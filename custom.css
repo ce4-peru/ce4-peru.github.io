@@ -1,0 +1,19 @@
+.logo {
+    width: 80px;
+}
+.title {
+    display: inline-block;
+    vertical-align: top;
+    margin: 10px 15px;
+    font-size: 38px;
+    width: 80%;
+}
+.grupo {
+	margin: 15px 0;
+}
+.integrante {
+	margin: 10px 0;
+}
+#clic-aqui {
+	cursor: pointer;
+}
