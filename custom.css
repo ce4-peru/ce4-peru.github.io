@@ -11,7 +11,7 @@
 .grupo {
 	margin: 15px 0;
 }
-.integrante {
+.listas > li {
 	margin: 10px 0;
 }
 #clic-aqui {
