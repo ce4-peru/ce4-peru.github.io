@@ -50,8 +50,12 @@ $(function(){
         div_descripcion.textContent = "\ufeff"+items[i].DESCRIPCION;
         // - LINK
         div_link = document.createElement('div');
-        div_link.className = "link";
-        div_link.textContent = items[i].LINK;
+        div_link.className = "wrapper-link";
+        div_a = document.createElement('a');
+        div_a.className = "link";
+        div_a.setAttribute('href', 'page/'+items[i].LINK);
+        div_a.textContent = "Ver más información";
+        div_link.appendChild(div_a);
 
         //Envoltura para el cuerpo del item
         var div_wrapper2 = document.createElement('div');
