@@ -10,12 +10,12 @@ setwd("~/covid19PE-LIEZ/")
 
 
 ## Call data
-# covid_ind <- fread("~/covid19PE-LIEZ/data/crudas/covidPE_IND_20200326_MD.csv")
-covid_ind <- fread("~/covid19PE-LIEZ/data/crudas/covidPE_IND_20200327_MD.csv")
-
+# covid_ind <- fread("~/ce4-peru.github.io/data/crudas/covidPE_IND_20200326_MD.csv")
+# covid_ind <- fread("~/ce4-peru.github.io/data/crudas/covidPE_IND_20200327_MD.csv")
+covid_ind <- fread("~/ce4-peru.github.io/data/crudas/covidPE_IND_20200331_MD.csv")
 
 ## Checar base
-str(covid_ind) # 479 obs. of  20 variables
+str(covid_ind) # 850 obs. of  20 variables
 names(covid_ind)
 # [1] "CASO_ID"              "FECHA"                "REGION"              
 # [4] "PROVINCIA"            "DISTRITO"             "DIRECCION"           
@@ -55,13 +55,14 @@ table(covid_ind$CASO_ID)
 
 ### Fecha ####
 table(covid_ind$FECHA)
-# 06/03/2020 07/03/2020 09/03/2020 10/03/2020 11/03/2020 12/03/2020 13/03/2020 14/03/2020 
-# 1          5          3          2          6          5         16          5 
-# 15/03/2020 16/03/2020 17/03/2020 18/03/2020 19/03/2020 20/03/2020 21/03/2020 22/03/2020 
-# 28         15         31         29         89         29         55         43 
-# 23/03/2020 24/03/2020 25/03/2020 
-# 32         21         64 
-
+# 06/03/2020 07/03/2020 09/03/2020 10/03/2020 11/03/2020 12/03/2020 13/03/2020 
+# 1          5          3          2          6          5         16 
+# 14/03/2020 15/03/2020 16/03/2020 17/03/2020 18/03/2020 19/03/2020 20/03/2020 
+# 5         28         15         31         29         89         29 
+# 21/03/2020 22/03/2020 23/03/2020 24/03/2020 25/03/2020 26/03/2020 27/03/2020 
+# 55         43         32         21         64         99         55 
+# 28/03/2020 29/03/2020 
+# 36        181 
 
 #### separando caracteres en varias columnas ######
 covid_ind$FECHA2 <- covid_ind$FECHA
@@ -116,6 +117,7 @@ levels(covid_ind$REGION) <- c(levels(covid_ind$REGION),
                               "JUNIN", "SAN MARTIN"))
 
 covid_ind$REGION[covid_ind$REGION == "HUáNUCO"] <- "HUANUCO"
+unique(covid_ind$REGION) # ok
 
 
 ## Provincia
@@ -134,6 +136,7 @@ levels(covid_ind$PROVINCIA) <- c(levels(covid_ind$PROVINCIA),
 
 covid_ind$PROVINCIA[covid_ind$PROVINCIA == "FERREñAFE"] <- "FERRENAFE"
 covid_ind$PROVINCIA[covid_ind$PROVINCIA == ""] <- NA
+unique(covid_ind$PROVINCIA)
 
 
 ## Distrito
@@ -160,6 +163,7 @@ unique(covid_ind$DISTRITO)
 
 # Hay  ""
 covid_ind$DISTRITO[covid_ind$DISTRITO == ""] <- NA
+unique(covid_ind$DISTRITO)
 
 
 ## Direccion
@@ -179,19 +183,19 @@ covid_ind$EDAD_A[covid_ind$EDAD_A == ""] <- NA
 str(covid_ind$SEXOM1H0) # int
 table(covid_ind$SEXOM1H0) # 0 and 1
 # 0  1 
-# 49 47 
+# 78 54
 
 ## Hospitalizado
 str(covid_ind$HOSPITALIZADOS1N0) # int
 table(covid_ind$HOSPITALIZADOS1N0) # 0 and 1
 # 0  1 
-# 69 20
+# 93 27 
 
 ## AisladoDomicil
 str(covid_ind$AISLADODOMICILS1N0) # int
 table(covid_ind$AISLADODOMICILS1N0) # 0 and 1
 # 0  1 
-# 18 70
+# 26 93 
 
 ## cONTACTO
 str(covid_ind$CONTACTO) # CHR
@@ -247,8 +251,9 @@ covid_ind$CONTACTO[covid_ind$CONTACTO == ""] <- NA
 ## IMPORTADO
 str(covid_ind$IMPORTADO) # int
 unique(covid_ind$IMPORTADO) 
-# [1]  1  0 NA
-# Hay NA
+# [1] "1"    "0"    ""     "LINK"
+covid_ind$IMPORTADO[covid_ind$IMPORTADO == "LINK"] <- NA
+covid_ind$IMPORTADO[covid_ind$IMPORTADO == ""] <- NA
 
 ## ORIGEN_INTERNACIONAL
 str(covid_ind$ORIGEN_INTERNACIONAL) # chr
@@ -257,6 +262,8 @@ unique(covid_ind$ORIGEN_INTERNACIONAL)
 # [6] "WASHINGTON DC" "EEUU"    
 # Hay ""  
 covid_ind$ORIGEN_INTERNACIONAL[covid_ind$ORIGEN_INTERNACIONAL == ""] <- NA
+unique(covid_ind$ORIGEN_INTERNACIONAL) 
+covid_ind$ORIGEN_INTERNACIONAL[covid_ind$ORIGEN_INTERNACIONAL == "LINK 2"] <- NA
 
 
 ## CASO_CONTACTO
@@ -285,7 +292,7 @@ covid_ind$ORIGEN_NACIONAL[covid_ind$ORIGEN_NACIONAL == ""] <- NA
 
 ## Double check "" and count NAs
 unique(covid_ind$CASO_ID)
-sum(is.na(covid_ind$CASO_ID)) # 445 NAs
+sum(is.na(covid_ind$CASO_ID)) # 816 NAs
 
 unique(covid_ind$FECHA)
 sum(is.na(covid_ind$FECHA)) # 0 NAs
@@ -303,43 +310,43 @@ unique(covid_ind$REGION)
 sum(is.na(covid_ind$REGION)) # 0 NAs
 
 unique(covid_ind$PROVINCIA)
-sum(is.na(covid_ind$PROVINCIA)) # 344 NAs
+sum(is.na(covid_ind$PROVINCIA)) # 650 NAs
 
 unique(covid_ind$DISTRITO)
-sum(is.na(covid_ind$DISTRITO)) # 386 NAs
+sum(is.na(covid_ind$DISTRITO)) # 717 NAs
 
 unique(covid_ind$DIRECCION)
-sum(is.na(covid_ind$DIRECCION)) # 479 NAs
+sum(is.na(covid_ind$DIRECCION)) # 850 NAs
 
 unique(covid_ind$EDAD_A_n)
-sum(is.na(covid_ind$EDAD_A_n)) # 402 NAs
+sum(is.na(covid_ind$EDAD_A_n)) # 747 NAs
 
 unique(covid_ind$SEXOM1H0)
-sum(is.na(covid_ind$SEXOM1H0)) # 383 NAs
+sum(is.na(covid_ind$SEXOM1H0)) # 718 NAs
 
 unique(covid_ind$HOSPITALIZADOS1N0)
-sum(is.na(covid_ind$HOSPITALIZADOS1N0)) # 390 NAs
+sum(is.na(covid_ind$HOSPITALIZADOS1N0)) # 730 NAs
 
 unique(covid_ind$AISLADODOMICILS1N0)
-sum(is.na(covid_ind$AISLADODOMICILS1N0)) # 391 NAs
+sum(is.na(covid_ind$AISLADODOMICILS1N0)) # 731 NAs
 
 unique(covid_ind$CONTACTO)
-sum(is.na(covid_ind$CONTACTO)) # 399 NAs
+sum(is.na(covid_ind$CONTACTO)) # 746 NAs
 
 unique(covid_ind$IMPORTADO)
-sum(is.na(covid_ind$IMPORTADO)) # 444 NAs
+sum(is.na(covid_ind$IMPORTADO)) # 815 NAs
 
 unique(covid_ind$ORIGEN_INTERNACIONAL)
-sum(is.na(covid_ind$ORIGEN_INTERNACIONAL)) # 462 NAs
+sum(is.na(covid_ind$ORIGEN_INTERNACIONAL)) # 833 NAs
 
 unique(covid_ind$CASO_CONTACTO)
-sum(is.na(covid_ind$CASO_CONTACTO)) # 461 NAs
+sum(is.na(covid_ind$CASO_CONTACTO)) # 832 NAs
 
 unique(covid_ind$RELACION_CONTACTO)
-sum(is.na(covid_ind$RELACION_CONTACTO)) # 461 NAs
+sum(is.na(covid_ind$RELACION_CONTACTO)) # 832 NAs
 
 unique(covid_ind$ORIGEN_NACIONAL)
-sum(is.na(covid_ind$ORIGEN_NACIONAL)) # 444 NAs
+sum(is.na(covid_ind$ORIGEN_NACIONAL)) # 815 NAs
 
 
 # Save dataset
@@ -364,4 +371,6 @@ names(covid_ind)
 # [19] "RELACION_CONTACTO"    "ORIGEN_NACIONAL"      "ENLACES1"            
 # [22] "ENLACES2"             "ENLACES3"             "OBSERVACIONES" 
 
-write.csv(covid_ind, "data/modificadas/covidPE_IND_20200327_MD_clean.csv")
+# Save csv.
+# CHANGE NAME! DONT FORGET!
+write.csv(covid_ind, "data/modificadas/covidPE_IND_20200331_MD_clean.csv")
