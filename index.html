@@ -7,93 +7,10 @@
         <script type="text/javascript" src="js/jquery-ui-1.12.1.custom/external/jquery/jquery.js"></script>
         <script type="text/javascript" src="js/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
         <script src="./js/jquery-csv.js"></script>    
+        <script type="text/javascript" src="js/custom.js"></script>
         <link href="css/jquery-ui.min.css" rel="stylesheet" type="text/css" />
         <link href="css/custom.css" rel="stylesheet" type="text/css" />
         
-        <script type="text/javascript">
-            $(function(){
-                $("#categorias").tabs({
-                    active: 0,                    
-                    event: "mouseover",
-                    heightStyle: "auto"
-                });
-
-
-	            $( "#clic-aqui" ).click(function() {
-				  $("#categorias").tabs({
-	                    active: 3
-	                });
-				});
-				$.ajax({
-				    url: "formato-publicaciones.csv",
-				    async: false,
-				    success: function (csvd) {
-				        var items = $.csv.toObjects(csvd);
-				        //var jsonobject = JSON.stringify(items);
-				        //Crear html de publicaciones
-				        var div_titulo = '';
-				        var div_estado = '';
-				        var div_fecha_publicacion = '';
-				        var div_fecha_actualizacion = '';
-				        var div_descripcion = '';
-				        var div_link = ''
-				        for (var i = 0; i < items.length; i++) {
-				        	//Envoltura para el cuerpo del item
-							var div_wrapper = document.createElement('div');
-							div_wrapper.className = 'wrapper';
-							//*Item internos del wrapper
-				        	// - Titulo
-				        	div_titulo = document.createElement('h3');
-							div_titulo.className = "titulo";
-							div_titulo.textContent = items[i].TITULO;
-							// - Estado
-							div_estado = document.createElement('div');
-							div_estado.className = "col3";
-							div_estado.textContent = "Estado: "+items[i].ESTADO;
-							// - Fecha publicacion
-							div_fecha_publicacion = document.createElement('div');
-							div_fecha_publicacion.className = "col3";
-							div_fecha_publicacion.textContent = "Fecha publicacion: "+items[i].FECHA_PUBLICACION;
-							// - Fecha ACTUALIZACION
-							div_fecha_actualizacion = document.createElement('div');
-							div_fecha_actualizacion.className = "col3";
-							div_fecha_actualizacion.textContent = "Fecha actualizacion: "+items[i].FECHA_ACTUALIZACION;
-							// - DESCRIPCION
-							div_descripcion = document.createElement('div');
-							div_descripcion.className = "descripcion";
-							div_descripcion.textContent = items[i].DESCRIPCION;
-							// - LINK
-							div_link = document.createElement('div');
-							div_link.className = "link";
-							div_link.textContent = items[i].LINK;
-							
-							//Envoltura para el cuerpo del item
-							var div_wrapper2 = document.createElement('div');
-							div_wrapper2.className = 'wrapper2';
-							//Poniendo dentro del wrapper2
-							div_wrapper2.appendChild(div_estado);
-							div_wrapper2.appendChild(div_fecha_publicacion);
-							div_wrapper2.appendChild(div_fecha_actualizacion);
-
-							//Poniendo dentro de ITEM_BODY
-							div_wrapper.appendChild(div_titulo);
-							div_wrapper.appendChild(div_wrapper2);
-							div_wrapper.appendChild(div_descripcion);
-							div_wrapper.appendChild(div_link);						
-							
-							//Poner todo dentro de la ruta del DIV que queramos
-							var currentDiv = document.getElementById('publicaciones');
-							currentDiv.appendChild(div_wrapper);
-				        }
-				    },
-				    dataType: "text",
-				    complete: function () {
-				        // call a function on complete 
-				    }
-				});
-            });
-
-        </script>
     </head>
     <body>
         <div id="categorias">
@@ -151,11 +68,10 @@
 						<a href="http://www.upch.edu.pe/faspa/index.php/es/unidad-de-una-salud">Unidad de Una Salud - Facultad de Salud Pública y Administración</a>
 						<ul class="listas">
 							<li >Ricardo Castillo Neyra (Médico Veterinario, Master en Salud Internacional, PhD en Epidemiología de Enfermedades Infecciosas)</li>
-							<li >Gian Franco Condori Luna</li>
-							<li >Elvis Diaz</li>
-							<li >Guillermo Porras</li>
-							<li >Micaela De la Puente</li>
-							<li >Claudia Arevalo Nieto</li>
+							<li >Claudia Arevalo Nieto (Bióloga, Maestra en Salud Pública, y Doctorando en Epidemiología Clínica)</li>
+							<li >Gian Franco Condori Luna (Ingeniero de Sistemas)</li>
+							<li >Micaela De la Puente ( Médico Veterinaria, Master en Ecología de las Enfermedades, y Doctorando en Epidemiologia)</li>
+							<li >Elvis Diaz (Médico Veterinario)</li>
 						</ul>
 					</li>
 					<li class="grupo">
@@ -167,7 +83,8 @@
 							<li>Cesar Aybar Camacho</li>
 						</ul>
 					</li>
-					<li class="grupo">Instituto de Medicina Tropical Alexander von Humboldt
+					<li class="grupo">
+						<a href="https://imtavh.cayetano.edu.pe/es/">Instituto de Medicina Tropical Alexander von Humboldt</a>
 						<ul class="listas">
 							<li>Cesar Ugarte-Gil (Médico, MSc Epidemiología, PhD en Epidemiología y Control de Enfermedades Globales)</li>
 						</ul>
