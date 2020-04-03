@@ -44,6 +44,15 @@
 	padding: 20px 10px;
     box-sizing: border-box;
 }
+.wrapper-link {
+	text-align: right;
+}
 .link {
-	padding: 10px;
+	background-color: #007fff;
+    border-radius: 5px;
+    padding: 10px;
+    color: #fff !important;
+    margin: 0 30px 15px;
+    display: inline-block;
+    text-decoration: none;
 }
