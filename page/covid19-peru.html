@@ -3,11 +3,9 @@
     <head>
         <meta lang="es" />
         <meta charset="utf-8" />
-        <title>Covid19-Perú</title>
-        <link href="css/custom.css" rel="stylesheet" type="text/css" />
-        
+        <title>Datos Covid19-Perú</title>        
     </head>
-    <body>
+    <body style="margin: 25px;">
         <h2><a href="https://github.com/ce4-peru/covid19" target="_blank">COVID19-Perú</a></h2>
         <p>Esta es una página pública de recursos abiertos para centralizar información sobre los datos de casos COVID19 para Perú.</p>
         <!--######################################-->
@@ -16,7 +14,7 @@
         <!--######################################-->
         <div>
             <h3>Datos de casos COVID19 e información asociada a la epidemia en Perú</h3>
-            <p>Nuestras bases de <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/data/crudas">datos crudas</a> se compilan a partir de fuentes disponibles y abiertas en la web, principalmente sitios web oficiales de salud pública a nivel provincial y/o regional, y se complementan con información de diarios locales.</p>
+            <p>Nuestras bases de <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/data/crudas">datos crudos</a> se compilan a partir de fuentes disponibles y abiertas en la web, principalmente sitios web oficiales de salud pública a nivel provincial y/o regional, y se complementan con información de diarios locales.</p>
             <p>Actualizamos una vez al día alrededor de las 22:00 hora de Lima.</p>
             <p>Estas bases de datos contiene un número diario informado de casos confirmados positivos y fuentes.</p>
             <p>Los datos anteriores al 23 de marzo de 2020 se recuperaron retroactivamente de fuentes abiertas en la web. Los datos del 23 de marzo de 2020 en adelante se recopilan diariamente directamente de los sitios.</p>
@@ -27,7 +25,7 @@
             <ul>
                 <li>Pone toda la información en un formato consistente</li>
                 <li>Calcula la incidencia diaria a partir de casos acumulativos</li>
-                <li>Corrige errores menores (usando este <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/Scripts/CÓDIGO LIMPIEZA BASE INDIVIDUAL_CA_MD.R">código</a>)</li>
+                <li>Corrige errores menores (usando este <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/Scripts/CÓDIGO LIMPIEZA BASE INDIVIDUAL_CA_MD.R">código</a> para la base de datos de casos individuales y este código para la base de datos agregados por día)</li>
                 <li>Cuando es posible, utilizamos informes resumidos del sitio web de la <a target="_blank" href="https://www.dge.gob.pe/portal/">Dirección General de Epidemiología</a> para verificar nuestra corrección de errores y la certeza de nuestro datos.</li>
             </ul>
         </div>
@@ -38,6 +36,12 @@
             <!--Aqui se tiene que actualizar la fecha-->
             <p>Última actualización: <b>31 de marzo 20:11 hora de Perú</b></p>
             <!--######################################-->
+            <div>
+                <img style="width: 49%; padding: 2%; box-sizing: border-box;" src="../IMG/20200402_weekly_incid_COVID19.png" alt="">
+                <img style="width: 49%; padding: 2%; box-sizing: border-box;" src="../IMG/20200402_daily_incid_COVID19.png" alt="">
+                
+                <img style="width: 100%; padding: 2%; box-sizing: border-box;" src="../IMG/20200402_Dep_COVID19_Incidencerate.png" alt="">
+            </div>
         </div>
         <div>
             <h3>Contactos</h3>
