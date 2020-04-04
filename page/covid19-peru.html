@@ -3,14 +3,14 @@
     <head>
         <meta lang="es" />
         <meta charset="utf-8" />
-        <title>Datos Covid19-Perú</title>        
-    </head>
+        <title>Datos Covid19-Perú</title> 
+    </head>  
     <body style="margin: 25px;">
-        <h2><a href="https://github.com/ce4-peru/covid19" target="_blank">COVID19-Perú</a></h2>
+        <h2><a href="https://github.com/ce4-peru/covid19" target="_blank">Datos COVID19-Perú</a></h2>
         <p>Esta es una página pública de recursos abiertos para centralizar información sobre los datos de casos COVID19 para Perú.</p>
         <!--######################################-->
         <!--Aqui se tiene que actualizar la fecha-->
-        <p>Última actualización: <b>01 de abril 10:11pm hora de Perú</b></p>
+        <p>Última actualización: <b id="fecha1"></b></p>
         <!--######################################-->
         <div>
             <h3>Datos de casos COVID19 e información asociada a la epidemia en Perú</h3>
@@ -32,10 +32,9 @@
         <div>
             <h3>Gráficos epidemiólogicos</h3>
             <p>Estos gráficos se generan utilizando los datos seleccionados.</p>
-            <!--######################################-->
-            <!--Aqui se tiene que actualizar la fecha-->
-            <p>Última actualización: <b>31 de marzo 20:11 hora de Perú</b></p>
-            <!--######################################-->
+            
+            <p>Última actualización: <b id="fecha2"></b></p>
+            
             <div>
                 <img style="width: 49%; padding: 2%; box-sizing: border-box;" src="../IMG/20200402_weekly_incid_COVID19.png" alt="">
                 <img style="width: 49%; padding: 2%; box-sizing: border-box;" src="../IMG/20200402_daily_incid_COVID19.png" alt="">
@@ -60,5 +59,15 @@
             <h3>Términos de Uso</h3>
             <p>Esta página de GitHub, sus contenidos en este documento, y todos los datos pertenecen al Laboratorio de Investigación de Enfermedades Zoonóticas, un consorcio entre la Universidad Peruana Cayetano Heredia (Perú) y la Universidad de Pensilvania (EE.UU). Todos los derechos reservados, se proporcionan al público estrictamente con fines de investigación académica y educativa. Los datos aquí proporcionados provienen de múltiples fuentes disponibles públicamente que no siempre concuerdan. El proceso de curación involucra en algunos casos consenso para dirimir sobre las discordancias de datos entre fuentes. La metodología para la obtención de datos no ofrece garantías sobre la precisión y la idoneidad de las base de datos para ciertos. Se prohíbe estrictamente el uso de este sitio web para el comercio.</p>
         </div>
+        <script type="text/javascript">
+            function actualizarFecha(fecha) {
+              document.querySelector("#fecha1").innerText = fecha;
+              document.querySelector("#fecha2").innerText = fecha;
+            };
+            //--------------------------------------->
+            //Aqui se tiene que actualizar la fecha-->
+            actualizarFecha('03 de abril 22:00 hora de Perú');
+            //--------------------------------------->
+        </script>     
     </body>
 </html>
