@@ -5,8 +5,8 @@
         <meta charset="utf-8" />
         <title>Datos Covid19-Perú</title> 
     </head>  
-    <body style="margin: 25px;">
-        <h2><a href="https://github.com/ce4-peru/covid19" target="_blank">Datos COVID19-Perú</a></h2>
+    <body style="max-width: 1024px; margin: 30px auto;">
+        <h2 style="font-size: 2.2em;"><a href="https://github.com/ce4-peru/covid19" target="_blank">Datos COVID19-Perú</a></h2>
         <p>Esta es una página pública de recursos abiertos para centralizar información sobre los datos de casos COVID19 para Perú.</p>
         <p>Última actualización: <b id="fecha1"></b></p>
         <div>
@@ -22,7 +22,7 @@
             <ul>
                 <li>Pone toda la información en un formato consistente</li>
                 <li>Calcula la incidencia diaria a partir de casos acumulativos</li>
-                <li>Corrige errores menores (usando este <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/Scripts/CÓDIGO LIMPIEZA BASE INDIVIDUAL_CA_MD.R">código</a> para la base de datos de casos individuales y este código para la base de datos agregados por día)</li>
+                <li>Corrige errores menores (usando este <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/Scripts/CÓDIGO LIMPIEZA BASE INDIVIDUAL_CA_MD.R">código</a> para la base de datos de casos individuales y este <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/Scripts/CÓDIGO LIMPIEZA BASE AGREGADA POR DIA_CA_MD.R">código</a> para la base de datos agregados por día)</li>
                 <li>Cuando es posible, utilizamos informes resumidos del sitio web de la <a target="_blank" href="https://www.dge.gob.pe/portal/">Dirección General de Epidemiología</a> para verificar nuestra corrección de errores y la certeza de nuestro datos.</li>
             </ul>
         </div>
@@ -31,10 +31,10 @@
             <p>Estos gráficos se generan utilizando los datos seleccionados.</p>
             <p>Última actualización: <b id="fecha2"></b></p>
             <div>
-                <img style="width: 49%; padding: 2%; box-sizing: border-box;" src="../IMG/20200402_weekly_incid_COVID19.png" alt="">
-                <img style="width: 49%; padding: 2%; box-sizing: border-box;" src="../IMG/20200402_daily_incid_COVID19.png" alt="">
+                <img style="width: 49%; padding: 2%; box-sizing: border-box;" src="../IMG/Número de casos de COVID19 por semana.png" alt="">
+                <img style="width: 49%; padding: 2%; box-sizing: border-box;" src="../IMG/Número de casos de COVID19 por día.png" alt="">
                 
-                <img style="width: 100%; padding: 2%; box-sizing: border-box;" src="../IMG/20200402_Dep_COVID19_Incidencerate.png" alt="">
+                <img style="width: 100%; padding: 2%; box-sizing: border-box;" src="../IMG/Mapa de incidencias regionales de COVID19.png" alt="">
             </div>
         </div>
         <div>
@@ -61,7 +61,7 @@
             };
             //--------------------------------------->
             //Aqui se tiene que actualizar la fecha-->
-            actualizarFecha('03 de abril 22:00 hora de Perú');
+            actualizarFecha('03 de abril 21:34 hora de Perú');
             //--------------------------------------->
         </script>     
     </body>
