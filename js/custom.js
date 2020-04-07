@@ -54,6 +54,7 @@ $(function(){
         div_a = document.createElement('a');
         div_a.className = "link";
         div_a.setAttribute('href', 'page/'+items[i].LINK);
+        div_a.setAttribute('target', '_blank');
         div_a.textContent = "Ver más información";
         div_link.appendChild(div_a);
 
