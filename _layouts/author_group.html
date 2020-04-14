@@ -2,36 +2,33 @@
 layout: default
 ---
 {% assign group_data = site.data.authors | where: "id", page.tag | first %}
-<h1>{{ group_data.name }}</h1>
-
-{{ content }}
-
-<p>Nuestro {{ group_data.name }} esta compuesto por los siguientes integrantes:</p>
 
 <ul id="author-group">
-{% for author in group_data.members %}
-	{% assign author_data = site.data.authors | where: "id", author | first %}
-  <li>
-    {% if author_data.url %}
-      <a href="{{ author_data.url }}">{{ author_data.name }}</a>
-    {% else %}
-		  {{ author_data.name }}
-    {% endif %}
-    {% if author_data.twitter %}
-      (<a href="https://twitter.com/{{ author_data.twitter }}">@{{ author_data.twitter }}</a>)
-    {% endif %}
-	{% if author_data.grade %}
-	<ul>
-	<li>{{ author_data.grade }}</li>
-	</ul>
-	{% endif %}
-  </li>
+  {% for author in group_data.members %}
+    {% assign author_data = site.data.authors | where: "id", author | first %}
+    <li style="margin-bottom: 25px;">
+      {% if author_data.url %}
+        <a href="{{ author_data.url }}">{{ author_data.name }}</a>
+      {% else %}
+        <h4 style="margin-bottom: 0;"><b>{{ author_data.name }}</b>
+          {% if author_data.twitter %}
+            (<a href="https://twitter.com/{{ author_data.twitter }}">@{{ author_data.twitter }}</a>)
+          {% endif %}
+        </h4>
+        {% if author_data.type %}
+          <h4 style="margin-top: 0;">{{ author_data.type}}</h4>
+        {% endif %}
+      {% endif %}
+      {% if author_data.grade %}
+        <h5>{{ author_data.grade }}</h5>
+      {% endif %}
+    </li>
   {% endfor %}
 </ul>
 
 <script>
   var list = document.getElementById("author-group");
   for (var i = list.children.length; i >= 0; i--) {
-    list.appendChild(list.children[Math.random() * i | 0]);
+    list.appendChild(list.children[i]);
   }
 </script>

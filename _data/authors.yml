@@ -3,72 +3,84 @@
   email: 
   url:
   twitter:
+  type: Investigador Principal
   grade: Médico Veterinario, Master en Salud Internacional, PhD en Epidemiología de Enfermedades Infecciosas
 - id: arevalo_nieto_c
   name: Claudia Arevalo Nieto
   email:
   url: 
   twitter:
+  type:
   grade: Bióloga, Maestra en Salud Pública, y Doctorando en Epidemiología Clínica
 - id: condori_luna_gf
-  name: Gian Franco Condori Luna
+  name: Gian Franco Joel Condori Luna
   email:
   url:
   twitter:
+  type:
   grade: Ingeniero de Sistemas
 - id: puente_mc
   name: Micaela De la Puente
   email:
   url: 
   twitter:
+  type:
   grade: Médico Veterinaria, Master en Ecología de las Enfermedades, y Doctorando en Epidemiologia
 - id: diaz_e
   name: Elvis Diaz
   email:
   url:
   twitter:
+  type:
   grade: Médico Veterinario
 - id: carrasco_escobar_g
   name: Gabriel Carrasco Escobar
   email:
   url: 
   twitter: gabc91
+  type: Investigador Principal
   grade: Epidemiólogo, Maestria en Ciencias en Investigación Epidemiológicas, PhD(c) Salud Pública
 - id: manrique_valverde_e
   name: Edgar Manrique Valverde
   email:
   url: 
   twitter:
+  type:
   grade: 
 - id: ruiz_cabrejos_j
   name: Jorge Ruiz Cabrejos
   email:
   url: 
   twitter:
+  type:
   grade: Bachiller en Administración en Salud
 - id: camacho_aybar_c
   name: Cesar Aybar Camacho
   email:
   url: 
-  twitter:     
+  twitter:
+  type:  
+  grade:
 - id: ugarte-gil_c
   name: Cesar Ugarte-Gil
   email:
   url: 
-  twitter:      
+  twitter:  
+  type: Investigador Principal    
   grade: Médico, MSc Epidemiología, PhD en Epidemiología y Control de Enfermedades Globales
  
 - id: group
   name: Grupo de trabajo
   type: group
   members:
+   - carrasco_escobar_g
    - castillo_neyra_r
+   - ugarte-gil_c
    - arevalo_nieto_c
+   - camacho_aybar_c
    - condori_luna_gf
    - puente_mc
    - diaz_e
-   - carrasco_escobar_g
    - manrique_valverde_e
    - ruiz_cabrejos_j
-   - camacho_aybar_c
-   - ugarte-gil_c
+   
