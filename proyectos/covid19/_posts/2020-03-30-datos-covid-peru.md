@@ -39,8 +39,8 @@ update: 2020-04-13
             <p>Estos gráficos se generan utilizando los datos seleccionados.</p>
             <p>Última actualización: <b id="fecha2"></b></p>
             <div style="text-align: center;">
-                <img style="padding: 2%; box-sizing: border-box;width: 60%;display: inline-block;" src="covid19-peru/pruebas_vs_positivos_COVID19.png" alt="">
-                <img style="width: 100%; padding: 2%; box-sizing: border-box;" src="covid19-peru/Mapa de incidencias regionales de COVID19.png" alt="">
+                <img style="padding: 2%; box-sizing: border-box;width: 60%;display: inline-block;" src="covid19-peru/img/pruebas_vs_positivos_COVID19.png" alt="">
+                <img style="width: 100%; padding: 2%; box-sizing: border-box;" src="covid19-peru/img/Mapa de incidencias regionales de COVID19.png" alt="">
             </div>
         </div>
         <div>
