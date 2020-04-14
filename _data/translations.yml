@@ -1,0 +1,32 @@
+- name: First online
+  en: First online
+- name: Last update
+  en: Last update
+- name: Read more
+  en: Read more
+- name: Status
+  en: Status
+- name: Category
+  en: Category
+- name: in-progress
+  en: in-progress
+- name: under-review
+  en: under-review
+- name: accepted
+  en: accepted
+- name: published
+  en: published
+- name: corresponding author
+  en: corresponding author
+- name: Posts
+  en: Posts
+- name: We have divided our work on this topic under the following categories
+  en: We have divided our work on this topic under the following categories
+- name: No articles match the current filter
+  en: No articles match the current filter
+- name: The list below shows all our work on this topic
+  en: The list below shows all our work on this topic
+- name: This study has not yet been peer reviewed.
+  en: This study has not yet been peer reviewed.
+- name: Authors
+  en: Authors

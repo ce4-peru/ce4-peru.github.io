@@ -1,0 +1,191 @@
+<!doctype html>
+
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+			New project on Covid work#add a description
+		&nbsp;| Repositorio CE4</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>	
+	<!-- use bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> 
+	<link href="https://fonts.googleapis.com/css?family=Merriweather|Open+Sans&display=swap" rel="stylesheet"> 
+	<link rel="stylesheet" href="/assets/css/styles.css" />
+	<link rel="icon" type="media/png" href="/assets/media/Favicon/favicon-16x16.png" sizes="16x16">  
+	<link rel="icon" type="media/png" href="/assets/media/Favicon/favicon-32x32.png" sizes="32x32">  
+	<link rel="icon" type="media/png" href="/assets/media/Favicon/favicon-96x96.png" sizes="96x96">
+	
+	
+	
+</head>
+  <body>
+    <header>
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/"><img src="/assets/media/upch-logo-blanco.png"  class="logo" title="Consorcio en Epidemiología y Ecología Espacial de Enfermedades - CE4" /></a>
+				<a class="navbar-brand text" href="/">Repositorio CE4</a>
+			</div>
+			<div class="collapse navbar-collapse" id="myNavbar">
+	<ul class="nav navbar-nav">
+		
+		
+		
+			
+			
+				
+			<li >
+				<a href="/">Inicio</a>
+			</li>
+		
+			
+			
+				
+			<li >
+				<a href="/proyectos/covid19/">COVID-19</a>
+			</li>
+		
+			
+			
+				
+			<li >
+				<a href="/proyectos/">Proyectos</a>
+			</li>
+		
+			
+			
+				
+			<li >
+				<a href="/apps">Aplicaciones</a>
+			</li>
+		
+			
+			
+				
+			<li >
+				<a href="/integrantes/">Integrantes</a>
+			</li>
+		
+	</ul>
+</div>
+
+		</div>
+	</nav>
+</header>
+	<section class="main">
+		<div class="container">
+		<h1>New project on Covid work#add a description</h1>
+		<div class="blog list">
+	
+		
+    <h1>
+
+
+</h1>
+	
+	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed feugiat nunc sit amet ullamcorper mollis. Duis mollis nisi eu nulla condimentum efficitur. Donec congue, dolor non aliquam pharetra, arcu orci lacinia arcu, non viverra justo massa id lorem. Morbi dignissim luctus risus, id viverra nunc lacinia vel. Interdum et malesuada fames ac ante ipsum primis in faucibus. Vestibulum iaculis metus at lacus maximus ultricies. Aenean arcu ligula, euismod sit amet lobortis id, rutrum in quam. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla ut justo pulvinar, facilisis nisi nec, porta urna. Integer consectetur ante enim, ac hendrerit augue tristique ac. Etiam tincidunt fermentum luctus. Nunc quis placerat ipsum. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean efficitur nulla nec mauris rhoncus vehicula. In tincidunt sapien at urna suscipit, non mattis lectus fermentum.</p>
+
+	
+	
+		
+
+
+
+
+
+
+
+	
+	
+	
+		<h3>
+
+
+La lista a continuación contiene los proyectos por categoría, fecha y estado.
+</h3>
+		
+
+
+	<p>
+
+
+Aún no hemos colocado trabajos acerca de este tema
+.</p>
+
+
+<script>
+	$('.filter-select').click(
+		function(){
+			//make all visible
+			$('.posts article').css("display", "");
+			
+			//get unchecked boxes
+			var checked_classes = [];
+			$( '.filter input:not(:checked)' ).each(
+				function() {
+					checked_classes.push( $( this ).data("filter") +'_'+$( this ).val() );
+				}
+			);
+			
+			//hide those unchecked
+			$.each(checked_classes, function(i, val){
+				$( '.posts article.'+val ).css("display","none");
+			});
+			
+			//count number of articles visible
+			var count_articles = $(".posts article").not(
+					$(".posts article").filter(
+						function(){
+							return $(this).css("display") == "none"
+						}
+					)
+			).length;
+			//show no-articles block if no articles
+			if(count_articles == 0){
+				$('.no-articles').css("display","block");
+			} else {
+				$('.no-articles').css("display","none");
+			}
+		}
+	)
+</script>
+
+	
+	
+</div>	
+		</div>
+	</section>
+	<footer class="site-footer" role="banner">
+	
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="wrapper">
+				<p>Consorcio en Epidemiología y Ecología Espacial de Enfermedades</p>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="wrapper">
+				<a href="https://twitter.com/tropicalesupch" target="_blank"><img class="social twitter" src="/assets/media/twitter_social.svg" title="Síguenos en twitter" /></a> Síguenos en twitter
+			</div>
+			<div class="wrapper">
+				<a href="https://github.com/ce4-peru/ce4-peru.github.io" target="_blank"><img class="social twitter" src="/assets/media/Octicons-mark-github.svg" title="Colabora en GitHub" /></a> Colabora en GitHub
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="wrapper">
+				<img src="/assets/media/upch-logo.png" title="Universidad Peruana Cayetano Heredia"/>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  </body>
+</html>

@@ -1,0 +1,207 @@
+<!doctype html>
+
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+			﻿Datos COVID19-Perú
+		&nbsp;| Repositorio CE4</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>	
+	<!-- use bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> 
+	<link href="https://fonts.googleapis.com/css?family=Merriweather|Open+Sans&display=swap" rel="stylesheet"> 
+	<link rel="stylesheet" href="/assets/css/styles.css" />
+	<link rel="icon" type="media/png" href="/assets/media/Favicon/favicon-16x16.png" sizes="16x16">  
+	<link rel="icon" type="media/png" href="/assets/media/Favicon/favicon-32x32.png" sizes="32x32">  
+	<link rel="icon" type="media/png" href="/assets/media/Favicon/favicon-96x96.png" sizes="96x96">
+	
+	
+	
+</head>
+  <body>
+    <header>
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="/"><img src="/assets/media/upch-logo-blanco.png"  class="logo" title="Consorcio en Epidemiología y Ecología Espacial de Enfermedades - CE4" /></a>
+				<a class="navbar-brand text" href="/">Repositorio CE4</a>
+			</div>
+			<div class="collapse navbar-collapse" id="myNavbar">
+	<ul class="nav navbar-nav">
+		
+		
+		
+			
+			
+				
+			<li >
+				<a href="/">Inicio</a>
+			</li>
+		
+			
+			
+				
+			<li >
+				<a href="/proyectos/covid19/">COVID-19</a>
+			</li>
+		
+			
+			
+				
+			<li >
+				<a href="/proyectos/">Proyectos</a>
+			</li>
+		
+			
+			
+				
+			<li >
+				<a href="/apps">Aplicaciones</a>
+			</li>
+		
+			
+			
+				
+			<li >
+				<a href="/integrantes/">Integrantes</a>
+			</li>
+		
+	</ul>
+</div>
+
+		</div>
+	</nav>
+</header>
+	<section class="main">
+		<div class="container">
+		<h1>﻿Datos COVID19-Perú</h1>
+		
+
+<div class="post-status"><span class="status under-review">
+
+
+Status
+: 
+
+
+under-review
+</span> | <span class="date">
+
+
+First online
+: 30-03-2020</span>  | <span class="date">
+
+
+Last update
+: 13-04-2020</span></div>
+
+
+
+
+	<p><b>
+
+
+Este proyecto o estudio aún no se encuentra revisado por pares o publicado.
+</b></p>
+
+
+<html>
+    <head>
+        <meta lang="es" />
+        <meta charset="utf-8" />
+    </head>  
+    <body style="max-width: 1024px; margin: 30px auto;">
+        <p>Esta es una página pública de recursos abiertos para centralizar información sobre los datos de casos COVID19 para Perú.</p>
+        <p><a target="_blank" href="https://github.com/ce4-peru/covid19">Repositorio de Github</a></p>
+		<p>Última actualización: <b id="fecha1"></b></p>
+        <div>
+            <h3>Datos de casos COVID19 e información asociada a la epidemia en Perú</h3>
+            <p>Nuestras bases de <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/data/crudas">datos crudos</a> se compilan a partir de fuentes disponibles y abiertas en la web, principalmente sitios web oficiales de salud pública a nivel provincial y/o regional, y se complementan con información de diarios locales.</p>
+            <p>Actualizamos una vez al día alrededor de las 22:00 hora de Lima.</p>
+            <p>Estas bases de datos contiene un número diario informado de casos confirmados positivos y fuentes.</p>
+            <p>Los datos anteriores al 23 de marzo de 2020 se recuperaron retroactivamente de fuentes abiertas en la web. Los datos del 23 de marzo de 2020 en adelante se recopilan diariamente directamente de los sitios.</p>
+        </div>
+        <div>
+            <h3>Curación de datos</h3>
+            <p>Nuestra <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/data/modificadas">base de datos curados</a>:</p>
+            <ul>
+                <li>Pone toda la información en un formato consistente</li>
+                <li>Calcula la incidencia diaria a partir de casos acumulativos</li>
+                <li>Corrige errores menores (usando este <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/Scripts/CÓDIGO LIMPIEZA BASE INDIVIDUAL_CA_MD.R">código</a> para la base de datos de casos individuales y este <a target="_blank" href="https://github.com/ce4-peru/covid19/tree/master/Scripts/CÓDIGO LIMPIEZA BASE AGREGADA POR DIA_CA_MD.R">código</a> para la base de datos agregados por día)</li>
+                <li>Cuando es posible, utilizamos informes resumidos del sitio web de la <a target="_blank" href="https://www.dge.gob.pe/portal/">Dirección General de Epidemiología</a> para verificar nuestra corrección de errores y la certeza de nuestro datos.</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Gráficos epidemiólogicos</h3>
+            <p>Estos gráficos se generan utilizando los datos seleccionados.</p>
+            <p>Última actualización: <b id="fecha2"></b></p>
+            <div style="text-align: center;">
+                <img style="padding: 2%; box-sizing: border-box;width: 60%;display: inline-block;" src="covid19-peru/pruebas_vs_positivos_COVID19.png" alt="" />
+                <img style="width: 100%; padding: 2%; box-sizing: border-box;" src="covid19-peru/Mapa de incidencias regionales de COVID19.png" alt="" />
+            </div>
+        </div>
+        <div>
+            <h3>Contactos</h3>
+            <p>Si tiene alguna pregunta sobre los datos, comuníquese por correo electrónico.</p>
+            <p>Administradora: </p>
+            <ul>
+                <li>Micaela De la Puente (virginia.de.la.puente@upch.pe)</li>
+            </ul>
+            <p>Investigador Principal:</p>
+            <ul>
+                <li>Ricardo Castillo Neyra (cricardo@upenn.edu)</li>
+            </ul>
+        </div>
+        <div>
+            <h3>Términos de Uso</h3>
+            <p>Esta página de GitHub, sus contenidos en este documento, y todos los datos pertenecen al Laboratorio de Investigación de Enfermedades Zoonóticas, un consorcio entre la Universidad Peruana Cayetano Heredia (Perú) y la Universidad de Pensilvania (EE.UU). Todos los derechos reservados, se proporcionan al público estrictamente con fines de investigación académica y educativa. Los datos aquí proporcionados provienen de múltiples fuentes disponibles públicamente que no siempre concuerdan. El proceso de curación involucra en algunos casos consenso para dirimir sobre las discordancias de datos entre fuentes. La metodología para la obtención de datos no ofrece garantías sobre la precisión y la idoneidad de las base de datos para ciertos. Se prohíbe estrictamente el uso de este sitio web para el comercio.</p>
+        </div>
+        <script type="text/javascript">
+            function actualizarFecha(fecha) {
+              document.querySelector("#fecha1").innerText = fecha;
+              document.querySelector("#fecha2").innerText = fecha;
+            };
+            //--------------------------------------->
+            //Aqui se tiene que actualizar la fecha-->
+            actualizarFecha('13 de abril 22:21 hora de Perú');
+            //--------------------------------------->
+        </script>  
+</body>		
+</html>
+	
+		</div>
+	</section>
+	<footer class="site-footer" role="banner">
+	
+	<div class="row">
+		<div class="col-sm-4">
+			<div class="wrapper">
+				<p>Consorcio en Epidemiología y Ecología Espacial de Enfermedades</p>
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="wrapper">
+				<a href="https://twitter.com/tropicalesupch" target="_blank"><img class="social twitter" src="/assets/media/twitter_social.svg" title="Síguenos en twitter" /></a> Síguenos en twitter
+			</div>
+			<div class="wrapper">
+				<a href="https://github.com/ce4-peru/ce4-peru.github.io" target="_blank"><img class="social twitter" src="/assets/media/Octicons-mark-github.svg" title="Colabora en GitHub" /></a> Colabora en GitHub
+			</div>
+		</div>
+		<div class="col-sm-4">
+			<div class="wrapper">
+				<img src="/assets/media/upch-logo.png" title="Universidad Peruana Cayetano Heredia"/>
+			</div>
+		</div>
+	</div>
+</footer>
+
+  </body>
+</html>

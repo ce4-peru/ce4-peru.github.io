@@ -1,0 +1,10 @@
+- name: Inicio
+  link: /
+- name: COVID-19
+  link: /proyectos/covid19/
+- name: Proyectos
+  link: /proyectos/
+- name: Aplicaciones
+  link: /apps
+- name: Integrantes
+  link: /integrantes/
