@@ -3,7 +3,7 @@ layout: default
 ---
 {% assign group_data = site.data.authors | where: "id", page.tag | first %}
 
-<ul id="author-group">
+<ul style="list-style: none; padding: 15px;" id="author-group">
   {% for author in group_data.members %}
     {% assign author_data = site.data.authors | where: "id", author | first %}
     <li style="margin-bottom: 25px;">
