@@ -6,7 +6,8 @@ description: "Esta es una página pública de recursos abiertos para centralizar
 status: under-review
 
 update: 2020-04-13
-  
+ 
+github: https://github.com/ce4-peru/covid19
 ---
 <html>
     <head>
