@@ -66,7 +66,7 @@ update: 2020-04-13
             };
             //--------------------------------------->
             //Aqui se tiene que actualizar la fecha-->
-            actualizarFecha('15 de abril 22:02 hora de Perú');
+            actualizarFecha('16 de abril 17:10 hora de Perú');
             //--------------------------------------->
         </script>  
 </body>		
