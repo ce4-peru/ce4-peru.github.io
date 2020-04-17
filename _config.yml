@@ -36,6 +36,9 @@ plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
   - jekyll-redirect-from
+  - jekyll-gist
+
+gems: ['jekyll-twitter-plugin']
 
 collections:
   authors:
