@@ -82,8 +82,10 @@
 			</div>
 			<div class="content">
 				<p>{{post.description}}</p>
+				{% if post.github %}
+					{% include github.html %}
+				{% endif %}
 				<p class="read-more"><a href="{{post.url}}">{% include fn_gettranslation string="Leer más" lang=page.language %}</a></p>
-				
 			</div>
 		</article>
 	{% endfor %}
