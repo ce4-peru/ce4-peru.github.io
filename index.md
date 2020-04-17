@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Consorcio en Epidemiología y Ecología Espacial de Enfermedades
+special: true
 ---
 
 Esta iniciativa parte de la necesidad de entender problemas complejos (brotes epidémicos, ecología de las enfermedades) desde una mirada multidisciplinaria.  Esperamos que los recursos brindados de forma abierta en esta página pueda aportar a la toma de decisiones basada en la evidencia. La información y resultados presentados son en muchos casos <b>trabajo en progreso.
