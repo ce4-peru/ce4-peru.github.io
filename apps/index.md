@@ -12,3 +12,5 @@ Próximamemente podrás encontrar aqui aplicaciones interactivas.
 {% for app in site.shinyapp %}
  - [{{ app.title }}]({{ app.url }})
 {% endfor %}
+
+
