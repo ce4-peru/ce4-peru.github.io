@@ -89,8 +89,6 @@ dep <- st_as_sf(dep, sf_column_name = 'geometry')
 pal_fun <- colorQuantile("YlOrRd", NULL, n = 5)
 pal_smp <- colorQuantile("Blues", NULL, n = 5)
 
-pal.cases <- colorNumeric( palette="YlOrRd", domain = log(dep$pos), na.color="transparent")
-
 labels.total <- sprintf(
       "<strong>%s</strong><br/<strong>Value: </strong>%s",
       dep$dep, dep$pos) %>% lapply(htmltools::HTML)
@@ -158,12 +156,14 @@ dat4 <- dat0 %>%
 
 # Regional {.bg}
 
-Column 1 {.tabset} 
+Column 1 {.tabset data-width=350} 
 -------------------------------------
 
 ### Casos totales 
 
 ```{r}
+pal.cases <- colorNumeric( palette="YlOrRd", domain = log(dep$pos), na.color="transparent")
+
 leaflet(dep) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
   addPolygons(fillColor = pal.cases(log(dep$pos)),
@@ -183,15 +183,18 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal =pal.cases, values = log(dep$pos), title= 'Log de casos')
+  addLegend("bottomleft", pal = pal.cases, values = log(dep$pos), title= 'Log de casos')
 ```
 
 ### Casos nuevos 
 
 ```{r}
+
+pal.newcases <- colorNumeric( palette="YlOrRd", domain = log(dep$pos.new), na.color="transparent")
+
 leaflet(dep) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
-  addPolygons(fillColor = pal_fun(dep$pos.new),
+  addPolygons(fillColor = pal.newcases(log(dep$pos.new)),
               weight = 2,
               opacity = 1,
               color = "white",
@@ -208,15 +211,17 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal_fun, values = dep$pos.new, title= 'Cantidad de casos')
+  addLegend("bottomleft", pal=pal.newcases, values = log(dep$pos.new), title= ' Log de casos')
 ```
 
 ### Fallecidos 
 
 ```{r}
+pal.pas <- colorNumeric( palette="YlOrRd", domain = dep[dep$pas > 0,]$pas, na.color="transparent")
+
 leaflet(dep[dep$pas > 0,]) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
-  addPolygons(fillColor = pal_fun(dep[dep$pas > 0,]$pas),
+  addPolygons(fillColor = pal.pas(dep[dep$pas > 0,]$pas),
               weight = 2,
               opacity = 1,
               color = "white",
@@ -233,15 +238,17 @@ leaflet(dep[dep$pas > 0,]) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal_fun, values = dep[dep$pas > 0,]$pas, title= 'Cantidad de fallecidos')
+  addLegend("bottomleft", pal=pal.pas, values = dep[dep$pas > 0,]$pas, title= 'Cantidad de fallecidos')
 ```
 
 ### Pruebas realizadas 
 
 ```{r}
+pal.smp <- colorNumeric( palette="Blues", domain = log(dep$smp), na.color="transparent")
+
 leaflet(dep) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
-  addPolygons(fillColor = pal_smp(dep$smp),
+  addPolygons(fillColor = pal.smp(log(dep$smp)),
               weight = 2,
               opacity = 1,
               color = "white",
@@ -258,15 +265,17 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal_smp, values = dep$smp, title= 'Cantidad de pruebas totales')
+  addLegend("bottomleft", pal=pal.smp, values = log(dep$smp), title= 'Log de pruebas totales')
 ```
 
 ### Nuevas pruebas realizadas 
 
 ```{r}
+pal.smpnew <-  colorNumeric( palette="Blues", domain = log(dep$smp.new), na.color="transparent")
+
 leaflet(dep) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
-  addPolygons(fillColor = pal_smp(dep$smp.new),
+  addPolygons(fillColor =pal.smpnew(log(dep$smp.new)),
               weight = 2,
               opacity = 1,
               color = "white",
@@ -283,10 +292,91 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal_smp, values = dep$smp.new, title= 'Cantidad de pruebas totales')
+  addLegend("bottomleft", pal=pal.smpnew, values = log(dep$smp.new), title= 'Log de pruebas nuevas')
 ```
 
-Column 2 
+Column 2 {.tabset data-width=400}
+-------------------------------------
+
+### Lineal
+
+```{r, message=F, warning=F, class.output="scroll-100"}
+plot_ly(dat1) %>%
+  add_trace(x = ~Dia, y = ~pos_new, 
+            type = 'bar', name = 'Casos Nuevos',
+            marker = list(color = 'rgb(128,160,53)'), 
+            text = paste(dat1$tm, "días desde hoy"),
+            hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                  '<br><b>Nuevos Casos:</b> %{y}</br>',
+                                  '<b>%{text}</b>'))%>% 
+  add_trace(x = ~Dia, y = ~cum_pos, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Casos Acumulados', 
+            yaxis = 'y2',
+            line = list(color = 'rgb(35,104,99)'), 
+            marker = list(color = 'rgb(35,104,99)'),
+            text = paste(dat1$tm, "días desde hoy"),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Casos Acumulados: %{y}</b></br>",
+                                   '<b>%{text}</b>')) %>% 
+  layout(title = 'Casos nuevos y acumulados de Perú',
+         xaxis = list(title = "Fecha"),
+         yaxis = list(side = 'left', title = 'Casos Nuevos por día', showgrid = FALSE, zeroline = FALSE),
+         yaxis2 = list(side = 'right', overlaying = "y", title = 'Casos acumulados por día', showgrid = FALSE, zeroline = FALSE))%>%
+  add_segments(x = "2020-04-08", xend = "2020-04-08", 
+               y = 0, yend=max(dat1$pos_new),
+               text="2020-04-08",name="Inicio de P.R's",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+               width=2, 
+               line = list(color = "rgb(166,55,63)", 
+                           width = 3, 
+                           dash = "dot")
+  )
+```
+
+### Logaritmico
+
+```{r, message=F, warning=F, class.output="scroll-100"}
+plot_ly(dat1) %>%
+  add_trace(x = ~Dia, y = ~pos_new, 
+            type = 'bar', name = 'Casos Nuevos',
+            marker = list(color = 'rgb(128,160,53)'), 
+            text = paste(dat1$tm, "días desde hoy"),
+            hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                  '<br><b>Nuevos Casos:</b> %{y}</br>',
+                                  '<b>%{text}</b>'))%>% 
+  add_trace(x = ~Dia, y = ~cum_pos, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Casos Acumulados', 
+            yaxis = 'y2',
+            line = list(color = 'rgb(35,104,99)'), 
+            marker = list(color = 'rgb(35,104,99)'),
+            text = paste(dat1$tm, "días desde hoy"),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                          "<br><b>Casos Acumulados: %{y}</b></br>",
+                          '<b>%{text}</b>')) %>% 
+  layout(title = 'Casos nuevos y acumulados de Perú',
+         xaxis = list(title = "Fecha"),
+         yaxis = list(side = 'left', title = 'Casos Nuevos por día', showgrid = FALSE, zeroline = FALSE),
+         yaxis2 = list(side = 'right', overlaying = "y", type = "log",
+                       title = 'Casos acumulados por día', 
+                       showgrid = FALSE, zeroline = FALSE))%>%
+  add_segments(x = "2020-04-08", xend = "2020-04-08", 
+               y = 0, yend=max(dat1$pos_new),
+               text="2020-04-08",name="Inicio de P.R's",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+               width=2, 
+              line = list(color = "rgb(166,55,63)", 
+                          width = 3, 
+                          dash = "dot")
+               )
+```
+
+Column 3 {data-width=250}
 -------------------------------------
 
 ### Datos actualizados al:
@@ -308,21 +398,6 @@ valueBox(sum(dep$pos.new), icon = "fa-pencil")
 
 ### Column 2 - Chart 1
 ```{r}
-ggplot(mtcars, aes(x = mpg, y = disp)) +
-  geom_point()
-```
-
-### Column 2 - Chart 2
-```{r}
-ggplot(mtcars, aes(x = mpg, y = disp)) +
-  geom_point()
-```
-
-Column 3 
--------------------------------------
-
-### Ranking de casos
-```{r}
 DT::datatable(dep %>% 
                 select(Region = dep,
                        `Total de casos` = pos,
@@ -334,42 +409,3 @@ DT::datatable(dep %>%
                 bPaginate = FALSE
 ))
 ```
-
-### Column 3 - Chart 1
-
-```{r, message=F, warning=F,fig.height=10,fig.width=10, class.output="scroll-100"}
-plot_ly(dat1) %>%
-  add_trace(x = ~Dia, y = ~pos_new, 
-            type = 'bar', name = 'Casos Nuevos',
-            marker = list(color = 'rgb(128,160,53)'), 
-            text = paste(dat1$tm, "d�as desde hoy"),
-            hovertemplate = paste('<b>Fecha</b>: %{x}',
-                                  '<br><b>Nuevos Casos:</b> %{y}</br>',
-                                  '<b>%{text}</b>'))%>% 
-  add_trace(x = ~Dia, y = ~cum_pos, 
-            type = 'scatter',
-            mode = 'lines+markers', 
-            name = 'Casos Acumulados', 
-            yaxis = 'y2',
-            line = list(color = 'rgb(35,104,99)'), 
-            marker = list(color = 'rgb(35,104,99)'),
-            text = paste(dat1$tm, "d�as desde hoy"),
-            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
-                                   "<br><b>Casos Acumulados: %{y}</b></br>",
-                                   '<b>%{text}</b>')) %>% 
-  layout(title = 'Casos nuevos y acumulados de Per�',
-         xaxis = list(title = "Fecha"),
-         yaxis = list(side = 'left', title = 'Casos Nuevos por d�a', showgrid = FALSE, zeroline = FALSE),
-         yaxis2 = list(side = 'right', overlaying = "y", title = 'Casos acumulados por d�a', showgrid = FALSE, zeroline = FALSE))%>%
-  add_segments(x = "2020-04-08", xend = "2020-04-08", 
-               y = 0, yend=max(dat1$pos_new),
-               text="2020-04-08",name="Inicio de P.R's",
-               hovertemplate = paste('<b>%{text}</b>'),
-               legendgroup = 'group2',
-               width=2, 
-               line = list(color = "rgb(166,55,63)", 
-                           width = 3, 
-                           dash = "dot")
-  )
-```
-
