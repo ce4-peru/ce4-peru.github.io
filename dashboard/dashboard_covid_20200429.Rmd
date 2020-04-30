@@ -1,0 +1,731 @@
+---
+title: "CE4 - Dashboard COVID-19"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    social: menu
+    theme: cosmo 
+---
+
+<style>                     
+.navbar {
+  background-color:black;
+  border-color:grey;
+}
+.navbar-brand {
+color:white!important;
+}
+.bg {
+  background-color: black;
+}
+.body {
+  color: black;
+}
+</style>
+
+```{r libraries}
+library(flexdashboard)
+library(rio)
+library(tidyverse)
+library(XML)
+library(httr)
+library(RCurl)
+library(sf)
+library(lubridate)
+library(leaflet)
+library(colorspace)
+library(DT)
+library(zoo)
+library(slider)
+library(plotly)
+
+options(scipen=999)
+```
+
+```{r imports}
+nac <- rio::import("https://github.com/jincio/COVID_19_PERU/blob/master/docs/reportes_minsa.xlsx?raw=true")
+
+deps <- rio::import("https://github.com/jincio/COVID_19_PERU/blob/master/docs/reportes_minsa.xlsx?raw=true", sheet = 2)
+
+pop <- read_csv("data/peru_pop_stratum.csv") %>%
+  group_by(dep_adm1) %>%
+  dplyr::summarise(pop = sum(N)) %>%
+  mutate(REGION = toupper(dep_adm1))
+```
+
+
+```{r dm maps, include=FALSE}
+c.date <- max(deps$Fecha)
+
+dep <- 
+  deps %>% 
+  dplyr::select(dat = Fecha,
+                dep = REGION, 
+                pos = Positivos_totales, 
+                pos.imp = PositivosImputados_totales,
+                pas =Fallecidos, 
+                smp =Total_muestras) %>% 
+  mutate(pas = pas %>% if_else(is.na(.), 0, .)) %>% 
+  group_by(dep) %>% 
+  mutate(pos.lag = lag(pos, n = 1),
+         pos.imp.lag = lag(pos.imp, n = 1),
+         pas.lag = lag(pas, n = 1),
+         smp.lag = lag(smp, n = 1)) %>%
+  filter(dat == c.date) %>% 
+  mutate(pos.new = abs(pos - pos.lag),
+         pos.imp.new = abs(pos.imp - pos.imp.lag),
+         pas.new = abs(pas - pas.lag),
+         smp.new = abs(smp - smp.lag),
+         ratio.new = signif(pos.new/smp.new), digits = 3)
+  
+
+## Regions geometry
+shp <- st_read("Limite_departamental", stringsAsFactors = F)
+shp <- shp %>% 
+  st_transform(4326) %>% 
+  select(Departamento = NOMBDEP)
+
+# Append
+dep <- merge(dep, shp, by.y = 'Departamento', by.x = 'dep', all.x = T)
+dep <- st_as_sf(dep, sf_column_name = 'geometry')
+
+## aes
+pal_fun <- colorQuantile("YlOrRd", NULL, n = 5)
+pal_smp <- colorQuantile("Blues", NULL, n = 5)
+
+labels.total <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$pos) %>% lapply(htmltools::HTML)
+
+labels.new <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$pos.new) %>% lapply(htmltools::HTML)
+
+labels.pas <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$pas) %>% lapply(htmltools::HTML)
+
+labels.smp <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$smp) %>% lapply(htmltools::HTML)
+
+labels.smp.new <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$smp.new) %>% lapply(htmltools::HTML)
+
+labels.ratio <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$ratio.new) %>% lapply(htmltools::HTML)
+```
+
+```{r dm plotly}
+today <- ymd(Sys.Date())
+
+deps1 <- deps %>%
+  dplyr::select(REGION, Fecha, Positivos_totales, Positivos_PR) %>% 
+  inner_join(pop, by="REGION") %>%
+  arrange(REGION, Fecha) %>%
+  group_by(REGION) %>%
+  dplyr::mutate(new_cases = Positivos_totales - lag(Positivos_totales, default = 0),
+                mav_new = slide_dbl(new_cases, ~mean(.x, na.rm = TRUE), .before = 6),
+                pmav_new = 1000000*mav_new/pop,
+                max = max(mav_new)) 
+
+nac1 <- nac %>%
+  dplyr::mutate(RapidasPositivos = replace_na(RapidasPositivos,0),
+                Descartados = replace_na(Descartados,0),
+                PruebasRapidas = replace_na(PruebasRapidas,0),
+                total_pos = Positivos + RapidasPositivos,
+                pos_new = total_pos -lag(total_pos,default = 0),
+                rapid_des = PruebasRapidas - RapidasPositivos,
+                total_des = rapid_des + Descartados,
+                des_new = total_des-lag(total_des,default = 0),
+                Dia = ymd(Dia)) %>%
+  dplyr::select(Dia,
+                pos_new,
+                des_new) %>%
+  dplyr::mutate(cum_pos = cumsum(pos_new),
+                tot_pruebas = pos_new+des_new,
+                tm = difftime(today, Dia , units = c("days")))
+
+
+nac2 <- nac1 %>%
+  dplyr::mutate(neg_new = tot_pruebas-pos_new) %>%
+  dplyr::select(Dia, pos_new, neg_new) %>%
+  dplyr::rename(Positivo = pos_new, Negativo = neg_new) %>%
+  gather(res, count, -Dia) %>%
+  uncount(count)
+
+nac3 <- nac1 %>%
+  dplyr::mutate(new_cases = cum_pos - lag(cum_pos, default = 0),
+                mav_new = slide_dbl(new_cases, ~mean(.x, na.rm = TRUE), .before = 6),
+                max = max(mav_new)
+  )
+
+deps2 <- deps1 %>%
+  select(Fecha,REGION,mav_new) %>%
+  spread(REGION, mav_new) %>%
+  mutate(tm = difftime(today, Fecha , units = c("days")))
+
+deps3 <- deps1 %>%
+  select(Fecha,REGION,pmav_new) %>%
+  spread(REGION, pmav_new) %>%
+  mutate(tm = difftime(today ,Fecha , units = c("days")))
+
+
+nac4 <- nac1 %>%
+  mutate(dias = as.numeric(Dia-first(Dia), unit="days"),
+         dup_1 = exp((log(2)/1)*dias),
+         dup_2 = exp((log(2)/2)*dias),
+         dup_3 = exp((log(2)/3)*dias)
+         )
+
+
+```
+
+Nacional {.bg}
+=====================================  
+
+Column 1 {.tabset data-width=350} 
+-------------------------------------
+
+### Casos totales 
+
+```{r}
+pal.cases <- colorNumeric( palette="YlOrRd", domain = log(dep$pos), na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addPolygons(fillColor = pal.cases(log(dep$pos)),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.total,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal = pal.cases, values = log(dep$pos), title= 'Log de casos')
+```
+
+### Casos nuevos 
+
+```{r}
+
+pal.newcases <- colorNumeric( palette="YlOrRd", domain = log(dep$pos.new), na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addPolygons(fillColor = pal.newcases(log(dep$pos.new)),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.new,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal=pal.newcases, values = log(dep$pos.new), title= ' Log de casos')
+```
+
+### Fallecidos 
+
+```{r}
+pal.pas <- colorNumeric( palette="YlOrRd", domain = dep$pas, na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addPolygons(fillColor = pal.pas(dep$pas),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.pas,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal=pal.pas, values = dep$pas, title= 'Cantidad de fallecidos')
+```
+
+### Pruebas realizadas 
+
+```{r}
+pal.smp <- colorNumeric( palette="Blues", domain = log(dep$smp), na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addPolygons(fillColor = pal.smp(log(dep$smp)),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.smp,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal=pal.smp, values = log(dep$smp), title= 'Log de pruebas totales')
+```
+
+### Nuevas pruebas realizadas 
+
+```{r}
+pal.smpnew <-  colorNumeric( palette="Blues", domain = log(dep$smp.new), na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addPolygons(fillColor =pal.smpnew(log(dep$smp.new)),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.smp.new,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal=pal.smpnew, values = log(dep$smp.new), title= 'Log de pruebas nuevas')
+```
+
+### Tasa de positivos nuevos
+
+```{r}
+pal.ratio <-  colorNumeric( palette="Blues", domain = dep$ratio.new, na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addPolygons(fillColor = pal.ratio(dep$ratio.new),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.ratio,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal=pal.ratio, values = dep$ratio.new, title= 'Tasa de positivos nuevos')
+```
+
+Column 2 {.tabset data-width=400}
+-------------------------------------
+
+### Lineal
+
+```{r, message=F, warning=F, class.output="scroll-100"}
+plot_ly(nac1) %>%
+  add_trace(x = ~Dia, y = ~pos_new, 
+            type = 'bar', name = 'Casos Nuevos',
+            marker = list(color = 'rgb(128,160,53)'), 
+            text = paste(nac1$tm, "días desde hoy"),
+            hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                  '<br><b>Nuevos Casos:</b> %{y}</br>',
+                                  '<b>%{text}</b>'))%>% 
+  add_trace(x = ~Dia, y = ~cum_pos, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Casos Acumulados', 
+            yaxis = 'y2',
+            line = list(color = 'rgb(35,104,99)'), 
+            marker = list(color = 'rgb(35,104,99)'),
+            text = paste(nac1$tm, "días desde hoy"),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Casos Acumulados: %{y}</b></br>",
+                                   '<b>%{text}</b>')) %>% 
+  layout(title = 'Casos nuevos y acumulados de Perú',
+         xaxis = list(title = "Fecha"),
+         yaxis = list(side = 'left', title = 'Casos Nuevos por día', showgrid = FALSE, zeroline = FALSE),
+         yaxis2 = list(side = 'right', overlaying = "y",
+                       title = 'Casos acumulados por día', 
+                       showgrid = FALSE, zeroline = FALSE),
+         legend = list(x=1, y=-0.1,
+                       title=list(text='<b> Leyenda </b>'))
+         ) %>%
+  add_segments(x = "2020-04-08", xend = "2020-04-08", 
+               y = 0, yend=max(nac1$pos_new),
+               text="2020-04-08",name="Inicio de P.R's",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+               width=2, 
+               line = list(color = "rgb(166,55,63)", 
+                           width = 3, 
+                           dash = "dot")
+  )
+```
+
+### Logaritmico
+
+```{r, message=F, warning=F, class.output="scroll-100"}
+plot_ly(nac1) %>%
+  add_trace(x = ~Dia, y = ~pos_new, 
+            type = 'bar', name = 'Casos Nuevos',
+            marker = list(color = 'rgb(128,160,53)'), 
+            text = paste(nac1$tm, "días desde hoy"),
+            hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                  '<br><b>Nuevos Casos:</b> %{y}</br>',
+                                  '<b>%{text}</b>'))%>% 
+  add_trace(x = ~Dia, y = ~cum_pos, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Casos Acumulados', 
+            yaxis = 'y2',
+            line = list(color = 'rgb(35,104,99)'), 
+            marker = list(color = 'rgb(35,104,99)'),
+            text = paste(nac1$tm, "días desde hoy"),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                          "<br><b>Casos Acumulados: %{y}</b></br>",
+                          '<b>%{text}</b>')) %>% 
+  layout(title = 'Casos nuevos y acumulados de Perú',
+         xaxis = list(title = "Fecha"),
+         yaxis = list(side = 'left', title = 'Casos Nuevos por día', showgrid = FALSE, zeroline = FALSE),
+         yaxis2 = list(side = 'right', overlaying = "y", type = "log",
+                       title = 'Casos acumulados por día', 
+                       showgrid = FALSE, zeroline = FALSE,
+                       tickmode = "linear",
+                       tick0 = 0),
+         legend = list(x=1, y=-0.1,
+                       title=list(text='<b> Leyenda </b>'))
+         ) %>%
+  add_segments(x = "2020-04-08", xend = "2020-04-08", 
+               y = 0, yend=max(nac1$pos_new),
+               text="2020-04-08",name="Inicio de P.R's",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+               width=2, 
+              line = list(color = "rgb(166,55,63)", 
+                          width = 3, 
+                          dash = "dot")
+               )
+```
+
+### Media Móvil
+
+```{r, message=F, warning=F,fig.height=10,fig.width=10, class.output="scroll-100"}
+plot_ly(nac3) %>%
+  add_trace(x = ~Dia, y = ~pos_new, 
+            type = 'bar', name = 'Casos Nuevos',
+            marker = list(color = 'rgb(128,160,53)'), 
+            text = paste(nac3$tm, "días desde hoy"),
+            hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                  '<br><b>Nuevos Casos:</b> %{y}</br>',
+                                  '<b>%{text}</b>'))%>% 
+  add_trace(x = ~Dia, y = ~mav_new, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Casos Acumulados', 
+            yaxis = 'y2',
+            line = list(color = 'rgb(35,104,99)'), 
+            marker = list(color = 'rgb(35,104,99)'),
+            text = paste(nac3$tm, "días desde hoy"),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                          "<br><b>Casos Acumulados: %{y}</b></br>",
+                          '<b>%{text}</b>')) %>% 
+  layout(title = 'Media móvil de casos nuevos nuevos y acumulados de Perú (7 días)',
+         xaxis = list(title = "Fecha"),
+         yaxis = list(side = 'left', title = 'Casos acumulados por día', showgrid = FALSE, zeroline = FALSE),
+         yaxis2 = list(side = 'right', overlaying = "y", type = "log",
+                       title = 'Casos Nuevos por día', 
+                       showgrid = FALSE, zeroline = FALSE,
+                       tickmode = "linear",
+                       tick0 = 0),
+         legend = list(x=1, y=-0.1,
+                       title=list(text='<b> Leyenda </b>'))
+         ) %>%
+  add_segments(x = "2020-04-08", xend = "2020-04-08", 
+               y = 0, yend=max(nac3$pos_new),
+               text="2020-04-08",name="Inicio de P.R's",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+               width=2, 
+              line = list(color = "rgb(166,55,63)", 
+                          width = 3, 
+                          dash = "dot")
+               )
+```
+
+### Duplicación
+
+```{r, message=F, warning=F}
+plot_ly(nac4)%>%
+  add_trace(x = ~dias, y = ~cum_pos, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Casos Acumulados',
+            line = list(color = 'rgb(124,21,28)'), 
+            marker = list(color = 'rgb(124,21,28)'),
+            hovertemplate = ~paste("<br><b>Casos Acumulados: %{y}</b></br>"),
+            legendgroup = 'group1') %>% 
+  add_trace(x = ~dias, y = ~dup_1,
+            mode = 'lines', 
+            name = 'Casos se duplican en un (1) día',
+            line = list(color = 'rgb(13,78,74)',
+                        dash = "dash",
+                        width=3.5),
+            text = "Casos se duplican en un (1) día",
+            hoverinfo = "text",
+            legendgroup = 'group2') %>% 
+  add_trace(x = ~dias, y = ~dup_2,
+            mode = 'lines', 
+            name = 'Casos se duplican en dos (2) días',
+            line = list(color = 'rgb(90,120,20)',
+                        dash = "dash",
+                        width=3.5),
+            text = "Casos se duplican en dos (2) días",
+            hoverinfo = "text",
+            legendgroup = 'group2') %>% 
+  add_trace(x = ~dias, y = ~dup_3,
+            mode = 'lines', 
+            name = 'Casos se duplican en tres (3) días',
+            line = list(color = 'rgb(30,105,18)',
+                        dash = "dash",
+                        width=3.5),
+            text = "Casos se duplican en tres (3) días",
+            hoverinfo = "text",
+            legendgroup = 'group2')  %>% 
+  layout(title = '<b>Total de casos acumulados desde el inicio de los casos</b>',
+         xaxis = list(title = "Días desde el primer reporte",
+                      range = c(min(0),max(nac4$dias)+5)),
+         yaxis = list(side = 'left', title = 'Total de casos acumulados', type="log",
+                      range = c(min(0),max(6)),
+                      showgrid = FALSE, zeroline = FALSE,
+                       tickmode = "linear",
+                       tick0 = 0),
+         legend = list(x=0.9, y=0.2,
+                       title=list(text='<b> Leyenda </b>'))
+         ) 
+
+```
+
+Column 3 {data-width=250}
+-------------------------------------
+
+### `r c.date` 
+```{r}
+valueBox("Datos actualizados al:", icon = "fa-calendar")
+```
+
+### `r sum(dep$pos)` 
+
+```{r}
+valueBox("Total de casos", icon = "fa-pencil")
+```
+
+### `r sum(dep$pos.new)` 
+
+```{r}
+valueBox("Nuevos casos", icon = "fa-pencil")
+```
+
+### Tabla por región
+```{r}
+DT::datatable(dep %>% 
+                select(Region = dep,
+                       `Total de casos` = pos,
+                       `Total de fallecidos` = pas,
+                       `Total de muestras` = smp) %>% 
+                arrange(desc(`Total de casos`)) %>% 
+                st_set_geometry(NULL), 
+              options = list(
+                bPaginate = FALSE
+))
+```
+
+Regional  {data-orientation=rows}
+=====================================  
+
+Row {.tabset}
+-------------------------------------
+
+### Media Móvil
+```{r , message=F, warning=F}
+
+deps2 <- deps2 %>% dplyr::rename(LA_LIBERTAD = `LA LIBERTAD`,
+                                 MADRE_DE_DIOS = `MADRE DE DIOS`,
+                                 SAN_MARTIN = `SAN MARTIN`) 
+
+vars <- setdiff(names(deps2), c("Fecha","tm"))
+
+
+plots <- lapply(vars, function(var) {
+  
+  plot_ly(deps2, 
+          x = ~Fecha, 
+          y = as.formula(paste0("~", var)),
+          text = paste(deps2$tm, "días desde hoy"),
+          hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                '<br><b>Media Móvil</b>: %{y:.2f}<br>',
+                                '<b>%{text}</b>')
+          ) %>%
+    add_lines(name = var,
+              legendgroup = 'group1',
+              showlegend = F, 
+              line = list(color = "rgb(166,55,63)", 
+                          width = 4)
+              ) %>%
+    add_segments(x = "2020-04-08", xend = "2020-04-08", 
+               y = 0, yend = max(deps2[var],na.rm = T),
+               text="2020-04-08", name="Inicio de P.R's",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+               showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE),
+               width=2, 
+               line = list(color = "rgb(60,141,47)", 
+                          width = 3, 
+                          dash = "dot")
+               ) %>%
+    layout(xaxis = list(range = c(min(deps2$Fecha),
+                                  max(deps2$Fecha))),
+           annotations = list(text = ifelse(var=="LA_LIBERTAD","<b>LA LIBERTAD<b>",
+                                            ifelse(var=="MADRE_DE_DIOS","<b>MADRE DE DIOS<b>",
+                                            ifelse(var=="SAN_MARTIN","<b>SAN MARTIN<b>",paste0("<b>",var,"<b>")))),
+                              x = 0,y = 1.15,
+                              yref = "paper",xref = "paper",
+                              xanchor = "left",yanchor = "top",
+                              showarrow = FALSE,
+                              font = list(size = 16)),
+           legend=list(title=list(text='<b> Leyenda </b>')),
+           showlegend =T)
+})
+
+subplot(plots,nrows=5, shareX = T, titleX = F) %>%
+  layout(margin =0.12,
+         title = list(text = "Media móvil (7 días) de casos nuevos por Regiones",
+                      font = list(size = 24)),
+         annotations = list(
+           list(text = "Fecha",
+                x = 0.5,
+                y = -0.1,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 16)),
+           list(text = "Media móvil - Número de casos",
+                x = -0.1,
+                y = 0.5,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 16),
+                textangle = -90))
+           )
+```
+
+
+### Media móvil por millón de habitantes
+```{r, message=F, warning=F}
+
+deps3 <- deps3 %>% dplyr::rename(LA_LIBERTAD = `LA LIBERTAD`,
+                                 MADRE_DE_DIOS = `MADRE DE DIOS`,
+                                 SAN_MARTIN = `SAN MARTIN`) 
+vars <- setdiff(names(deps3), c("Fecha","tm"))
+
+
+plots <- lapply(vars, function(var) {
+  plot_ly(deps3, 
+          x = ~Fecha, 
+          y = as.formula(paste0("~", var)),
+          text = paste(deps3$tm, "días desde hoy"),
+          hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                '<br><b>Media Móvil</b>: %{y:.2f}<br>',
+                                '<b>%{text}</b>')
+          ) %>%
+    add_lines(name = var,
+              legendgroup = 'group1',
+              showlegend = F, 
+              line = list(color = "rgb(166,55,63)", width = 4)
+              ) %>%
+  add_segments(x = "2020-04-08", xend = "2020-04-08", 
+               y = 0, yend = max(deps1$pmav_new,na.rm = T),
+               text="2020-04-08",name="Inicio de P.R's",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+               showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE),
+               width=2, 
+              line = list(color = "rgb(60,141,47)", 
+                          width = 2, 
+                          dash = "dot")
+               ) %>%
+    layout(xaxis = list(range = c(min(deps3$Fecha),
+                                  max(deps3$Fecha))),
+           yaxis = list(range = c(min(deps1$pmav_new),
+                                  max(deps1$pmav_new))),
+           annotations = list(text = ifelse(var=="LA_LIBERTAD","<b>LA LIBERTAD<b>",
+                                            ifelse(var=="MADRE_DE_DIOS","<b>MADRE DE DIOS<b>",
+                                            ifelse(var=="SAN_MARTIN","<b>SAN MARTIN<b>",paste0("<b>",var,"<b>")))),
+                              x = 0, y = 1.15,
+                              yref = "paper",xref = "paper",
+                              xanchor = "left",yanchor = "top",
+                              showarrow = FALSE,
+                              font = list(size = 16)),
+           legend=list(title=list(text='<b> Leyenda </b>')),
+           showlegend =T)
+})
+
+subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
+  layout(margin =0.12,
+         title = list(text = "Media móvil (7 días) de casos nuevos por Regiones",
+                      font = list(size = 24)),
+         annotations = list(
+           list(text = "Fecha",
+                x = 0.5,
+                y = -0.1,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 16)),
+           list(text = "Media móvil - Número de casos",
+                x = -0.1,
+                y = 0.5,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 16),
+                textangle = -90))
+           )
+```    
