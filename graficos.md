@@ -7,3 +7,9 @@ permalink: /graficos/
     <iframe src="https://ce4-peru.github.io/prueba" height="1150" width="100%" allowfullscreen="" frameborder="0">
     </iframe>
 </div>
+
+
+<div class="video-container">
+    <iframe  src="https://brettory.shinyapps.io/gender_tech_country/" height="1150" width="100%" allowfullscreen="" frameborder="0">
+    </iframe>
+</div>
