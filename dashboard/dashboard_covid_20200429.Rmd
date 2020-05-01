@@ -4,6 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
+    source_code: embed
     social: menu
     theme: cosmo 
 ---
@@ -18,9 +19,99 @@ color:white!important;
 }
 .bg {
   background-color: black;
+  color: white;
 }
-.body {
-  color: black;
+body {
+  background: black;
+}
+
+body hr {
+  border-color: black;
+  margin: 10px 0;
+}
+
+.chart-title {
+  border-bottom: 1px solid #d7d7d7;
+  color: white!important;
+  font-size: 14px;
+  font-weight: 300;
+  padding: 7px 10px 4px;
+}
+
+.nav-tabs-custom {
+  background: black;
+  border: 1px solid #c4c4c4;
+  border-radius: 3px;
+  margin-bottom: 8px;
+  margin-right: 8px;
+}
+
+.nav-tabs-custom > .nav-tabs {
+  margin: 0;
+  border-bottom: 1px solid #d7d7d7;
+  color: white;
+  font-size: 14px;
+  font-weight: 300;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a,
+.nav-tabs-custom > .nav-tabs > li.active:hover > a {
+  background-color: black;
+  color: white;
+}
+
+.nav-tabs-custom > .tab-content {
+  background: black;
+  padding: 0;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.nav-tabs-custom > .tab-content > .chart-wrapper {
+  background: black;
+  border: none;
+  margin: 0;
+}
+
+.value-box {
+  border-radius: 1px;
+  position: relative;
+  display: block;
+  margin-right: 4px;
+  margin-bottom: 4px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.value-box > .inner {
+  padding: 5px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.value-box .value {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 0 3px 0;
+  white-space: nowrap;
+  padding: 0;
+}
+
+.value-box .caption {
+  font-size: 20px;
+}
+
+.value-box .icon i {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 40px;
+  color: rgba(0, 0, 0, 0.15);
 }
 </style>
 
@@ -39,6 +130,8 @@ library(DT)
 library(zoo)
 library(slider)
 library(plotly)
+library(waffle)
+library(extrafont)
 
 options(scipen=999)
 ```
@@ -89,34 +182,6 @@ shp <- shp %>%
 # Append
 dep <- merge(dep, shp, by.y = 'Departamento', by.x = 'dep', all.x = T)
 dep <- st_as_sf(dep, sf_column_name = 'geometry')
-
-## aes
-pal_fun <- colorQuantile("YlOrRd", NULL, n = 5)
-pal_smp <- colorQuantile("Blues", NULL, n = 5)
-
-labels.total <- sprintf(
-      "<strong>%s</strong><br/<strong>Value: </strong>%s",
-      dep$dep, dep$pos) %>% lapply(htmltools::HTML)
-
-labels.new <- sprintf(
-      "<strong>%s</strong><br/<strong>Value: </strong>%s",
-      dep$dep, dep$pos.new) %>% lapply(htmltools::HTML)
-
-labels.pas <- sprintf(
-      "<strong>%s</strong><br/<strong>Value: </strong>%s",
-      dep$dep, dep$pas) %>% lapply(htmltools::HTML)
-
-labels.smp <- sprintf(
-      "<strong>%s</strong><br/<strong>Value: </strong>%s",
-      dep$dep, dep$smp) %>% lapply(htmltools::HTML)
-
-labels.smp.new <- sprintf(
-      "<strong>%s</strong><br/<strong>Value: </strong>%s",
-      dep$dep, dep$smp.new) %>% lapply(htmltools::HTML)
-
-labels.ratio <- sprintf(
-      "<strong>%s</strong><br/<strong>Value: </strong>%s",
-      dep$dep, dep$ratio.new) %>% lapply(htmltools::HTML)
 ```
 
 ```{r dm plotly}
@@ -193,6 +258,10 @@ Column 1 {.tabset data-width=350}
 ### Casos totales 
 
 ```{r}
+labels.total <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$pos) %>% lapply(htmltools::HTML)
+
 pal.cases <- colorNumeric( palette="YlOrRd", domain = log(dep$pos), na.color="transparent")
 
 leaflet(dep) %>%
@@ -220,6 +289,9 @@ leaflet(dep) %>%
 ### Casos nuevos 
 
 ```{r}
+labels.new <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$pos.new) %>% lapply(htmltools::HTML)
 
 pal.newcases <- colorNumeric( palette="YlOrRd", domain = log(dep$pos.new), na.color="transparent")
 
@@ -248,6 +320,10 @@ leaflet(dep) %>%
 ### Fallecidos 
 
 ```{r}
+labels.pas <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$pas) %>% lapply(htmltools::HTML)
+
 pal.pas <- colorNumeric( palette="YlOrRd", domain = dep$pas, na.color="transparent")
 
 leaflet(dep) %>%
@@ -272,9 +348,13 @@ leaflet(dep) %>%
   addLegend("bottomleft", pal=pal.pas, values = dep$pas, title= 'Cantidad de fallecidos')
 ```
 
-### Pruebas realizadas 
+### Pruebas
 
 ```{r}
+labels.smp <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$smp) %>% lapply(htmltools::HTML)
+
 pal.smp <- colorNumeric( palette="Blues", domain = log(dep$smp), na.color="transparent")
 
 leaflet(dep) %>%
@@ -299,9 +379,13 @@ leaflet(dep) %>%
   addLegend("bottomleft", pal=pal.smp, values = log(dep$smp), title= 'Log de pruebas totales')
 ```
 
-### Nuevas pruebas realizadas 
+### Nuevas pruebas
 
 ```{r}
+labels.smp.new <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$smp.new) %>% lapply(htmltools::HTML)
+
 pal.smpnew <-  colorNumeric( palette="Blues", domain = log(dep$smp.new), na.color="transparent")
 
 leaflet(dep) %>%
@@ -329,6 +413,10 @@ leaflet(dep) %>%
 ### Tasa de positivos nuevos
 
 ```{r}
+labels.ratio <- sprintf(
+      "<strong>%s</strong><br/<strong>Value: </strong>%s",
+      dep$dep, dep$ratio.new) %>% lapply(htmltools::HTML)
+
 pal.ratio <-  colorNumeric( palette="Blues", domain = dep$ratio.new, na.color="transparent")
 
 leaflet(dep) %>%
@@ -550,30 +638,38 @@ Column 3 {data-width=250}
 valueBox("Datos actualizados al:", icon = "fa-calendar")
 ```
 
-### `r sum(dep$pos)` 
+### `r paste0(format(sum(dep$pos), big.mark = ","), ' / ', format(sum(dep$pos.new), big.mark = ","))` 
 
 ```{r}
-valueBox("Total de casos", icon = "fa-pencil")
+valueBox(paste0("Total de casos", ' / ', "Nuevos casos"), icon = "fas fa-user-md")
 ```
 
-### `r sum(dep$pos.new)` 
-
+### Infograma {.bg}
 ```{r}
-valueBox("Nuevos casos", icon = "fa-pencil")
+# dep %>% 
+#   st_set_geometry(NULL) %>% 
+#   select(dep, pos) %>% 
+#   mutate(pos = as.integer(round((pos/sum(pos))*100))) %>% 
+#   waffle(rows = 5, title = "Your basic waffle chart")
+
+waffle(c(50,20), rows = 5, title = "Your basic waffle chart")
 ```
 
-### Tabla por región
+### Tabla por región {.bg}
 ```{r}
-DT::datatable(dep %>% 
-                select(Region = dep,
-                       `Total de casos` = pos,
-                       `Total de fallecidos` = pas,
-                       `Total de muestras` = smp) %>% 
-                arrange(desc(`Total de casos`)) %>% 
-                st_set_geometry(NULL), 
-              options = list(
-                bPaginate = FALSE
-))
+dep %>% 
+  select(Region = dep,
+         Casos = pos,
+         Fallecidos = pas,
+         Muestras = smp) %>% 
+  arrange(desc(Casos)) %>% 
+  st_set_geometry(NULL) %>%  
+  DT::datatable(options = list(
+    bPaginate = FALSE, 
+    dom = 't'), 
+    rownames = F) %>% 
+  formatStyle(columns = c('Region', 'Casos', 'Fallecidos', 'Muestras'), 
+                     backgroundColor = 'black', color = 'white')
 ```
 
 Regional  {data-orientation=rows}
