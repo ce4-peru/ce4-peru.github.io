@@ -1757,6 +1757,7 @@ Columm 2 {data-width = 300}
 -------------------------------------
 
 ### Infograma {.bg}
+
 ```{r}
 # dep %>% 
 #   st_set_geometry(NULL) %>% 
