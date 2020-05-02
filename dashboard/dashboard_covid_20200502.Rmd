@@ -1758,7 +1758,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
 
 ```
 
-Columm 2 {data-width = 300}
+Columm 2 {data-width=300}
 -------------------------------------
 
 ### Infograma {.bg}
