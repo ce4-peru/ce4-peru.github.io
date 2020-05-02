@@ -184,6 +184,9 @@ shp <- shp %>%
 # Append
 dep <- merge(dep, shp, by.y = 'Departamento', by.x = 'dep', all.x = T)
 dep <- st_as_sf(dep, sf_column_name = 'geometry')
+dep <- merge(dep, pop %>% select(dep = REGION, pop))
+dep <- dep %>% mutate(pos.hab = pos/pop*100000, 
+                      smp.hab = smp/pop*100000)
 ```
 
 ```{r dm, message=F, warning=F, class.output="scroll-100"}
@@ -345,7 +348,7 @@ Nacional {.bg}
 Column 1 {.tabset data-width=350} 
 -------------------------------------
 
-### Casos totales 
+### Casos
 
 ```{r}
 palette_1 <- c("#ffffff",
@@ -369,10 +372,10 @@ palette_2 <- c("#ffffff",
                "#0e5871")
 
 labels.total <- sprintf(
-  "<strong>%s</strong><br/<strong>Value: </strong>%s",
+  "<strong>%s</strong><br/<strong>Casos: </strong>%s",
   dep$dep, dep$pos) %>% lapply(htmltools::HTML)
 
-pal.cases <- colorNumeric( palette="YlOrRd", domain = log(dep$pos), na.color="transparent")
+pal.cases <- colorNumeric( palette="RdPu", domain = log(dep$pos), na.color="transparent")
 
 leaflet(dep) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
@@ -393,17 +396,48 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal = pal.cases, values = log(dep$pos), title= 'Log de casos')
+  addLegend("bottomleft", pal = pal.cases, values = log(dep$pos), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))
+```
+
+### Casos / 100k hab
+
+```{r}
+labels.pos.hab <- sprintf(
+  "<strong>%s</strong><br/<strong>Casos/100k hab: </strong>%s",
+  dep$dep, round(dep$pos.hab)) %>% lapply(htmltools::HTML)
+
+pal.pos.hab <- colorNumeric( palette="RdPu", domain = log(dep$pos.hab), na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addPolygons(fillColor = pal.pos.hab(log(dep$pos.hab)),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.pos.hab,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal = pal.pos.hab, values = log(dep$pos.hab), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))
 ```
 
 ### Casos nuevos 
 
 ```{r}
 labels.new <- sprintf(
-  "<strong>%s</strong><br/<strong>Value: </strong>%s",
+  "<strong>%s</strong><br/<strong>Casos: </strong>%s",
   dep$dep, dep$pos.new) %>% lapply(htmltools::HTML)
 
-pal.newcases <- colorNumeric( palette="YlOrRd", domain = log(dep$pos.new), na.color="transparent")
+pal.newcases <- colorNumeric( palette="RdPu", domain = log(dep$pos.new), na.color="transparent")
 
 leaflet(dep) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
@@ -424,17 +458,17 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.newcases, values = log(dep$pos.new), title= ' Log de casos')
+  addLegend("bottomleft", pal=pal.newcases, values = log(dep$pos.new), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))
 ```
 
 ### Fallecidos 
 
 ```{r}
 labels.pas <- sprintf(
-  "<strong>%s</strong><br/<strong>Value: </strong>%s",
+  "<strong>%s</strong><br/<strong>Fallecidos: </strong>%s",
   dep$dep, dep$pas) %>% lapply(htmltools::HTML)
 
-pal.pas <- colorNumeric( palette="YlOrRd", domain = dep$pas, na.color="transparent")
+pal.pas <- colorNumeric( palette="RdPu", domain = dep$pas, na.color="transparent")
 
 leaflet(dep) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
@@ -455,14 +489,45 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.pas, values = dep$pas, title= 'Cantidad de fallecidos')
+  addLegend("bottomleft", pal=pal.pas, values = dep$pas, title= 'Fallecidos')
+```
+
+### Fallecidos nuevos
+
+```{r}
+labels.pasnew <- sprintf(
+  "<strong>%s</strong><br/<strong>Fallecidos: </strong>%s",
+  dep$dep, dep$pas.new) %>% lapply(htmltools::HTML)
+
+pal.pasnew <- colorNumeric( palette="RdPu", domain = dep$pas.new, na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addPolygons(fillColor = pal.pasnew(dep$pas.new),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.pasnew,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal=pal.pasnew, values = dep$pas.new, title= 'Fallecidos')
 ```
 
 ### Pruebas
 
 ```{r}
 labels.smp <- sprintf(
-  "<strong>%s</strong><br/<strong>Value: </strong>%s",
+  "<strong>%s</strong><br/<strong>Pruebas: </strong>%s",
   dep$dep, dep$smp) %>% lapply(htmltools::HTML)
 
 pal.smp <- colorNumeric( palette="Blues", domain = log(dep$smp), na.color="transparent")
@@ -486,14 +551,45 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.smp, values = log(dep$smp), title= 'Log de pruebas totales')
+  addLegend("bottomleft", pal=pal.smp, values = log(dep$smp), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))
+```
+
+### Pruebas / 100k hab
+
+```{r}
+labels.smp.hab <- sprintf(
+  "<strong>%s</strong><br/<strong>Pruebas/100k hab: </strong>%s",
+  dep$dep, round(dep$smp.hab)) %>% lapply(htmltools::HTML)
+
+pal.smp.hab <- colorNumeric( palette="Blues", domain = log(dep$smp.hab), na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addPolygons(fillColor = pal.smp.hab(log(dep$smp.hab)),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.smp.hab,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal=pal.smp.hab, values = log(dep$smp.hab), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))
 ```
 
 ### Nuevas pruebas
 
 ```{r}
 labels.smp.new <- sprintf(
-  "<strong>%s</strong><br/<strong>Value: </strong>%s",
+  "<strong>%s</strong><br/<strong>Pruebas: </strong>%s",
   dep$dep, dep$smp.new) %>% lapply(htmltools::HTML)
 
 pal.smpnew <-  colorNumeric( palette="Blues", domain = log(dep$smp.new), na.color="transparent")
@@ -517,21 +613,21 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.smpnew, values = log(dep$smp.new), title= 'Log de pruebas nuevas')
+  addLegend("bottomleft", pal=pal.smpnew, values = log(dep$smp.new), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))
 ```
 
 ### Tasa de positivos nuevos
 
 ```{r}
 labels.ratio <- sprintf(
-  "<strong>%s</strong><br/<strong>Value: </strong>%s",
-  dep$dep, dep$ratio.new) %>% lapply(htmltools::HTML)
+  "<strong>%s</strong><br/<strong>Porcentaje: </strong>%s",
+  dep$dep, dep$ratio.new*100) %>% lapply(htmltools::HTML)
 
-pal.ratio <-  colorNumeric( palette="Blues", domain = dep$ratio.new, na.color="transparent")
+pal.ratio <-  colorNumeric( palette="RdPu", domain = dep$ratio.new*100, na.color="transparent")
 
 leaflet(dep) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
-  addPolygons(fillColor = pal.ratio(dep$ratio.new),
+  addPolygons(fillColor = pal.ratio(dep$ratio.new*100),
               weight = 2,
               opacity = 1,
               color = "white",
@@ -548,7 +644,7 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.ratio, values = dep$ratio.new, title= 'Tasa de positivos nuevos')
+  addLegend("bottomleft", pal=pal.ratio, values = dep$ratio.new*100, title= '% Positivos')
 ```
 
 Column 2 {.tabset data-width=400}
@@ -911,38 +1007,18 @@ Column 3 {data-width=250}
 valueBox("Datos actualizados al:", icon = "fa-calendar")
 ```
 
-### `r paste0(format(sum(dep$pos), big.mark = ","), ' / ', format(sum(dep$pos.new), big.mark = ","))` 
+### Total de casos / Casos nuevos
 
 ```{r}
-valueBox(paste0("Total de casos", ' / ', "Nuevos casos"), icon = "fas fa-user-md")
+valueBox(paste0(format(sum(dep$pos), big.mark = ","), ' / ', format(sum(dep$pos.new), big.mark = ",")), icon = "fas fa-user-md")
 ```
 
-### Infograma {.bg}
+### Total de fallecidos / Fallecidos en las últimas 24 horas
+
 ```{r}
-# dep %>% 
-#   st_set_geometry(NULL) %>% 
-#   select(dep, pos) %>% 
-#   mutate(pos = as.integer(round((pos/sum(pos))*100))) %>% 
-#   waffle(rows = 5, title = "Your basic waffle chart")
-#library(extrafont)
-#library(emojifont)
-#library(sysfonts)
-#"C:/Users/Jorge Ruiz/Desktop/fontawesome-webfont.ttf"
-#"C:/Windows/Fonts/fontawesome-webfont.ttf"
-#font_add("FontAwesome", regular = "C:/Users/Jorge Ruiz/Desktop/fontawesome-webfont.ttf")
-#font_import("C:/Windows/Fonts/fontawesome-webfont.ttf")
-#load.fontawesome(font = "C:/Users/Jorge Ruiz/Desktop/fontawesome-webfont.ttf")
-#load.fontawesome(font = "fontawesome-webfont.otf")
-
-
-#install.packages('extrafont')
-library(extrafont)
-library(waffle)
-loadfonts(device = "win")
-
-waffle(c(50,20), rows = 5, title = "Your basic waffle chart", 
-       use_glyph = "male",glyph_size=10)
+valueBox(paste0(format(sum(dep$pas), big.mark = ","), ' / ', format(sum(dep$pas.new), big.mark = ",")), icon = "fas fa-user-md")
 ```
+
 
 ### Tabla por región {.bg}
 ```{r}
@@ -950,14 +1026,14 @@ dep %>%
   select(Region = dep,
          Casos = pos,
          Fallecidos = pas,
-         Muestras = smp) %>% 
+         Pruebas = smp) %>% 
   arrange(desc(Casos)) %>% 
   st_set_geometry(NULL) %>%  
   DT::datatable(options = list(
     bPaginate = FALSE, 
     dom = 't'), 
     rownames = F) %>% 
-  formatStyle(columns = c('Region', 'Casos', 'Fallecidos', 'Muestras'), 
+  formatStyle(columns = c('Region', 'Casos', 'Fallecidos', 'Pruebas'), 
               backgroundColor = 'black', color = 'white')
 ```
 
@@ -1341,11 +1417,11 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
 
 
 
-Regional - Parte 2 {data-orientation=rows}
+Regional - Parte 2 {data-orientation=columns}
 =====================================  
 
 
-Row 1 {.tabset}
+Column 1 {.tabset}
 -------------------------------------
 
 ```{r}
@@ -1677,3 +1753,51 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
 
 ```
 
+Columm 2 {data-width = 300}
+-------------------------------------
+
+### Infograma {.bg}
+```{r}
+# dep %>% 
+#   st_set_geometry(NULL) %>% 
+#   select(dep, pos) %>% 
+#   mutate(pos = as.integer(round((pos/sum(pos))*100))) %>% 
+#   waffle(rows = 5, title = "Your basic waffle chart")
+# library(extrafont)
+# library(emojifont)
+# library(sysfonts)
+# "C:/Users/Jorge Ruiz/Desktop/fontawesome-webfont.ttf"
+# "C:/Windows/Fonts/fontawesome-webfont.ttf"
+# font_add("FontAwesome", regular = "C:/Users/edgar/Desktop/font-awesome-4.7.0/fonts/fontawesome-webfont.ttf")
+# font_import("C:/Windows/Fonts/fontawesome-webfont.ttf")
+# load.fontawesome(font = 'C:/Users/edgar/Desktop/font-awesome-4.7.0/fonts/fontawesome-webfont.ttf')
+# load.fontawesome(font = "C:/Users/edgar/Desktop/font-awesome-4.7.0/fonts/FontAwesome.otf")
+
+
+#install.packages('extrafont')
+# library(extrafont)
+# library(waffle)
+# loadfonts(device = "win")
+# 
+# waffle(c(50,20), rows = 5, title = "Your basic waffle chart", 
+#        use_glyph = "male",glyph_size=10)
+```
+
+### Tabla por región {.bg}
+```{r}
+dep %>% 
+  select(Region = dep,
+         Casos = pos,
+         `Casos nuevos` = pos.new,
+         Fallecidos = pas,
+         `Fallecidos nuevos` = pas.new,
+         Pruebas = smp) %>% 
+  arrange(desc(Casos)) %>% 
+  st_set_geometry(NULL) %>%  
+  DT::datatable(options = list(
+    bPaginate = FALSE, 
+    dom = 't'), 
+    rownames = F) %>% 
+  formatStyle(columns = c('Region', 'Casos', 'Casos nuevos', 'Fallecidos', 'Fallecidos nuevos', 'Pruebas'), 
+              backgroundColor = 'black', color = 'white')
+```
