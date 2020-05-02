@@ -152,6 +152,7 @@ pop <- read_csv("data/peru_pop_stratum.csv") %>%
 
 ```{r dm maps, include=FALSE}
 c.date <- max(deps$Fecha)
+y.date <- as.Date(c.date) - 1 
 
 dep <- 
   deps %>% 
@@ -174,6 +175,26 @@ dep <-
                 smp.new = abs(smp - smp.lag),
                 ratio.new = signif(pos.new/smp.new), digits = 3)
 
+y.dep <- 
+  deps %>% 
+  dplyr::select(dat = Fecha,
+                dep = REGION, 
+                pos = Positivos_totales, 
+                pos.imp = PositivosImputados_totales,
+                pas =Fallecidos, 
+                smp =Total_muestras) %>% 
+  dplyr::mutate(pas = pas %>% if_else(is.na(.), 0, .)) %>% 
+  group_by(dep) %>% 
+  dplyr::mutate(pos.lag = lag(pos, n = 1),
+                pos.imp.lag = lag(pos.imp, n = 1),
+                pas.lag = lag(pas, n = 1),
+                smp.lag = lag(smp, n = 1)) %>%
+  dplyr::filter(dat == y.date) %>% 
+  dplyr::mutate(pos.new = abs(pos - pos.lag),
+                pos.imp.new = abs(pos.imp - pos.imp.lag),
+                pas.new = abs(pas - pas.lag),
+                smp.new = abs(smp - smp.lag),
+                ratio.new = signif(pos.new/smp.new), digits = 3)
 
 ## Regions geometry
 shp <- st_read("Limite_departamental", stringsAsFactors = F)
@@ -1009,16 +1030,20 @@ Column 3 {data-width=250}
 valueBox("Datos actualizados al:", icon = "fa-calendar")
 ```
 
-### Total de casos / Casos nuevos
+### Total de casos / Casos en las últimas 24 horas
 
 ```{r}
-valueBox(paste0(format(sum(dep$pos), big.mark = ","), ' / ', format(sum(dep$pos.new), big.mark = ",")), icon = "fas fa-user-md")
+valueBox(paste0(format(sum(dep$pos), big.mark = ","), ' / ', format(sum(dep$pos.new), big.mark = ",")), 
+         icon = "fas fa-user-md",
+         color = ifelse(sum(dep$pos.new) > sum(y.dep$pos.new), "warning", "primary"))
 ```
 
 ### Total de fallecidos / Fallecidos en las últimas 24 horas
 
 ```{r}
-valueBox(paste0(format(sum(dep$pas), big.mark = ","), ' / ', format(sum(dep$pas.new), big.mark = ",")), icon = "fas fa-user-md")
+valueBox(paste0(format(sum(dep$pas), big.mark = ","), ' / ', format(sum(dep$pas.new), big.mark = ",")), 
+         icon = "fas fa-user-md",
+         color = ifelse(sum(dep$pas.new) > sum(y.dep$pas.new), "warning", "primary"))
 ```
 
 
