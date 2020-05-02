@@ -111,7 +111,7 @@ position: absolute;
 top: 15px;
 right: 15px;
 font-size: 40px;
-color: rgba(0, 0, 0, 0.15);
+color: rgba(0, 0, 0, 0.5);
 }
 </style>
 
@@ -1027,23 +1027,35 @@ Column 3 {data-width=250}
 
 ### `r c.date` 
 ```{r}
-valueBox("Datos actualizados al:", icon = "fa-calendar")
+valueBox("Datos actualizados al:", icon = "fa-calendar", color = 'teal')
 ```
 
 ### Total de casos / Casos en las últimas 24 horas
 
 ```{r}
-valueBox(paste0(format(sum(dep$pos), big.mark = ","), ' / ', format(sum(dep$pos.new), big.mark = ",")), 
-         icon = "fas fa-user-md",
-         color = ifelse(sum(dep$pos.new) > sum(y.dep$pos.new), "warning", "primary"))
+if (sum(dep$pos.new) > sum(y.dep$pos.new)) {
+  valueBox(paste0(format(sum(dep$pos), big.mark = ","), ' / ', format(sum(dep$pos.new), big.mark = ",")), 
+         icon = "fa-sort-up",
+         color = 'orange')
+} else {
+  valueBox(paste0(format(sum(dep$pos), big.mark = ","), ' / ', format(sum(dep$pos.new), big.mark = ",")), 
+         icon = "fa-sort-down",
+         color = 'teal')
+}
 ```
 
 ### Total de fallecidos / Fallecidos en las últimas 24 horas
 
 ```{r}
-valueBox(paste0(format(sum(dep$pas), big.mark = ","), ' / ', format(sum(dep$pas.new), big.mark = ",")), 
-         icon = "fas fa-user-md",
-         color = ifelse(sum(dep$pas.new) > sum(y.dep$pas.new), "warning", "primary"))
+if (sum(dep$pas.new) > sum(y.dep$pas.new)) {
+  valueBox(paste0(format(sum(dep$pas), big.mark = ","), ' / ', format(sum(dep$pas.new), big.mark = ",")), 
+         icon = "fa-sort-up",
+         color = 'orange')
+} else {
+  valueBox(paste0(format(sum(dep$pas), big.mark = ","), ' / ', format(sum(dep$pas.new), big.mark = ",")), 
+         icon = "fa-sort-down",
+         color = 'teal')
+}
 ```
 
 
