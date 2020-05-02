@@ -1350,14 +1350,37 @@ Row 1 {.tabset}
 
 ```{r}
 colnames(deps4) <- paste(colnames(deps4), "2", sep = "_")
+vars_mav_new <- deps1 %>%
+  dplyr::select(Fecha,REGION,mav_new) %>% 
+  dplyr::filter(Fecha == c.date) %>%
+  dplyr::summarise(max = as.numeric(max(mav_new)))%>% 
+  dplyr::arrange(dplyr::desc(max)) %>%
+  dplyr::select(REGION) %>%
+  dplyr::mutate(REGION = ifelse(REGION=="LA LIBERTAD","LA_LIBERTAD",
+                                ifelse(REGION=="MADRE DE DIOS","MADRE_DE_DIOS",
+                                       ifelse(REGION=="SAN MARTIN","SAN_MARTIN",REGION))))%>% 
+  .$REGION
+
+vars_pmav_new <- deps1 %>%
+  dplyr::select(Fecha,REGION,pmav_new) %>% 
+  dplyr::filter(Fecha == c.date) %>%
+  dplyr::summarise(max = as.numeric(max(pmav_new)))%>% 
+  dplyr::arrange(dplyr::desc(max)) %>%
+  dplyr::select(REGION) %>%
+  dplyr::mutate(REGION = ifelse(REGION=="LA LIBERTAD","LA_LIBERTAD",
+                                ifelse(REGION=="MADRE DE DIOS","MADRE_DE_DIOS",
+                                       ifelse(REGION=="SAN MARTIN","SAN_MARTIN",REGION))))%>% 
+  .$REGION
+
 vars <- setdiff(names(deps2), c("Fecha","tm"))
+
 deps2 <- deps4 %>% select(-c("Fecha_2")) %>% cbind(deps2)
 ```
 
 ### Casos nuevos
 ```{r}
 
-plots <- lapply(vars, function(var) {
+plots <- lapply(vars_mav_new, function(var) {
   
   plot_ly(deps2) %>%
   add_lines(x = ~Fecha, 
@@ -1413,7 +1436,7 @@ plots <- lapply(vars, function(var) {
 })
 
 subplot(plots,nrows=5, shareX = T, titleX = F) %>%
-  layout(margin =0.12,
+  layout(margin =0.2,
          title = list(text = "Media móvil (7 días) de casos nuevos",
                       font = list(size = 24,
                                   color="white")),
@@ -1427,7 +1450,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
                 font = list(size = 16,
                             color = "white")),
            list(text = "Media móvil - Número de casos",
-                x = -0.1,
+                x = -0.03,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1464,7 +1487,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
 #  filter(REGION == "LIMA") %>%
 #  add_lines(name = "LIMA")
 
-plots <- lapply(vars, function(var) {
+plots <- lapply(vars_pmav_new, function(var) {
   deps1 %>%
     group_by(REGION) %>%
     plot_ly(x = ~Fecha, y = ~pmav_new) %>%
@@ -1534,7 +1557,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
                 font = list(size = 16,
                             color = "white")),
            list(text = "Media móvil  - Casos nuevos por millón de hab.",
-                x = -0.1,
+                x = -0.03,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1560,7 +1583,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
 
 ### Casos nuevos desde fecha de reporte
 ```{r}
-plots <- lapply(vars, function(var) {
+plots <- lapply(vars_mav_new, function(var) {
   deps1 %>%
     group_by(REGION)%>%
   dplyr::mutate(dias = as.numeric(Fecha-first(Fecha), unit="days")) %>%
@@ -1631,7 +1654,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
                 font = list(size = 16,
                             color = "white")),
            list(text = "Media móvil - Casos nuevos",
-                x = -0.1,
+                x = -0.03,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
