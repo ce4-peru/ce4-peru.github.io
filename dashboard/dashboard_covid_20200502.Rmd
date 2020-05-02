@@ -201,7 +201,9 @@ deps1 <- deps %>%
                 new_cases_inp = PositivosImputados_totales - lag(PositivosImputados_totales, default = 0),
                 mav_new = slide_dbl(new_cases, ~mean(.x, na.rm = TRUE), .before = 6),
                 pmav_new = 1000000*mav_new/pop,
-                max = max(mav_new)) 
+                max = max(mav_new),
+         dias = as.numeric(Fecha-first(Fecha), unit="days")) %>%
+  mutate(tm = difftime(today, Fecha , units = c("days")))
 
 nac1 <- nac %>%
   dplyr::mutate(RapidasPositivos = replace_na(RapidasPositivos,0),
@@ -1526,7 +1528,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
                 font = list(size = 16,
                             color = "white")),
            list(text = "Media móvil - Número de casos",
-                x = -0.03,
+                x = -0.04,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1535,7 +1537,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
                             color ="white"),
                 textangle = -90)),
          hovermode = "closest",
-         hoverdistance = 50,
+         hoverdistance = 10,
          dragmode="pan"
   ) %>%
   config(locale = "es",
@@ -1572,29 +1574,31 @@ plots <- lapply(vars_pmav_new, function(var) {
               width = 0.5,
               showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE)) %>%
     filter(REGION == ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
-                                            ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
-                                                   ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>%
-    add_lines(text = paste("días desde hoy"),
+                            ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
+                                   ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>%
+    add_lines(text = paste(deps1 %>% filter(REGION==ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
+                                                           ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
+                                                                  ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>% dplyr::select(tm) %>% .$tm, "días desde hoy"),
               hovertemplate = paste('<b>Fecha</b>: %{x}',
                                     '<br><b>Media Móvil</b>: %{y:.2f}<br>',
                                     '<b>%{text}</b>'),
               name = ifelse(var == vars[length(vars)],"Media Móvil",var),
               legendgroup = 'group1',
               showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE), 
-  line = list(color = "#ffa600", width = 4)
-) %>%
-  add_segments(x = "2020-04-08", xend = "2020-04-08", 
-               y = 0, yend = max(deps1$pmav_new,na.rm = T),
-               text="2020-04-08",name="Inicio de P.R's",
-               hovertemplate = paste('<b>%{text}</b>'),
-               legendgroup = 'group2',
-               showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE),
-               width=2, 
-               line = list(color = "rgb(60,141,47)", 
-                           width = 2, 
-                           dash = "dot")
-  ) %>%
-  layout(xaxis = list(range = c(min(deps3$Fecha),
+              line = list(color = "#ffa600", width = 4)
+    ) %>%
+    add_segments(x = "2020-04-08", xend = "2020-04-08", 
+                 y = 0, yend = max(deps1$pmav_new,na.rm = T),
+                 text="2020-04-08",name="Inicio de P.R's",
+                 hovertemplate = paste('<b>%{text}</b>'),
+                 legendgroup = 'group2',
+                 showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE),
+                 width=2, 
+                 line = list(color = "rgb(60,141,47)", 
+                             width = 2, 
+                             dash = "dot")
+    ) %>%
+    layout(xaxis = list(range = c(min(deps3$Fecha),
                                   max(deps3$Fecha)),
                         color = "white"),
            yaxis = list(range = c(min(deps1$pmav_new),
@@ -1633,7 +1637,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
                 font = list(size = 16,
                             color = "white")),
            list(text = "Media móvil  - Casos nuevos por millón de hab.",
-                x = -0.03,
+                x = -0.04,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1661,41 +1665,42 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
 ```{r}
 plots <- lapply(vars_mav_new, function(var) {
   deps1 %>%
-    group_by(REGION)%>%
-  dplyr::mutate(dias = as.numeric(Fecha-first(Fecha), unit="days")) %>%
+    group_by(REGION) %>%
     plot_ly(x = ~dias, y = ~mav_new) %>%
     add_lines(name = "Otras regiones", hoverinfo = "none", 
               line = list(color = "#007e7b"),
               width = 0.5,
               showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE)) %>%
     filter(REGION == ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
-                                            ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
-                                                   ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>%
-    add_lines(text = paste("días desde hoy"),
+                            ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
+                                   ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>%
+    add_lines(text = paste(deps1 %>% filter(REGION==ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
+                                                           ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
+                                                                  ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>% dplyr::select(dias) %>% .$dias, "días desde el primer reporte"),
               hovertemplate = paste('<b>Fecha</b>: %{x}',
                                     '<br><b>Media Móvil</b>: %{y:.2f}<br>',
                                     '<b>%{text}</b>'),
               name = ifelse(var == vars[length(vars)],"Media Móvil",var),
               legendgroup = 'group1',
               showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE), 
-  line = list(color = "#ffa600", width = 4)
-) %>%
-  add_segments(x = "2020-04-08", xend = "2020-04-08", 
-               y = 0, yend = max(deps1$pmav_new,na.rm = T),
-               text="2020-04-08",name="Inicio de P.R's",
-               hovertemplate = paste('<b>%{text}</b>'),
-               legendgroup = 'group2',
-               showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE),
-               width=2, 
-               line = list(color = "rgb(60,141,47)", 
-                           width = 2, 
-                           dash = "dot")
-  ) %>%
-  layout(xaxis = list(range = c(min(deps3$Fecha),
+              line = list(color = "#ffa600", width = 4)
+    ) %>%
+    add_segments(x = "2020-04-08", xend = "2020-04-08", 
+                 y = 0, yend = max(deps1$pmav_new,na.rm = T),
+                 text="2020-04-08",name="Inicio de P.R's",
+                 hovertemplate = paste('<b>%{text}</b>'),
+                 legendgroup = 'group2',
+                 showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE),
+                 width=2, 
+                 line = list(color = "rgb(60,141,47)", 
+                             width = 2, 
+                             dash = "dot")
+    ) %>%
+    layout(xaxis = list(range = c(min(deps3$Fecha),
                                   max(deps3$Fecha)),
                         color = "white"),
-           yaxis = list(range = c(min(deps1$pmav_new),
-                                  max(deps1$pmav_new)),
+           yaxis = list(range = c(min(deps1$pmav_new,
+                                      max(deps1$pmav_new))),
                         color = "white",
                         title = ""),
            annotations = list(text = ifelse(var=="LA_LIBERTAD","<b>LA LIBERTAD<b>",
@@ -1717,7 +1722,7 @@ plots <- lapply(vars_mav_new, function(var) {
 
 subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
   layout(margin =0.12,
-         title = list(text = "Media móvil (7 días) - Casos nuevos",
+         title = list(text = "Media móvil (7 días) - Casos nuevos desde primer reporte",
                       font = list(size = 24,
                                   color = "white")),
          annotations = list(
@@ -1730,7 +1735,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
                 font = list(size = 16,
                             color = "white")),
            list(text = "Media móvil - Casos nuevos",
-                x = -0.03,
+                x = -0.04,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
