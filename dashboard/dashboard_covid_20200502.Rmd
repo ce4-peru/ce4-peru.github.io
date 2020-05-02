@@ -173,7 +173,9 @@ dep <-
                 pos.imp.new = abs(pos.imp - pos.imp.lag),
                 pas.new = abs(pas - pas.lag),
                 smp.new = abs(smp - smp.lag),
-                ratio.new = signif(pos.new/smp.new), digits = 3)
+                ratio.new = signif(pos.new/smp.new), digits = 3) 
+
+dep[dep$pos.new == 0, ]$pos.new <- NA
 
 y.dep <- 
   deps %>% 
@@ -1033,12 +1035,12 @@ valueBox("Datos actualizados al:", icon = "fa-calendar", color = 'teal')
 ### Total de casos / Casos en las últimas 24 horas
 
 ```{r}
-if (sum(dep$pos.new) > sum(y.dep$pos.new)) {
-  valueBox(paste0(format(sum(dep$pos), big.mark = ","), ' / ', format(sum(dep$pos.new), big.mark = ",")), 
+if (sum(dep$pos.new, na.rm = T) > sum(y.dep$pos.new, na.rm = T)) {
+  valueBox(paste0(format(sum(dep$pos, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pos.new, na.rm = T), big.mark = ",")), 
          icon = "fa-sort-up",
          color = 'orange')
 } else {
-  valueBox(paste0(format(sum(dep$pos), big.mark = ","), ' / ', format(sum(dep$pos.new), big.mark = ",")), 
+  valueBox(paste0(format(sum(dep$pos, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pos.new, na.rm = T), big.mark = ",")), 
          icon = "fa-sort-down",
          color = 'teal')
 }
@@ -1047,12 +1049,12 @@ if (sum(dep$pos.new) > sum(y.dep$pos.new)) {
 ### Total de fallecidos / Fallecidos en las últimas 24 horas
 
 ```{r}
-if (sum(dep$pas.new) > sum(y.dep$pas.new)) {
-  valueBox(paste0(format(sum(dep$pas), big.mark = ","), ' / ', format(sum(dep$pas.new), big.mark = ",")), 
+if (sum(dep$pas.new, na.rm = T) > sum(y.dep$pas.new, na.rm = T)) {
+  valueBox(paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pas.new, na.rm = T), big.mark = ",")), 
          icon = "fa-sort-up",
          color = 'orange')
 } else {
-  valueBox(paste0(format(sum(dep$pas), big.mark = ","), ' / ', format(sum(dep$pas.new), big.mark = ",")), 
+  valueBox(paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pas.new, na.rm = T), big.mark = ",")), 
          icon = "fa-sort-down",
          color = 'teal')
 }
