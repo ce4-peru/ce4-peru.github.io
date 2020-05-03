@@ -6,7 +6,8 @@ output:
     vertical_layout: fill
     source_code: embed
     social: menu
-    theme: cosmo 
+    theme: cosmo
+    self_contained: FALSE 
 ---
 
 <style>                     
@@ -855,13 +856,14 @@ plot_ly(nac3) %>%
                        xanchor = "center",
                        yanchor = "bottom",  
                        x = 0.5,
+                       y = -0.3,
                        font = list(color = "white")),
          paper_bgcolor="black",
          plot_bgcolor="black",
          hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=50, r=50, b=80, t=50)
   ) %>%
   config(locale = "es",
          displaylogo=F,
