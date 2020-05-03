@@ -405,7 +405,8 @@ labels.total <- sprintf(
 pal.cases <- colorNumeric( palette="RdPu", domain = log(dep$pos), na.color="transparent")
 
 leaflet(dep) %>%
-  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+             options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
   addPolygons(fillColor = pal.cases(log(dep$pos)),
               weight = 2,
               opacity = 1,
@@ -423,7 +424,11 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal = pal.cases, values = log(dep$pos), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))
+  addLegend("bottomleft", pal = pal.cases, values = log(dep$pos), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
 ```
 
 ### Casos / 100k hab
@@ -679,7 +684,7 @@ Column 2 {.tabset data-width=400}
 
 ### Lineal
 
-```{r, message=F, warning=F, class.output="scroll-100"}
+```{r, message=F, warning=F}
 plot_ly(nac1) %>%
   add_trace(x = ~Dia, y = ~pos_new, 
             type = 'bar', name = 'Casos Nuevos',
@@ -709,42 +714,44 @@ plot_ly(nac1) %>%
                            width = 3, 
                            dash = "dot")
   )%>% 
-  layout(title = 'Casos nuevos y acumulados - Perú',
+  layout(title = '<b>Casos nuevos y acumulados - Perú</b>',
          titlefont=list(color="white"),
-         xaxis = list(title = "Fecha de Reporte",
+         xaxis = list(title = "<b>Fecha de Reporte</b>",
                       color = "white"),
-         yaxis = list(side = 'left', title = 'Casos Nuevos por día (lineal)', 
+         yaxis = list(side = 'left', title = '<b>Casos Nuevos por día (lineal)</b>', 
                       showgrid = FALSE, zeroline = FALSE,
                       color = "white"),
          yaxis2 = list(side = 'right', overlaying = "y",
-                       title = 'Casos acumulados por día (lineal)', 
+                       title = '<b>Casos acumulados por día (lineal)</b>', 
                        showgrid = FALSE, zeroline = FALSE,
                        color = "white"),
          legend = list(orientation = "h",  
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.5,
+                       y = -0.125,
                        font = list(color = "white")),
          paper_bgcolor="black",
          plot_bgcolor="black",
          hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=65, r=65, b=40, t=50)
   ) %>%
   config(locale = "es",
          displaylogo=F,
          modeBarButtonsToRemove = c("select2d","zoom2d","lasso2d",
                                     "drawclosedpath","drawopenpath",
                                     "hoverClosestCartesian","hoverCompareCartesian",
-                                    "toggleHover","toggleSpikelines")
+                                    "toggleHover","toggleSpikelines"),
+         responsive = T
   )
 
 ```
 
 ### Logaritmico
 
-```{r, message=F, warning=F, class.output="scroll-100"}
+```{r, message=F, warning=F}
 plot_ly(nac1) %>%
   add_trace(x = ~Dia, y = ~pos_new, 
             type = 'bar', name = 'Casos Nuevos',
@@ -774,15 +781,15 @@ plot_ly(nac1) %>%
                            width = 3, 
                            dash = "dot")
   ) %>% 
-  layout(title = 'Casos nuevos y acumulados - Perú',
+  layout(title = '<b>Casos nuevos y acumulados - Perú</b>',
          titlefont=list(color="white"),
-         xaxis = list(title = "Fecha de reporte",
+         xaxis = list(title = "<b>Fecha de reporte</b>",
                       color ="white"),
-         yaxis = list(side = 'left', title = 'Casos Nuevos por día (lineal)', 
+         yaxis = list(side = 'left', title = '<b>Casos Nuevos por día (lineal)</b>', 
                       showgrid = FALSE, zeroline = FALSE,
                       color="white"),
          yaxis2 = list(side = 'right', overlaying = "y", type = "log",
-                       title = 'Casos acumulados por día (logaritmica)', 
+                       title = '<b>Casos acumulados por día (logaritmica)</b>', 
                        showgrid = FALSE, zeroline = FALSE,
                        tickmode = "linear",
                        tick0 = 0,
@@ -791,27 +798,29 @@ plot_ly(nac1) %>%
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.5,
+                       y = -0.125,
                        font = list(color = "white")),
          paper_bgcolor="black",
          plot_bgcolor="black",
          hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=65, r=65, b=40, t=50)
   ) %>%
   config(locale = "es",
          displaylogo=F,
          modeBarButtonsToRemove = c("select2d","zoom2d","lasso2d",
                                     "drawclosedpath","drawopenpath",
                                     "hoverClosestCartesian","hoverCompareCartesian",
-                                    "toggleHover","toggleSpikelines")
+                                    "toggleHover","toggleSpikelines"),
+         responsive = F
   )
 ```
 
 ### Media Móvil
 
 
-```{r, message=F, warning=F,fig.height=10,fig.width=10, class.output="scroll-100"}
+```{r, message=F, warning=F}
 plot_ly(nac3) %>%
   add_trace(x = ~Dia, y = ~pos_new,
             type = 'bar', name = 'Casos Nuevos',
@@ -840,14 +849,14 @@ plot_ly(nac3) %>%
                            width = 3, 
                            dash = "dot")
   )%>% 
-  layout(title = 'Media móvil (7d) y casos nuevos por día - Perú',
+  layout(title = '<b>Media móvil (7d) y casos nuevos por día - Perú</b>',
          titlefont=list(color="white"),
-         xaxis = list(title = "Fecha de reporte",
+         xaxis = list(title = "<b>Fecha de reporte</b>",
                       color="white"),
-         yaxis = list(side = 'left', title = 'Casos nuevos por día', showgrid = FALSE, zeroline = FALSE,
+         yaxis = list(side = 'left', title = '<b>Casos nuevos por día</b>', showgrid = FALSE, zeroline = FALSE,
                       color = "white"),
          yaxis2 = list(side = 'right', overlaying = "y",
-                       title = 'Media móvil de casos nuevos - 7 días (lineal)', 
+                       title = '<b>Media móvil de casos nuevos - 7 días (lineal)</b>', 
                        showgrid = FALSE, zeroline = FALSE,
                        color="#ffa600",
                        range = c(min(0),
@@ -856,14 +865,14 @@ plot_ly(nac3) %>%
                        xanchor = "center",
                        yanchor = "bottom",  
                        x = 0.5,
-                       y = -0.3,
+                       y = -0.15,
                        font = list(color = "white")),
          paper_bgcolor="black",
          plot_bgcolor="black",
          hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
-         margin = list(l=50, r=50, b=80, t=50)
+         margin = list(l=65, r=0, b=40, t=50)
   ) %>%
   config(locale = "es",
          displaylogo=F,
@@ -877,7 +886,7 @@ plot_ly(nac3) %>%
 
 ### Duplicación
 
-```{r, message=F, warning=F,fig.height=10,fig.width=10, class.output="scroll-100"}
+```{r, message=F, warning=F}
 
 plot_ly(nac4)%>%
   add_trace(x = ~dias, y = ~cum_pos, 
@@ -926,25 +935,27 @@ plot_ly(nac4)%>%
             legendgroup = 'group2')  %>% 
   layout(title = '<b>Total de casos acumulados desde el inicio de los casos</b>',
          titlefont=list(color="white"),
-         xaxis = list(title = "Días desde el primer reporte",
+         xaxis = list(title = "<b>Días desde el primer reporte</b>",
                       range = c(min(0),max(nac4$calc)+5),
                       color ="white"),
-         yaxis = list(side = 'left', title = 'Total de casos acumulados', type="log",
+         yaxis = list(side = 'left', title = '<b>Total de casos acumulados</b>', type="log",
                       range = c(min(0),max(6)),
                       showgrid = FALSE, zeroline = FALSE,
                       tickmode = "linear",
                       tick0 = 0,
                       color ="white"),
-         legend = list(x=0.65, y=0.15,
-                       title=list(text='<b> Leyenda </b>',
-                                  font = list(color = "white")),
+         legend = list(orientation = "h",  
+                       xanchor = "center",
+                       yanchor = "bottom",  
+                       x = 0.5,
+                       y = -0.25,
                        font = list(color = "white")),
          paper_bgcolor="black",
          plot_bgcolor="black",
          hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=50, r=50, b=30, t=50)
   ) %>%
   config(locale = "es",
          displaylogo=F,
@@ -958,7 +969,7 @@ plot_ly(nac4)%>%
 
 
 ### Según estado
-```{r, message=F, warning=F,fig.height=10,fig.width=10, class.output="scroll-100"}
+```{r, message=F, warning=F}
 
 fig <- plot_ly(nac5, x = ~Dia)
 
@@ -982,12 +993,12 @@ fig <- fig %>% add_trace(y = ~Activos,
                          stackgroup = 'one')
 
 fig <- fig %>% 
-  layout(title ="Proporción de casos Activos, Recuperados, y Fallecidos",
+  layout(title ="<b>Proporción de casos Activos, Recuperados, y Fallecidos</b>",
          titlefont=list(color="white"),
-         xaxis = list(title = "Fecha de reporte",
+         xaxis = list(title = "<b>Fecha de reporte</b>",
                       showgrid = FALSE,
                       color ="white"),
-         yaxis = list(title = "Número de casos según estado",
+         yaxis = list(title = "<b>Número de casos según estado</b>",
                       showgrid = FALSE,
                       color ="white"),
          paper_bgcolor="black",
@@ -996,6 +1007,7 @@ fig <- fig %>%
                        xanchor = "center",
                        yanchor = "bottom",  
                        x = 0.5,
+                       y = -0.125,
                        font = list(color = "white")),
          hovermode = "closest",
          hoverdistance = 50,
@@ -1015,7 +1027,7 @@ fig
 ```
 
 ### Proporción de casos
-```{r, message=F, warning=F,fig.height=10,fig.width=10, class.output="scroll-100"}
+```{r, message=F, warning=F}
 
 fig <- plot_ly(nac5, x = ~Dia, y = ~per_fallecidos, name = 'Fallecidos', 
                type = 'scatter', mode = 'lines+markers', stackgroup = 'one', 
@@ -1035,7 +1047,7 @@ fig <- fig %>% add_trace(y = ~per_activos,
                          line = list(color = 'rgba(0,0,0,0)'))
 
 fig <- fig %>% 
-  layout(title ="Proporción de casos Activos, Recuperados, y Fallecidos",
+  layout(title ="<b>Proporción de casos Activos, Recuperados, y Fallecidos</b>",
          titlefont=list(color="white"),
          shapes = list(
            list(
@@ -1063,10 +1075,10 @@ fig <- fig %>%
                          dash = "dot")
            )
          ),
-         xaxis = list(title = "Fecha de reporte",
+         xaxis = list(title = "<b>Fecha de reporte</b>",
                       showgrid = FALSE,
                       color ="white"),
-         yaxis = list(title = "Proporción de casos según estado",
+         yaxis = list(title = "<b>Proporción de casos según estado</b>",
                       showgrid = FALSE,
                       ticksuffix = '%',
                       color ="white"),
@@ -1076,6 +1088,7 @@ fig <- fig %>%
                        xanchor = "center",
                        yanchor = "bottom",  
                        x = 0.5,
+                       y = -0.125,
                        font = list(color = "white")),
         hovermode = "closest",
          hoverdistance = 50,
@@ -1204,26 +1217,27 @@ plots <- lapply(vars, function(var) {
          legend = list(orientation = "h",  
                        xanchor = "center",
                        yanchor = "bottom",
+                       y = -0.125,
                        x = 0.5,
                        font = list(color = "white")),
            showlegend =T)
 })
 
 subplot(plots,nrows=5, shareX = T, titleX = F) %>%
-  layout(title = list(text = "Media móvil (7 días) de casos nuevos - Top 10",
+  layout(title = list(text = "<b>Media móvil (7 días) de casos nuevos - Top 10</b>",
                       font = list(size = 24,
                                   color="white")),
          annotations = list(
-           list(text = "Fecha de reporte",
+           list(text = "<b>Fecha de reporte</b>",
                 x = 0.5,
-                y = -0.1,
+                y = -0.085,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
                 font = list(size = 16,
                             color = "white")),
-           list(text = "Media móvil - Número de casos",
-                x = -0.1,
+           list(text = "<b>Media móvil - Número de casos</b>",
+                x = -0.085,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1234,7 +1248,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
          hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=75, r=0, b=25, t=50)
   ) %>%
   config(locale = "es",
          displaylogo=F,
@@ -1299,26 +1313,27 @@ plots <- lapply(vars, function(var) {
          legend = list(orientation = "h",  
                        xanchor = "center",
                        yanchor = "bottom",
+                       y = -0.125,
                        x = 0.5,
                        font = list(color = "white")),
            showlegend =T)
 })
 
 subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
-  layout(title = list(text = "Media móvil (7 días) de casos nuevos - Top 10",
+  layout(title = list(text = "<b>Media móvil (7 días) de casos nuevos - Top 10</b>",
                       font = list(size = 24,
                                   color = "white")),
          annotations = list(
-           list(text = "Fecha de reporte",
+           list(text = "</b>Fecha de reporte</b>",
                 x = 0.5,
-                y = -0.1,
+                y = -0.085,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
                 font = list(size = 16,
                             color = "white")),
-           list(text = "Media móvil - Número de casos",
-                x = -0.1,
+           list(text = "<b>Media móvil - Número de casos</b>",
+                x = -0.085,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1329,7 +1344,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
          hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=75, r=0, b=25, t=50)
   ) %>%
   config(locale = "es",
          displaylogo=F,
@@ -1393,26 +1408,27 @@ plots <- lapply(vars, function(var) {
          legend = list(orientation = "h",  
                        xanchor = "center",
                        yanchor = "bottom",
+                       y = -0.125,
                        x = 0.5,
                        font = list(color = "white")),
            showlegend =T)
 })
 
 subplot(plots,nrows=5, shareX = T, titleX = F) %>%
-  layout(title = list(text = "Media móvil (7 días) de casos nuevos",
+  layout(title = list(text = "<b>Media móvil (7 días) de casos nuevos</b>",
                       font = list(size = 24,
                                   color="white")),
          annotations = list(
-           list(text = "Fecha de reporte",
+           list(text = "<b>Fecha de reporte</b>",
                 x = 0.5,
-                y = -0.1,
+                y = -0.085,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
                 font = list(size = 16,
                             color = "white")),
-           list(text = "Media móvil - Número de casos",
-                x = -0.1,
+           list(text = "<b>Media móvil - Número de casos</b>",
+                x = -0.085,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1423,7 +1439,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
          hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=75, r=0, b=25, t=50)
   ) %>%
   config(locale = "es",
          displaylogo=F,
@@ -1488,25 +1504,26 @@ plots <- lapply(vars, function(var) {
          legend = list(orientation = "h",  
                        xanchor = "center",
                        yanchor = "bottom",
+                       y = -0.125,
                        x = 0.5,
                        font = list(color = "white")),
            showlegend =T)
 })
 
 subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
-  layout(title = list(text = "Media móvil (7 días) de casos nuevos",
+  layout(title = list(text = "<b>Media móvil (7 días) de casos nuevos</b>",
                       font = list(size = 24,
                                   color = "white")),
          annotations = list(
-           list(text = "Fecha de reporte",
+           list(text = "<b>Fecha de reporte</b>",
                 x = 0.5,
-                y = -0.1,
+                y = -0.05,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
                 font = list(size = 16,
                             color = "white")),
-           list(text = "Media móvil - Número de casos",
+           list(text = "<b>Media móvil - Número de casos</b>",
                 x = -0.1,
                 y = 0.5,
                 yref = "paper",
@@ -1518,7 +1535,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
          hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=50, r=0, b=25, t=50)
   ) %>%
   config(locale = "es",
          displaylogo=F,
@@ -1623,25 +1640,26 @@ plots <- lapply(vars_mav_new, function(var) {
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.5,
+                       y = -0.125,
                        font = list(color = "white")),
            showlegend =T)
 })
 
 subplot(plots,nrows=5, shareX = T, titleX = F) %>%
-  layout(title = list(text = "Media móvil (7 días) de casos nuevos",
+  layout(title = list(text = "<b>Media móvil (7 días) de casos nuevos</b>",
                       font = list(size = 24,
                                   color="white")),
          annotations = list(
-           list(text = "Fecha de reporte",
+           list(text = "<b>Fecha de reporte</b>",
                 x = 0.5,
-                y = -0.065,
+                y = -0.09,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
                 font = list(size = 16,
                             color = "white")),
-           list(text = "Media móvil - Número de casos",
-                x = -0.04,
+           list(text = "<b>Media móvil - Número de casos</b>",
+                x = -0.05,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1652,7 +1670,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
          hovermode = "closest",
          hoverdistance = 10,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=75, r=0, b=65, t=60)
   ) %>%
   config(locale = "es",
          displaylogo=F,
@@ -1734,24 +1752,25 @@ plots <- lapply(vars_pmav_new, function(var) {
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.5,
+                       y = -0.125,
                        font = list(color = "white")))
 })
 
 subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
-  layout(title = list(text = "Media móvil (7 días) - Casos nuevos por millón de hab.",
+  layout(title = list(text = "<b>Media móvil (7 días) - Casos nuevos por millón de hab.</b>",
                       font = list(size = 24,
                                   color = "white")),
          annotations = list(
-           list(text = "Fecha de reporte",
+           list(text = "<b>Fecha de reporte</b>",
                 x = 0.5,
-                y = -0.065,
+                y = -0.09,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
                 font = list(size = 16,
                             color = "white")),
-           list(text = "Media móvil  - Casos nuevos por millón de hab.",
-                x = -0.04,
+           list(text = "<b>Media móvil  - Casos nuevos por millón de hab.</b>",
+                x = -0.05,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1762,7 +1781,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
          hovermode = "all",
          hoverdistance = 100000000,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=75, r=0, b=65, t=65)
   ) %>%
   config(locale = "es",
          displaylogo=F,
@@ -1837,11 +1856,11 @@ plots <- lapply(vars_mav_new, function(var) {
 })
 
 subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
-  layout(title = list(text = "Media móvil (7 días) - Casos nuevos desde primer reporte",
+  layout(title = list(text = "<b>Media móvil (7 días) - Casos nuevos desde primer reporte</b>",
                       font = list(size = 24,
                                   color = "white")),
          annotations = list(
-           list(text = "Días desde primer reporte de casos en cada Región",
+           list(text = "<b>Días desde primer reporte de casos en cada Región</b>",
                 x = 0.5,
                 y = -0.065,
                 yref = "paper",
@@ -1849,8 +1868,8 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
                 showarrow = FALSE,
                 font = list(size = 16,
                             color = "white")),
-           list(text = "Media móvil - Casos nuevos",
-                x = -0.04,
+           list(text = "<b>Media móvil - Casos nuevos</b>",
+                x = -0.05,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1861,7 +1880,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
          hovermode = "all",
          hoverdistance = 100000000,
          dragmode="pan",
-         margin = list(l=50, r=50, b=25, t=50)
+         margin = list(l=75, r=0, b=25, t=65)
   ) %>%
   config(locale = "es",
          displaylogo=F,
