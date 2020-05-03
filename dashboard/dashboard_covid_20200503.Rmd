@@ -177,7 +177,7 @@ dep <-
                 smp.new = abs(smp - smp.lag),
                 ratio.new = signif(pos.new/smp.new), digits = 3)
 
-dep[dep$pos.new == 0, ]$pos.new <- NA
+#dep[dep$pos.new == 0, ]$pos.new <- NA
 
 y.dep <- 
   deps %>% 
@@ -459,7 +459,11 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal = pal.pos.hab, values = log(dep$pos.hab), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))
+  addLegend("bottomleft", pal = pal.pos.hab, values = log(dep$pos.hab), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
 ```
 
 ### Casos nuevos 
@@ -490,7 +494,11 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.newcases, values = log(dep$pos.new), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))
+  addLegend("bottomleft", pal=pal.newcases, values = log(dep$pos.new), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
 ```
 
 ### Fallecidos 
@@ -521,7 +529,11 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.pas, values = dep$pas, title= 'Fallecidos')
+  addLegend("bottomleft", pal=pal.pas, values = dep$pas, title= 'Fallecidos')%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
 ```
 
 ### Fallecidos nuevos
@@ -552,7 +564,11 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.pasnew, values = dep$pas.new, title= 'Fallecidos')
+  addLegend("bottomleft", pal=pal.pasnew, values = dep$pas.new, title= 'Fallecidos')%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
 ```
 
 ### Pruebas
@@ -583,7 +599,11 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.smp, values = log(dep$smp), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))
+  addLegend("bottomleft", pal=pal.smp, values = log(dep$smp), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
 ```
 
 ### Pruebas / 100k hab
@@ -614,7 +634,11 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.smp.hab, values = log(dep$smp.hab), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))
+  addLegend("bottomleft", pal=pal.smp.hab, values = log(dep$smp.hab), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
 ```
 
 ### Nuevas pruebas
@@ -645,7 +669,11 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.smpnew, values = log(dep$smp.new), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))
+  addLegend("bottomleft", pal=pal.smpnew, values = log(dep$smp.new), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
 ```
 
 ### Tasa de positivos nuevos
@@ -676,7 +704,11 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.ratio, values = dep$ratio.new*100, title= '% Positivos')
+  addLegend("bottomleft", pal=pal.ratio, values = dep$ratio.new*100, title= '% Positivos')%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
 ```
 
 Column 2 {.tabset data-width=400}
