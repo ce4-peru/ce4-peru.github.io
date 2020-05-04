@@ -8,6 +8,7 @@ output:
     social: menu
     theme: cosmo
     self_contained: FALSE 
+    fig_mobile: TRUE
 ---
 
 <style>                     
@@ -114,6 +115,15 @@ right: 15px;
 font-size: 40px;
 color: rgba(0, 0, 0, 0.5);
 }
+
+.content {
+overflow: auto;
+}
+
+.chart-wrapper { 
+overflow: auto; 
+}
+
 </style>
 
 ```{r libraries}
@@ -141,14 +151,20 @@ options(scipen=999)
 ```
 
 ```{r imports}
-nac <- rio::import("https://github.com/jincio/COVID_19_PERU/blob/master/docs/reportes_minsa.xlsx?raw=true")
+nac <- rio::import("https://github.com/jincio/COVID_19_PERU/blob/master/reportes_minsa.xlsx?raw=true")
 
-deps <- rio::import("https://github.com/jincio/COVID_19_PERU/blob/master/docs/reportes_minsa.xlsx?raw=true", sheet = 2)
+deps <- rio::import("https://github.com/jincio/COVID_19_PERU/blob/master/reportes_minsa.xlsx?raw=true", sheet = 2)
 
 pop <- read_csv("data/peru_pop_stratum.csv") %>%
   group_by(dep_adm1) %>%
   dplyr::summarise(pop = sum(N)) %>%
   dplyr::mutate(REGION = toupper(dep_adm1))
+
+
+Paises_LATAM <- c("Argentina","Bolivia","Brazil","Chile","Colombia","Ecuador","Mexico","Peru","Uruguay","Venezuela")
+LATAM <- read_csv ("https://covid.ourworldindata.org/data/owid-covid-data.csv") %>%
+  dplyr::filter(location %in% Paises_LATAM)
+
 ```
 
 
@@ -214,7 +230,7 @@ dep <- dep %>% mutate(pos.hab = pos/pop*100000,
                       smp.hab = smp/pop*100000)
 ```
 
-```{r dm, message=F, warning=F, class.output="scroll-100"}
+```{r dm, message=F, warning=F}
 today <- ymd(Sys.Date())
 
 deps1 <- deps %>%
@@ -227,7 +243,7 @@ deps1 <- deps %>%
                 mav_new = slide_dbl(new_cases, ~mean(.x, na.rm = TRUE), .before = 6),
                 pmav_new = 1000000*mav_new/pop,
                 max = max(mav_new),
-         dias = as.numeric(Fecha-first(Fecha), unit="days")) %>%
+                dias = as.numeric(Fecha-first(Fecha), unit="days")) %>%
   mutate(tm = difftime(today, Fecha , units = c("days")))
 
 nac1 <- nac %>%
@@ -344,10 +360,10 @@ deps4 <- deps1 %>% #Distinto a deps2
 nac4 <- nac1 %>%
   dplyr::mutate(dias = as.numeric(Dia-first(Dia), unit="days"),
                 calc = dias+20,
-         dup_1 = exp((log(2)/1)*dias),
-         dup_2 = exp((log(2)/2)*dias),
-         dup_3 = exp((log(2)/3)*dias),
-         dup_4 = exp((log(2)/4)*dias)
+                dup_1 = exp((log(2)/1)*dias),
+                dup_2 = exp((log(2)/2)*dias),
+                dup_3 = exp((log(2)/3)*dias),
+                dup_4 = exp((log(2)/4)*dias)
   )
 
 nac5 <- nac%>%
@@ -406,7 +422,7 @@ pal.cases <- colorNumeric( palette="RdPu", domain = log(dep$pos), na.color="tran
 
 leaflet(dep) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-             options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
   addPolygons(fillColor = pal.cases(log(dep$pos)),
               weight = 2,
               opacity = 1,
@@ -441,7 +457,8 @@ labels.pos.hab <- sprintf(
 pal.pos.hab <- colorNumeric( palette="RdPu", domain = log(dep$pos.hab), na.color="transparent")
 
 leaflet(dep) %>%
-  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
   addPolygons(fillColor = pal.pos.hab(log(dep$pos.hab)),
               weight = 2,
               opacity = 1,
@@ -476,7 +493,8 @@ labels.new <- sprintf(
 pal.newcases <- colorNumeric( palette="RdPu", domain = log(dep$pos.new), na.color="transparent")
 
 leaflet(dep) %>%
-  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
   addPolygons(fillColor = pal.newcases(log(dep$pos.new)),
               weight = 2,
               opacity = 1,
@@ -489,8 +507,8 @@ leaflet(dep) %>%
                 dashArray = "",
                 fillOpacity = 0.7,
                 bringToFront = TRUE),
-             label = labels.new,
-             labelOptions = labelOptions(
+              label = labels.new,
+              labelOptions = labelOptions(
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
@@ -511,7 +529,8 @@ labels.pas <- sprintf(
 pal.pas <- colorNumeric( palette="RdPu", domain = dep$pas, na.color="transparent")
 
 leaflet(dep) %>%
-  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
   addPolygons(fillColor = pal.pas(dep$pas),
               weight = 2,
               opacity = 1,
@@ -546,7 +565,8 @@ labels.pasnew <- sprintf(
 pal.pasnew <- colorNumeric( palette="RdPu", domain = dep$pas.new, na.color="transparent")
 
 leaflet(dep) %>%
-  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
   addPolygons(fillColor = pal.pasnew(dep$pas.new),
               weight = 2,
               opacity = 1,
@@ -581,7 +601,8 @@ labels.smp <- sprintf(
 pal.smp <- colorNumeric( palette="Blues", domain = log(dep$smp), na.color="transparent")
 
 leaflet(dep) %>%
-  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
   addPolygons(fillColor = pal.smp(log(dep$smp)),
               weight = 2,
               opacity = 1,
@@ -616,7 +637,8 @@ labels.smp.hab <- sprintf(
 pal.smp.hab <- colorNumeric( palette="Blues", domain = log(dep$smp.hab), na.color="transparent")
 
 leaflet(dep) %>%
-  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
   addPolygons(fillColor = pal.smp.hab(log(dep$smp.hab)),
               weight = 2,
               opacity = 1,
@@ -651,7 +673,8 @@ labels.smp.new <- sprintf(
 pal.smpnew <-  colorNumeric( palette="Blues", domain = log(dep$smp.new), na.color="transparent")
 
 leaflet(dep) %>%
-  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
   addPolygons(fillColor =pal.smpnew(log(dep$smp.new)),
               weight = 2,
               opacity = 1,
@@ -686,7 +709,8 @@ labels.ratio <- sprintf(
 pal.ratio <-  colorNumeric( palette="RdPu", domain = dep$ratio.new*100, na.color="transparent")
 
 leaflet(dep) %>%
-  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png') %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
   addPolygons(fillColor = pal.ratio(dep$ratio.new*100),
               weight = 2,
               opacity = 1,
@@ -711,7 +735,7 @@ leaflet(dep) %>%
                lat2 = -23.920121) 
 ```
 
-Column 2 {.tabset data-width=400}
+Column 2 {.tabset data-width=400 vertical_layout=scroll}
 -------------------------------------
 
 ### Lineal
@@ -768,7 +792,8 @@ plot_ly(nac1) %>%
          hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
-         margin = list(l=65, r=65, b=40, t=50)
+         margin = list(l=65, r=65, b=40, t=50),
+         autosize=T
   ) %>%
   config(locale = "es",
          displaylogo=F,
@@ -1122,7 +1147,7 @@ fig <- fig %>%
                        x = 0.5,
                        y = -0.125,
                        font = list(color = "white")),
-        hovermode = "closest",
+         hovermode = "closest",
          hoverdistance = 50,
          dragmode="pan",
          margin = list(l=50, r=50, b=25, t=50)
@@ -1152,12 +1177,12 @@ valueBox("Datos actualizados al:", icon = "fa-calendar", color = 'teal')
 ```{r}
 if (sum(dep$pos.new, na.rm = T) > sum(y.dep$pos.new, na.rm = T)) {
   valueBox(paste0(format(sum(dep$pos, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pos.new, na.rm = T), big.mark = ",")),  
-         icon = "fa-sort-up",
-         color = 'orange')
+           icon = "fa-sort-up",
+           color = 'orange')
 } else {
   valueBox(paste0(format(sum(dep$pos, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pos.new, na.rm = T), big.mark = ",")), 
-         icon = "fa-sort-down",
-         color = 'teal')
+           icon = "fa-sort-down",
+           color = 'teal')
 }
 ```
 
@@ -1166,12 +1191,12 @@ if (sum(dep$pos.new, na.rm = T) > sum(y.dep$pos.new, na.rm = T)) {
 ```{r}
 if (sum(dep$pas.new, na.rm = T) > sum(y.dep$pas.new, na.rm = T)) {
   valueBox(paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pas.new, na.rm = T), big.mark = ",")), 
-         icon = "fa-sort-up",
-         color = 'orange')
+           icon = "fa-sort-up",
+           color = 'orange')
 } else {
-valueBox(paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pas.new, na.rm = T), big.mark = ",")), 
-         icon = "fa-sort-down",
-         color = 'teal')
+  valueBox(paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pas.new, na.rm = T), big.mark = ",")), 
+           icon = "fa-sort-down",
+           color = 'teal')
 }
 ```
 
@@ -1246,12 +1271,12 @@ plots <- lapply(vars, function(var) {
                                           color = "white")),
            paper_bgcolor="black",
            plot_bgcolor="black",
-         legend = list(orientation = "h",  
-                       xanchor = "center",
-                       yanchor = "bottom",
-                       y = -0.125,
-                       x = 0.5,
-                       font = list(color = "white")),
+           legend = list(orientation = "h",  
+                         xanchor = "center",
+                         yanchor = "bottom",
+                         y = -0.125,
+                         x = 0.5,
+                         font = list(color = "white")),
            showlegend =T)
 })
 
@@ -1342,12 +1367,12 @@ plots <- lapply(vars, function(var) {
                                           color = "white")),
            paper_bgcolor="black",
            plot_bgcolor="black",
-         legend = list(orientation = "h",  
-                       xanchor = "center",
-                       yanchor = "bottom",
-                       y = -0.125,
-                       x = 0.5,
-                       font = list(color = "white")),
+           legend = list(orientation = "h",  
+                         xanchor = "center",
+                         yanchor = "bottom",
+                         y = -0.125,
+                         x = 0.5,
+                         font = list(color = "white")),
            showlegend =T)
 })
 
@@ -1437,12 +1462,12 @@ plots <- lapply(vars, function(var) {
                                           color = "white")),
            paper_bgcolor="black",
            plot_bgcolor="black",
-         legend = list(orientation = "h",  
-                       xanchor = "center",
-                       yanchor = "bottom",
-                       y = -0.125,
-                       x = 0.5,
-                       font = list(color = "white")),
+           legend = list(orientation = "h",  
+                         xanchor = "center",
+                         yanchor = "bottom",
+                         y = -0.125,
+                         x = 0.5,
+                         font = list(color = "white")),
            showlegend =T)
 })
 
@@ -1533,12 +1558,12 @@ plots <- lapply(vars, function(var) {
                                           color = "white")),
            paper_bgcolor="black",
            plot_bgcolor="black",
-         legend = list(orientation = "h",  
-                       xanchor = "center",
-                       yanchor = "bottom",
-                       y = -0.125,
-                       x = 0.5,
-                       font = list(color = "white")),
+           legend = list(orientation = "h",  
+                         xanchor = "center",
+                         yanchor = "bottom",
+                         y = -0.125,
+                         x = 0.5,
+                         font = list(color = "white")),
            showlegend =T)
 })
 
@@ -1556,7 +1581,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
                 font = list(size = 16,
                             color = "white")),
            list(text = "<b>Media móvil - Número de casos</b>",
-                x = -0.1,
+                x = -0.085,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1623,26 +1648,26 @@ deps2 <- deps4 %>% select(-c("Fecha_2")) %>% cbind(deps2)
 plots <- lapply(vars_mav_new, function(var) {
   
   plot_ly(deps2) %>%
-  add_lines(x = ~Fecha, 
-            y = as.formula(paste0("~", var)),
-            text = paste(deps2$tm, "días desde hoy"),
-            hovertemplate = paste('<b>Fecha</b>: %{x}',
-                                  '<br><b>Media Móvil</b>: %{y:.2f}<br>',
-                                  '<b>%{text}</b>'),
-                           name = ifelse(var == vars[length(vars)],"Media Móvil",var),
-                                  legendgroup = 'group1',
-                           showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE), 
-                                  line = list(color = "#ffa600", 
-                                              width = 4)
-            ) %>%
-              add_segments(x = "2020-04-08", xend = "2020-04-08", 
-                           y = 0, yend = max(deps4[paste0(var,"_2")],na.rm = T),
-                           text="2020-04-08", name="Inicio de P.R's",
-                           hovertemplate = paste('<b>%{text}</b>'),
-                           legendgroup = 'group2',
-                           showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE), 
-                           line = list(color = "#7aa82a", 
-                                       width = 3, 
+    add_lines(x = ~Fecha, 
+              y = as.formula(paste0("~", var)),
+              text = paste(deps2$tm, "días desde hoy"),
+              hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                    '<br><b>Media Móvil</b>: %{y:.2f}<br>',
+                                    '<b>%{text}</b>'),
+              name = ifelse(var == vars[length(vars)],"Media Móvil",var),
+              legendgroup = 'group1',
+              showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE), 
+              line = list(color = "#ffa600", 
+                          width = 4)
+    ) %>%
+    add_segments(x = "2020-04-08", xend = "2020-04-08", 
+                 y = 0, yend = max(deps4[paste0(var,"_2")],na.rm = T),
+                 text="2020-04-08", name="Inicio de P.R's",
+                 hovertemplate = paste('<b>%{text}</b>'),
+                 legendgroup = 'group2',
+                 showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE), 
+                 line = list(color = "#7aa82a", 
+                             width = 3, 
                              dash = "dot")
     )%>%
     add_trace(x = ~Fecha, y = as.formula(paste0("~", var,"_2")),
@@ -1652,7 +1677,7 @@ plots <- lapply(vars_mav_new, function(var) {
               hovertemplate = paste('<b>Fecha</b>: %{x}',
                                     '<br><b>Nuevos Casos:</b> %{y}</br>',
                                     '<b>%{text}</b><extra></extra>'),
-                           showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE)) %>%
+              showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE)) %>%
     layout(xaxis = list(range = c(min(deps2$Fecha),
                                   max(deps2$Fecha)),
                         color = "white"),
@@ -1668,12 +1693,12 @@ plots <- lapply(vars_mav_new, function(var) {
                                           color = "white")),
            paper_bgcolor="black",
            plot_bgcolor="black",
-         legend = list(orientation = "h",  
-                       xanchor = "center",
-                       yanchor = "bottom",
-                       x = 0.5,
-                       y = -0.125,
-                       font = list(color = "white")),
+           legend = list(orientation = "h",  
+                         xanchor = "center",
+                         yanchor = "bottom",
+                         x = 0.5,
+                         y = -0.125,
+                         font = list(color = "white")),
            showlegend =T)
 })
 
@@ -1724,7 +1749,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
 #  add_lines(alpha = 0.1, name = "Otros Departamentos", hoverinfo = "none", 
 #              line = list(color = "#64889a"),
 #                            width = 1)
-  
+
 #allCities %>%
 #  filter(REGION == "LIMA") %>%
 #  add_lines(name = "LIMA")
@@ -1778,14 +1803,14 @@ plots <- lapply(vars_pmav_new, function(var) {
                               showarrow = FALSE,
                               font = list(size = 16,
                                           color = "white")),
-         paper_bgcolor="black",
-         plot_bgcolor="black",
-         legend = list(orientation = "h",  
-                       xanchor = "center",
-                       yanchor = "bottom",
-                       x = 0.5,
-                       y = -0.125,
-                       font = list(color = "white")))
+           paper_bgcolor="black",
+           plot_bgcolor="black",
+           legend = list(orientation = "h",  
+                         xanchor = "center",
+                         yanchor = "bottom",
+                         x = 0.5,
+                         y = -0.125,
+                         font = list(color = "white")))
 })
 
 subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
@@ -1878,13 +1903,13 @@ plots <- lapply(vars_mav_new, function(var) {
                               showarrow = FALSE,
                               font = list(size = 16,
                                           color = "white")),
-         paper_bgcolor="black",
-         plot_bgcolor="black",
-         legend = list(orientation = "h",  
-                       xanchor = "center",
-                       yanchor = "bottom",
-                       x = 0.5,
-                       font = list(color = "white")))
+           paper_bgcolor="black",
+           plot_bgcolor="black",
+           legend = list(orientation = "h",  
+                         xanchor = "center",
+                         yanchor = "bottom",
+                         x = 0.5,
+                         font = list(color = "white")))
 })
 
 subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
@@ -1974,3 +1999,129 @@ dep %>%
   formatStyle(columns = c('Region', 'Casos', 'Casos nuevos', 'Fallecidos', 'Fallecidos nuevos', 'Pruebas'), 
               backgroundColor = 'black', color = 'white')
 ```
+
+
+
+
+
+
+
+
+
+LATAM {data-orientation=rows}
+=====================================  
+
+
+Column 1 {.tabset}
+-------------------------------------
+
+
+
+
+```{r}
+LATAM <- LATAM %>%
+  group_by(location) %>%
+  dplyr::mutate( mav_new = slide_dbl(new_cases, ~mean(.x, na.rm = TRUE), .before = 6))  
+
+  vars_latam_mav <- LATAM %>%
+  dplyr::select(date,location,mav_new) %>% 
+  dplyr::filter(date == c.date) %>%
+  dplyr::summarise(max = as.numeric(max(mav_new)))%>% 
+  dplyr::arrange(dplyr::desc(max)) %>%
+  dplyr::select(location)%>% 
+  .$location
+
+
+
+
+plots <- lapply(vars_latam_mav, function(var) {  
+  
+
+LATAM %>%
+  group_by(location) %>%
+  plot_ly(x = ~date, y = ~mav_new)%>%
+  add_lines(name = "Otras regiones", hoverinfo = "none", 
+            line = list(color = "#007e7b",
+            width = 0.7),
+            showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE))%>%
+  filter(location == var) %>%
+  add_lines(text = var,
+            hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                  '<br><b>Media Móvil</b>: %{y:.2f}<br>',
+                                  '<b>%{text}</b>'),
+            name = var,
+            showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE), 
+            line = list(color = "#ffa600", width = 4)
+  ) %>%
+    layout(xaxis = list(range = c(min(as.Date("2020-02-28")),
+                                  max(LATAM$date)),
+                        color = "white"),
+           yaxis = list(color = "white",
+                        title = "", type ="log", tickmode="linear"
+                        ),
+           annotations = list(text = var,
+                              x = 0, y = 1.05,
+                              yref = "paper",xref = "paper",
+                              xanchor = "left",yanchor = "top",
+                              showarrow = FALSE,
+                              font = list(size = 16,
+                                          color = "white")),
+           paper_bgcolor="black",
+           plot_bgcolor="black",
+           legend = list(orientation = "h",  
+                         xanchor = "center",
+                         yanchor = "bottom",
+                         x = 0.5,
+                         y = -0.125,
+                         font = list(color = "white")))
+})
+
+
+subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T)%>%
+  layout(title = list(text = "<b>Media móvil de casos nuevos - Latinoamerica</b>",
+                      font = list(size = 24,
+                                  color = "white")),
+         annotations = list(
+           list(text = "<b>Fecha de reporte</b>",
+                x = 0.5,
+                y = -0.09,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 16,
+                            color = "white")),
+           list(text = "<b>Media móvil - Nuevos casos por día</b>",
+                x = -0.05,
+                y = 0.5,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 16,
+                            color = "white"),
+                textangle = -90)),
+         hovermode = "all",
+         hoverdistance = 100000000,
+         dragmode="pan",
+         margin = list(l=75, r=0, b=65, t=65),
+         yaxis = list(type="log", tickmode="linear")
+  ) %>%
+  config(locale = "es",
+         displaylogo=F,
+         modeBarButtonsToRemove = c("select2d","zoom2d","lasso2d",
+                                    "drawclosedpath","drawopenpath",
+                                    "hoverClosestCartesian","hoverCompareCartesian",
+                                    "toggleHover","toggleSpikelines")
+  )
+
+
+
+```
+
+
+
+
+
+
+
+
+
