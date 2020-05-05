@@ -925,8 +925,20 @@ plot_ly(nac3) %>%
 ### Duplicación
 
 ```{r, message=F, warning=F}
+x <- data.frame(Dia = as.Date(seq(1,30, 1)+today)  )
 
-plot_ly(nac4)%>%
+
+y <- x %>%
+  dplyr::mutate(dias = as.numeric(Dia-first(nac4$Dia), unit="days"),
+                calc = dias+20,
+                dup_1 = exp((log(2)/1)*dias),
+                dup_2 = exp((log(2)/2)*dias),
+                dup_3 = exp((log(2)/3)*dias),
+                dup_4 = exp((log(2)/4)*dias)
+  ) %>%
+  bind_rows(nac4)
+
+plot_ly(y)%>%
   add_trace(x = ~dias, y = ~cum_pos, 
             type = 'scatter',
             mode = 'lines+markers', 
@@ -1587,7 +1599,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
 
 
 
-Regional - Parte 2 {data-orientation=columns}
+Todas las regiones {data-orientation=columns}
 =====================================  
 
 
@@ -1960,6 +1972,46 @@ Columm 2 {data-width=300}
 # 
 # waffle(c(50,20), rows = 5, title = "Your basic waffle chart", 
 #        use_glyph = "male",glyph_size=10)
+
+library(hrbrthemes)
+library(ggwaffle)
+library(waffle)
+library(waffle)
+library(extrafont)
+loadfonts(device = "win")
+
+
+deps %>% 
+  mutate(REGION = ifelse(REGION =="LIMA" | REGION =="CALLAO", "Lima Metropolitana", "Otras Regiones")) %>% 
+  group_by(REGION
+  ) %>% 
+  dplyr::summarize(max = sum(max(Positivos_totales))
+  ) %>%
+  dplyr::mutate(max = round(max/sum(max)*100),
+         REGION = as.factor(REGION)
+  )%>%
+  ggplot(aes(label = REGION, values = max)) +
+  geom_pictogram(n_rows = 20, aes(colour = REGION), flip = TRUE, make_proportional = T,
+    family = "FontAwesome", size =5) +
+  scale_color_manual(
+    name = NULL,
+    values = c("#0e5871", "#ffa600"),
+    labels = c("Lima Metropolitana", "Regiones")
+  ) +
+  scale_label_pictogram(
+    name = NULL,
+    values = c("male", "male"),
+    labels = c("Lima Metropolitana", "Regiones")
+  ) +
+  coord_equal() +
+  theme_ipsum_rc(grid="") +
+  theme_enhance_waffle() +
+  theme(legend.key.height = unit(2.25, "line")) +
+  theme(legend.text = element_text(colour = "white"))+ theme(plot.background = element_rect(fill = "black"))+
+    theme(plot.margin = unit(c(0,0,0,0), "cm"))
+
+
+
 ```
 
 ### Tabla por región {.bg}
@@ -1989,11 +2041,11 @@ dep %>%
 
 
 
-LATAM {data-orientation=rows}
+LATAM {data-orientation=columns}
 =====================================  
 
 
-Column 1 {.tabset}
+Column 1 {. tabset}
 -------------------------------------
 
 
@@ -2022,14 +2074,14 @@ LATAM %>%
   add_lines(name = "Otras regiones", hoverinfo = "none", 
             line = list(color = "#007e7b",
             width = 0.7),
-            showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE))%>%
+            showlegend = ifelse(var == vars_latam_mav[length(vars_latam_mav)],TRUE,FALSE))%>%
   filter(location == var) %>%
   add_lines(text = var,
             hovertemplate = paste('<b>Fecha</b>: %{x}',
                                   '<br><b>Media Móvil</b>: %{y:.2f}<br>',
                                   '<b>%{text}</b>'),
             name = var,
-            showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE), 
+            showlegend = ifelse(var == vars_latam_mav[length(vars_latam_mav)],TRUE,FALSE), 
             line = list(color = "#ffa600", width = 4)
   ) %>%
     layout(xaxis = list(range = c(min(as.Date("2020-02-28")),
@@ -2039,7 +2091,7 @@ LATAM %>%
                         title = "", type ="log", tickmode="linear"
                         ),
            annotations = list(text = var,
-                              x = 0, y = 1.05,
+                              x = 0, y = 0.9,
                               yref = "paper",xref = "paper",
                               xanchor = "left",yanchor = "top",
                               showarrow = FALSE,
@@ -2056,7 +2108,7 @@ LATAM %>%
 })
 
 
-subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T)%>%
+subplot(plots, nrows = 3, shareX = T, titleX = F,shareY=T)%>%
   layout(title = list(text = "<b>Media móvil de casos nuevos - Latinoamerica</b>",
                       font = list(size = 24,
                                   color = "white")),
@@ -2098,8 +2150,10 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T)%>%
 
 
 
+Column 2 {. tabset}
+-------------------------------------
 
-### Test
+### Todos los paises
 
 
 ```{r}
@@ -2110,17 +2164,19 @@ LATAM %>%
   highlight(on = "plotly_hover", off = "plotly_doubleclick") %>%
     layout(xaxis = list(range = c(min(as.Date("2020-02-28")),
                                   max(LATAM$date)),
-                        color = "white"),
+                        color = "white",
+                        title ="<b>Fecha de Reporte</b>"),
            yaxis = list(color = "white",
                         title = "", type ="log", tickmode="linear"
                         ),
-           annotations = list(text = "Media móvil de nuevos casos por país",
-                              x = 0, y = 0.5,
+           annotations = list(text = "<b>Media móvil de nuevos casos por país</b>",
+                              x = -0.03, y = 0.5,
                               yref = "paper",xref = "paper",
-                              xanchor = "middle",yanchor = "top",
+                              xanchor = "middle",yanchor = "middle",
                               showarrow = FALSE,
                               font = list(size = 16,
-                                          color = "white")),
+                                          color = "white"),
+                textangle = -90),
            paper_bgcolor="black",
            plot_bgcolor="black",
            legend = list(orientation = "h",  
