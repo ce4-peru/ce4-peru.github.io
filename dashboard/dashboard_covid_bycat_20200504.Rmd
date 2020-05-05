@@ -1,0 +1,364 @@
+---
+title: "CE4 - Dashboard COVID-19"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    source_code: embed
+    social: menu
+    theme: cosmo
+    self_contained: FALSE 
+    fig_mobile: TRUE
+---
+
+<style>                     
+.navbar {
+background-color:black;
+border-color:grey;
+}
+.navbar-brand {
+color:white!important;
+}
+.bg {
+background-color: black;
+color: white;
+}
+body {
+background: black;
+}
+
+body hr {
+border-color: black;
+margin: 10px 0;
+}
+
+.chart-title {
+border-bottom: 1px solid #d7d7d7;
+color: white!important;
+font-size: 14px;
+font-weight: 300;
+padding: 7px 10px 4px;
+}
+
+.nav-tabs-custom {
+background: black;
+border: 1px solid #c4c4c4;
+border-radius: 3px;
+margin-bottom: 8px;
+margin-right: 8px;
+}
+
+.nav-tabs-custom > .nav-tabs {
+margin: 0;
+border-bottom: 1px solid #d7d7d7;
+color: white;
+font-size: 14px;
+font-weight: 300;
+border-top-right-radius: 3px;
+border-top-left-radius: 3px;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a,
+.nav-tabs-custom > .nav-tabs > li.active:hover > a {
+background-color: black;
+color: white;
+}
+
+.nav-tabs-custom > .tab-content {
+background: black;
+padding: 0;
+border-bottom-right-radius: 3px;
+border-bottom-left-radius: 3px;
+display: -webkit-box;
+display: -webkit-flex;
+display: -ms-flexbox;
+display: flex;
+}
+
+.nav-tabs-custom > .tab-content > .chart-wrapper {
+background: black;
+border: none;
+margin: 0;
+}
+
+.value-box {
+border-radius: 1px;
+position: relative;
+display: block;
+margin-right: 4px;
+margin-bottom: 4px;
+box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.value-box > .inner {
+padding: 5px;
+padding-left: 20px;
+padding-right: 20px;
+}
+
+.value-box .value {
+font-size: 20px;
+font-weight: bold;
+margin: 0 0 3px 0;
+white-space: nowrap;
+padding: 0;
+}
+
+.value-box .caption {
+font-size: 20px;
+}
+
+.value-box .icon i {
+position: absolute;
+top: 15px;
+right: 15px;
+font-size: 40px;
+color: rgba(0, 0, 0, 0.5);
+}
+
+.content {
+overflow: auto;
+}
+
+.chart-wrapper { 
+overflow: auto; 
+}
+
+</style>
+
+```{r libraries}
+library(flexdashboard)
+library(rio)
+library(tidyverse)
+library(XML)
+library(httr)
+library(RCurl)
+library(sf)
+library(lubridate)
+library(leaflet)
+library(colorspace)
+library(DT)
+library(zoo)
+library(slider)
+library(plotly)
+library(waffle)
+library(extrafont)
+library(plyr)
+library(extrafont)
+library(waffle)
+library(RColorBrewer)
+options(scipen=999)
+```
+
+```{r imports}
+nac <- rio::import("https://github.com/jincio/COVID_19_PERU/blob/master/reportes_minsa.xlsx?raw=true")
+
+deps <- rio::import("https://github.com/jincio/COVID_19_PERU/blob/master/reportes_minsa.xlsx?raw=true", sheet = 2)
+
+pop <- read_csv("data/peru_pop_stratum.csv") %>%
+  group_by(dep_adm1) %>%
+  dplyr::summarise(pop = sum(N)) %>%
+  dplyr::mutate(REGION = toupper(dep_adm1))
+
+
+Paises_LATAM <- c("Argentina","Bolivia","Brazil","Chile","Colombia","Ecuador","Mexico","Peru","Uruguay","Venezuela")
+LATAM <- read_csv ("https://covid.ourworldindata.org/data/owid-covid-data.csv") %>%
+  dplyr::filter(location %in% Paises_LATAM) %>%
+  dplyr::mutate( mav_new = slide_dbl(new_cases, ~mean(.x, na.rm = TRUE), .before = 6))
+
+shp <- st_read("Limite_departamental", stringsAsFactors = F)
+```
+
+
+```{r DMdeps, message=F, warning=F}
+shp <- shp %>% 
+  st_transform(4326) %>% 
+  select(Departamento = NOMBDEP)
+
+
+c.date <- max(deps$Fecha)
+y.date <- as.Date(c.date) - 1 
+date <- ymd(Sys.Date())
+
+
+dep <- 
+  deps %>% 
+  dplyr::select(dat = Fecha,
+                dep = REGION, 
+                pos = Positivos_totales, 
+                pos.imp = PositivosImputados_totales,
+                pas =Fallecidos, 
+                smp =Total_muestras
+                ) %>% 
+  dplyr::mutate(pas = pas %>% if_else(is.na(.), 0, .)
+                ) %>% 
+  group_by(dep
+           ) %>% 
+  dplyr::mutate(pos.new = pos - lag(pos, n = 1),
+                pos.imp.new = pos.imp - lag(pos.imp, n = 1),
+                pas.new = lag(pas, n = 1),
+                smp.new = lag(smp, n = 1),
+                ratio.new = signif(pos.new/smp.new), digits = 3,
+                days.start =as.numeric(dat-first(dat), unit="days"),
+                days.end = difftime(date, dat , units = c("days"))
+                )
+
+dep <- merge(dep, shp, by.y = 'Departamento', by.x = 'dep', all.x = T) %>%
+  st_as_sf(sf_column_name = 'geometry') %>%
+  merge(pop %>% 
+          select(dep = REGION, pop)) %>% 
+  mutate(pos.hab = pos/pop*100000,
+         smp.hab = smp/pop*100000,
+         pos.new.hab = smp/pop*100000)
+
+
+```
+
+
+
+
+Casos Acumulados {.bg}
+=====================================  
+
+Column 1 {.tabset data-width=350} 
+-------------------------------------
+
+### Casos
+
+```{r}
+labels.total <- sprintf(
+  "<strong>%s</strong><br/<strong>Casos: </strong>%s",
+  dep$dep, dep$pos) %>% lapply(htmltools::HTML)
+
+pal.cases <- colorNumeric( palette="RdPu", domain = log(dep$pos), na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
+  addPolygons(fillColor = pal.cases(log(dep$pos)),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.total,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal = pal.cases, values = log(dep$pos), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
+```
+
+### Casos / 100k hab
+
+```{r}
+labels.pos.hab <- sprintf(
+  "<strong>%s</strong><br/<strong>Casos/100k hab: </strong>%s",
+  dep$dep, round(dep$pos.hab)) %>% lapply(htmltools::HTML)
+
+pal.pos.hab <- colorNumeric( palette="RdPu", domain = log(dep$pos.hab), na.color="transparent")
+
+leaflet(dep) %>%
+  addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+           options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
+  addPolygons(fillColor = pal.pos.hab(log(dep$pos.hab)),
+              weight = 2,
+              opacity = 1,
+              color = "white",
+              dashArray = "",
+              fillOpacity = 0.7,
+              highlight = highlightOptions(
+                weight = 5,
+                color = "#666",
+                dashArray = "",
+                fillOpacity = 0.7,
+                bringToFront = TRUE),
+              label = labels.pos.hab,
+              labelOptions = labelOptions(
+                style = list("font-weight" = "normal", padding = "3px 8px"),
+                textsize = "15px",
+                direction = "auto")) %>%
+  addLegend("bottomleft", pal = pal.pos.hab, values = log(dep$pos.hab), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  setMaxBounds(lng1 = -90.648918,
+               lat1 = 4.991423,
+               lng2 = -59.605965,
+               lat2 = -23.920121) 
+```
+
+### Lineal
+
+```{r, message=F, warning=F}
+plot_ly(nac1) %>%
+  add_trace(x = ~Dia, y = ~pos_new, 
+            type = 'bar', name = 'Casos Nuevos',
+            marker = list(color = '#006b7d'), 
+            text = paste(nac1$tm, "días desde hoy"),
+            hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                  '<br><b>Nuevos Casos:</b> %{y}</br>',
+                                  '<b>%{text}</b><extra></extra>'))%>% 
+  add_trace(x = ~Dia, y = ~cum_pos, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Casos Acumulados', 
+            yaxis = 'y2',
+            line = list(color = '#ffa600'), 
+            marker = list(color = '#ffa600'),
+            text = paste(nac1$tm, "días desde hoy"),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Casos Acumulados: %{y:.0f}</b></br><extra></extra>",
+                                   '<b>%{text}</b>'))  %>%
+  add_segments(x = "2020-04-08", xend = "2020-04-08", 
+               y = 0, yend=max(nac1$pos_new),
+               text="2020-04-08",name="Inicio de P.R's",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+               width=2, 
+               line = list(color = "#7aa82a", 
+                           width = 3, 
+                           dash = "dot")
+  )%>% 
+  layout(title = '<b>Casos nuevos y acumulados - Perú</b>',
+         titlefont=list(color="white"),
+         xaxis = list(title = "<b>Fecha de Reporte</b>",
+                      color = "white"),
+         yaxis = list(side = 'left', title = '<b>Casos Nuevos por día (lineal)</b>', 
+                      showgrid = FALSE, zeroline = FALSE,
+                      color = "white"),
+         yaxis2 = list(side = 'right', overlaying = "y",
+                       title = '<b>Casos acumulados por día (lineal)</b>', 
+                       showgrid = FALSE, zeroline = FALSE,
+                       color = "white"),
+         legend = list(orientation = "h",  
+                       xanchor = "center",
+                       yanchor = "bottom",
+                       x = 0.5,
+                       y = -0.125,
+                       font = list(color = "white")),
+         paper_bgcolor="black",
+         plot_bgcolor="black",
+         hovermode = "closest",
+         hoverdistance = 50,
+         dragmode="pan",
+         margin = list(l=65, r=65, b=40, t=50),
+         autosize=T
+  ) %>%
+  config(locale = "es",
+         displaylogo=F,
+         modeBarButtonsToRemove = c("select2d","zoom2d","lasso2d",
+                                    "drawclosedpath","drawopenpath",
+                                    "hoverClosestCartesian","hoverCompareCartesian",
+                                    "toggleHover","toggleSpikelines"),
+         responsive = T
+  )
+
+```
