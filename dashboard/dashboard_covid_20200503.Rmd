@@ -1992,7 +1992,7 @@ deps %>%
   )%>%
   ggplot(aes(label = REGION, values = max)) +
   geom_pictogram(n_rows = 20, aes(colour = REGION), flip = TRUE, make_proportional = T,
-    family = "FontAwesome", size =5) +
+    family = "FontAwesome", size =10) +
   scale_color_manual(
     name = NULL,
     values = c("#0e5871", "#ffa600"),
@@ -2003,13 +2003,11 @@ deps %>%
     values = c("male", "male"),
     labels = c("Lima Metropolitana", "Regiones")
   ) +
-  coord_equal() +
   theme_ipsum_rc(grid="") +
   theme_enhance_waffle() +
   theme(legend.key.height = unit(2.25, "line")) +
   theme(legend.text = element_text(colour = "white"))+ theme(plot.background = element_rect(fill = "black"))+
     theme(plot.margin = unit(c(0,0,0,0), "cm"))
-
 
 
 ```
@@ -2041,11 +2039,11 @@ dep %>%
 
 
 
-LATAM {data-orientation=columns}
+LATAM {.bg}
 =====================================  
 
 
-Column 1 {. tabset}
+Column 1 {.bg}
 -------------------------------------
 
 
@@ -2150,7 +2148,7 @@ subplot(plots, nrows = 3, shareX = T, titleX = F,shareY=T)%>%
 
 
 
-Column 2 {. tabset}
+Column 2 {.bg}
 -------------------------------------
 
 ### Todos los paises
