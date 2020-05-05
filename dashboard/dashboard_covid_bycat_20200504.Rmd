@@ -375,7 +375,6 @@ Mapas {.tabset data-width=250}
 
 ```{r, message=F, warning=F}
 
-
 labels.total <-  sprintf(
   "<strong>%s</strong><br/<strong>Casos: </strong>%s",
   c.dep$dep, c.dep$pos) %>% lapply(htmltools::HTML)
@@ -790,29 +789,33 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
 Casos Nuevos {.bg}
 =====================================  
 
-Mapas {.tabset data-width=350} 
+Mapas {.tabset data-width=250} 
 -------------------------------------
 ### Casos nuevos
 
 ```{r, message=F, warning=F}
+x <- c.dep %>% dplyr::mutate(pos.new = ifelse(pos.new==0,NA, pos.new)) %>% .$pos.new
+
+
 labels.new <- sprintf(
   "<strong>%s</strong><br/<strong>Casos: </strong>%s",
   c.dep$dep, c.dep$pos.new) %>% lapply(htmltools::HTML)
 
-pal.cases <- colorNumeric( palette="RdPu", domain = log(c.dep %>% dplyr::mutate(pos.new = ifelse(pos.new==0,NA, pos.new)) %>% .$pos.new), na.color="transparent")
+pal.cases <- colorNumeric( palette="RdPu", 
+                           domain = log(x), na.color="transparent")
 
 leaflet(c.dep) %>%
   map_tiles() %>%
-  map_poly (c.dep$pos.new,labels.new) %>%
-  addLegend("bottomleft", pal=pal.cases, values = log(c.dep$pos.new), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  map_poly (y=x,
+            z=labels.new) %>%
+  addLegend("bottomleft", pal=pal.cases, values = log(x), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
   map_bounds()
 
+rm(x)
 ```
 
 
-
-
-Column 2 {.tabset data-width=350} 
+Column 2 {.tabset data-width=300} 
 -------------------------------------
 
 ### Diario y media móvil - Lineal
@@ -1236,12 +1239,12 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
 Fallecidos {.bg}
 ===================================== 
 
-Column 1 {.tabset data-width=350} 
+Column 1 {.tabset data-width=250} 
 -------------------------------------
 
 
 
-Column 1 {.tabset data-width=350} 
+Column 1 {.tabset data-width=300} 
 -------------------------------------
 
 
