@@ -126,9 +126,6 @@ overflow: auto;
 
 </style>
 
-Casos Acumulados {.bg}
-=====================================  
-
 ```{r libraries, message=F, warning=F}
 library(flexdashboard)
 library(rio)
@@ -235,7 +232,6 @@ map_poly <-  function(x,y,z) {
 
 ```
 
-
 ```{r deps, message=F, warning=F}
 ## Procesamiento de los datos por región.
 
@@ -330,17 +326,7 @@ dep.pos.imp.new <- dep %>% #Distinto a deps2
                 SAN_MARTIN = `SAN MARTIN`) 
 
 
-
-
-
-
-
-
-
 ```
-
-
-
 
 ```{r, message=F, warning=F}
 
@@ -379,14 +365,16 @@ last.pos <- vars.pos[length(vars.pos)]
 
 ```
 
-Mapas {.tabset data-width=350} 
+Casos Acumulados {.bg}
+=====================================  
+
+Mapas {.tabset data-width=250} 
 -------------------------------------
 
 ### Casos
 
 ```{r, message=F, warning=F}
 
-f<-"data\\map1.html"
 
 labels.total <-  sprintf(
   "<strong>%s</strong><br/<strong>Casos: </strong>%s",
@@ -398,13 +386,8 @@ leaflet(c.dep) %>%
   map_tiles() %>%
   map_poly (c.dep$pos,labels.total)  %>%
   addLegend("bottomleft", pal = pal.cases, values = log(c.dep$pos), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x)))) %>% 
-  map_bounds %>%
-  htmlwidgets::saveWidget(file.path(normalizePath(dirname(f)),basename(f)),selfcontained = F)
-```
-
-
-```{r, echo=FALSE}
-htmltools::includeHTML("data/map1.html")
+  map_bounds ()
+    
 ```
 
 ### Casos / 100k hab
@@ -422,7 +405,7 @@ leaflet(c.dep) %>%
   addLegend("bottomleft", pal = pal.cases, values = log(c.dep$pos.hab), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x)))) %>% map_bounds
 ```
 
-Nacional {.tabset data-width=350} 
+Nacional {.tabset data-width=300} 
 -------------------------------------
 
 ### Lineal
@@ -718,6 +701,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
 ```
 
 ### Acumulados - Logaritmico
+
 ```{r, message=F, warning=F}
 
 plots <- lapply(vars.pos, function(var) {

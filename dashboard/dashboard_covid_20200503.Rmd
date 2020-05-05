@@ -2039,15 +2039,15 @@ dep %>%
 
 
 
-LATAM {.bg}
+LATAM 
 =====================================  
 
 
-Column 1 {.bg}
+Column 1 
 -------------------------------------
 
 
-### Casos Nuevos
+### Casos Nuevos {.bg}
 
 ```{r}
 LATAM <- LATAM %>%
@@ -2148,10 +2148,10 @@ subplot(plots, nrows = 3, shareX = T, titleX = F,shareY=T)%>%
 
 
 
-Column 2 {.bg}
+Column 2 
 -------------------------------------
 
-### Todos los paises
+### Todos los paises {.bg}
 
 
 ```{r}
