@@ -1,0 +1,22 @@
+<!doctype html>
+{% if page.language %}
+<html lang="{{ page.language | split: '-' | first }}">
+{% else %}
+<html lang="{{ site.locale }}">
+{% endif %}
+  {% include head.html%}
+  <body>
+    {% include header.html %}
+	<section class="main">
+		<div class="dashcontainer">
+			{% if page.special %}
+			<h1 style="font-size: 30px;	padding-bottom: 15px; text-align: center;">{{ page.title }}</h1>
+		{% else %}
+			<h1>{{ page.title }}</h1>
+		{% endif %}
+		{{ content }}
+		</div>
+	</section>
+	{% include footer.html %}
+  </body>
+</html>
