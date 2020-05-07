@@ -4,7 +4,7 @@ permalink: /graficos/
 ---
 
 <div class="video-container">
-    <iframe src="https://ce4-peru.github.io/prueba" height="1920" width="1080" allowfullscreen="" frameborder="0">
+    <iframe src="https://ce4-peru.github.io/dashboard/dashboard_covid_20200503.html" height="1920" width="1080" allowfullscreen="" frameborder="0">
     </iframe>
 </div>
 
