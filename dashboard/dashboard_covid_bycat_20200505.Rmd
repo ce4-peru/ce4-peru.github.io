@@ -172,10 +172,10 @@ shp <- st_read("Limite_departamental", stringsAsFactors = F)%>%
 ```
 
 ```{r global, message=F, warning=F}
-c.date <- max(deps$Fecha)
+c.date <- max(dep$Fecha)
 y.date <- as.Date(c.date) - 1 
 date <- ymd(Sys.Date())
-f.date <- min(deps$Fecha)
+f.date <- min(dep$Fecha)
 
 # https://stackoverflow.com/questions/6461209/how-to-round-up-to-the-nearest-10-or-100-or-x
 # Rounds Up to a nice number, defined as a number divisible by those in the vector.
@@ -202,8 +202,16 @@ plotly_config <- function(x) {
   )
 }
 
-
-
+plotly_layout <- function(x) {
+  x %>% layout(paper_bgcolor="black",
+         plot_bgcolor="black",
+         hoverdistance = 50,
+         hovermode = "closest",
+         dragmode="pan",
+         margin = list(l=65, r=65, b=40, t=50),
+         autosize=T
+         )
+}
 
 # %>%
 #   add_segments(x = "2020-03-15", xend = "2020-03-15", 
@@ -373,6 +381,16 @@ dep.pos.imp.new <- dep %>%
                 SAN_MARTIN = `SAN MARTIN`) 
 
 
+
+
+y<- dep.pos.imp.new 
+colnames(y) <- paste(colnames(y), "2", sep = "_")
+
+dep.pos_dep.pos.imp.new<- y %>% 
+  select(-c("dat_2","days.end_2")) %>% 
+  cbind(dep.pos)
+
+
 ```
 
 ```{r, message=F, warning=F}
@@ -414,7 +432,7 @@ last.pos <- vars.pos[length(vars.pos)]
 Casos Acumulados {.bg}
 =====================================  
 
-Mapas {.tabset data-width=250} 
+Mapas {.tabset data-width=200} 
 -------------------------------------
 
 ### Casos
@@ -472,40 +490,43 @@ Nacional {.tabset data-width=300}
 ### Lineal
 
 ```{r, message=F, warning=F}
-nac %>%
-  plot_ly()%>% 
-  add_trace(x = ~dat, y = ~pos, 
-            type = 'scatter',
-            mode = 'lines+markers', 
-            name = 'Casos Acumulados',
-            line = list(color = '#ffa600'), 
-            marker = list(color = '#ffa600'),
-            text = paste(nac$days.end, "días desde hoy"),
-            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
-                                   "<br><b>Casos Acumulados: %{y:.0f}</b></br><extra></extra>",
-                                   '<b>%{text}</b>'),
-            yaxis="y2") %>%
+CA_2_1<- nac %>%
+  plot_ly() %>%
   add_trace(x = ~dat, y = ~pos.new, 
             type = 'bar', name = 'Casos Nuevos',
             marker = list(color = '#006b7d'), 
             text = paste(nac$days.end, "días desde hoy"),
             hovertemplate = paste('<b>Fecha</b>: %{x}',
                                   '<br><b>Nuevos Casos:</b> %{y}</br>',
-                                  '<b>%{text}</b><extra></extra>'))  %>%
+                                  '<b>%{text}</b><extra></extra>'),
+            yaxis="y") %>% 
+  add_trace(x = ~dat, y = ~pos, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Casos Acumulados',
+            line = list(color = '#ffa600'), 
+            marker = list(color = '#ffa600',
+                          maxdisplayed = 5),
+            text = paste(nac$days.end, "días desde hoy"),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Casos Acumulados: %{y:.0f}</b></br><extra></extra>",
+                                   '<b>%{text}</b>'),
+            yaxis="y2") %>%
   add_segments(x = "2020-04-08", xend = "2020-04-08", 
                y = 0, yend=roundUpNice(max(nac$pos.new)),
                text="2020-04-08",name="Pruebas Rápidas",
                hovertemplate = paste('<b>%{text}</b>'),
-               legendgroup = 'group2',
                width=2, 
                line = list(color = "#008f6a", 
                            width = 3, 
                            dash = "dot"))%>% 
-  layout(title = '<b>Casos nuevos y acumulados - Perú</b>',
+  layout(title = '',
          titlefont=list(color="white"),
          xaxis = list(title = "<b>Fecha de Reporte</b>",
                       color = "white",
-                      tickformat= "%d-%b"),
+                      tickformat= "%d-%b",
+                      range = c(as.Date("2020-03-06"),
+                                  as.Date(c.date))),
          yaxis = list(side = 'left', title = '<b>Casos Nuevos por día</b>', 
                       showgrid = T, gridcolor = "#818181", zeroline = F,
                       color = "#98cbe1",
@@ -513,7 +534,7 @@ nac %>%
                       autotick=F,
                       tick0=0,
                       dtick=roundUpNice(max(nac$pos.new))/5),
-         yaxis2 = list(side = 'right', overlaying = "y",
+         yaxis2 = list(side = 'right', overlaying = "y3",
                        title = '<b>Casos acumulados (lineal)</b>', 
                        showgrid = F, zeroline = F,
                        color = "#ffd29f",
@@ -521,181 +542,246 @@ nac %>%
                       autotick=F,
                       tick0=0,
                       dtick=roundUpNice(max(nac$pos))/5),
-         legend = list(orientation = "v",  
-                       xanchor = "center",
-                       yanchor = "bottom",
-                       x = 0.25,
-                       y = 0.7,
-                       font = list(color = "white")),
-         paper_bgcolor="black",
-         plot_bgcolor="black",
-         hovermode = "closest",
-         hoverdistance = 50,
-         dragmode="pan",
-         margin = list(l=65, r=65, b=40, t=50),
-         autosize=T
+           annotations = list(text = "<b>Casos nuevos y acumulados - Perú</b>",
+                              x = 0.5, y = 1.1,
+                              yref = "paper",xref = "paper",
+                              xanchor = "middle",yanchor = "middle",
+                              showarrow = FALSE,
+                              font = list(size = 20,
+                                          color = "white")),
+          legend = list(orientation = "h",  
+                        xanchor = "bottom",
+                        yanchor = "middle",
+                       x = 0.5,
+                        y = -0.125,
+                       font = list(color = "white"))
   ) %>% 
-  plotly_config
+  plotly_config() %>% 
+  plotly_layout()
   
 
-```
-
-### Logaritmico 
-
-```{r, message=F, warning=F}
-nac %>%
-  plot_ly() %>%
-  add_trace(x = ~dat, y = ~pos.new, 
-            type = 'bar', name = 'Casos Nuevos',
-            marker = list(color = '#006b7d'), 
-            text = paste(nac$tm, "días desde hoy"),
-            hovertemplate = paste('<b>Fecha</b>: %{x}',
-                                  '<br><b>Nuevos Casos:</b> %{y}</br>',
-                                  '<b>%{text}</b><extra></extra>'))%>% 
-  add_trace(x = ~dat, y = ~pos, 
-            type = 'scatter',
-            mode = 'lines+markers', 
-            name = 'Casos Acumulados', 
-            yaxis = 'y2',
-            line = list(color = '#ffa600'), 
-            marker = list(color = '#ffa600'),
-            text = paste(nac$tm, "días desde hoy"),
-            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
-                                   "<br><b>Casos Acumulados: %{y:.0f}</b></br><extra></extra>",
-                                   '<b>%{text}</b>')) %>%
-  add_segments(x = "2020-04-08", xend = "2020-04-08", 
-               y = 0, yend=max(nac$pos.new),
-               text="2020-04-08",name="Inicio de P.R's",
-               hovertemplate = paste('<b>%{text}</b>'),
-               legendgroup = 'group2',
-               width=2, 
-               line = list(color = "#7aa82a", 
-                           width = 3, 
-                           dash = "dot")
-  ) %>% 
-  layout(title = '<b>Casos nuevos y acumulados - Perú</b>',
-         titlefont=list(color="white"),
-         xaxis = list(title = "<b>Fecha de reporte</b>",
-                      color ="white"),
-         yaxis = list(side = 'left', title = '<b>Casos Nuevos por día (lineal)</b>', 
-                      showgrid = FALSE, zeroline = FALSE,
-                      color="white"),
-         yaxis2 = list(side = 'right', overlaying = "y", type = "log",
-                       title = '<b>Casos acumulados por día (logaritmica)</b>', 
-                       showgrid = FALSE, zeroline = FALSE,
-                       tickmode = "linear",
-                       tick0 = 0,
-                       color="white"),
-         legend = list(orientation = "h",  
-                       xanchor = "center",
-                       yanchor = "bottom",
-                       x = 0.5,
-                       y = -0.125,
-                       font = list(color = "white")),
-         paper_bgcolor="black",
-         plot_bgcolor="black",
-         hovermode = "closest",
-         hoverdistance = 50,
-         dragmode="pan",
-         margin = list(l=65, r=65, b=40, t=50)
-  ) %>% plotly_config
 ```
 
 ### Duplicación
 
 ```{r, message=F, warning=F}
 
-plot_ly(dup.nac) %>%
-  add_trace(x = ~days.start,  y = ~pos, 
-            type = 'scatter',
-            mode = 'lines+markers', 
-            name = 'Casos Acumulados',
-            line = list(color = '#ffa600'), 
-            marker = list(color = '#ffa600'),
-            hovertemplate = ~paste("<br><b>Casos Acumulados: %{y:.d0}</b></br><extra></extra>"),
-            legendgroup = 'group1') %>% 
-  add_trace(x = ~days.start, y = ~dup.1,
+CA_2_2<- plot_ly(dup.nac)%>% 
+  add_trace(x = ~dat, y = ~dup.1,
             mode = 'lines', 
-            name = 'Casos se duplican en un (1) día',
+            name = 'Un (1) día',
             line = list(color = '#0e5871',
                         dash = "dash",
                         width=3.5),
             text = "Casos se duplican en un (1) día",
             hoverinfo = "text",
             legendgroup = 'group2') %>% 
-  add_trace(x = ~days.start,y = ~dup.2,
+  add_trace(x = ~dat, y = ~dup.2,
             mode = 'lines', 
-            name = 'Casos se duplican en dos (2) días',
+            name = 'Dos (2) días',
             line = list(color = '#006b7d',
                         dash = "dash",
                         width=3.5),
             text = "Casos se duplican en dos (2) días",
             hoverinfo = "text",
             legendgroup = 'group2') %>% 
-  add_trace(x = ~days.start,y = ~dup.3,
+  add_trace(x = ~dat, y = ~dup.3,
             mode = 'lines', 
-            name = 'Casos se duplican en tres (3) días',
+            name = 'Tres (3) días',
             line = list(color = '#007e7b',
                         dash = "dash",
                         width=3.5),
             text = "Casos se duplican en tres (3) días",
             hoverinfo = "text",
             legendgroup = 'group2') %>% 
-  add_trace(x = ~days.start,y = ~dup.4,
+  add_trace(x = ~dat, y = ~dup.4,
             mode = 'lines', 
-            name = 'Casos se duplican en cuatro (4) días',
+            name = 'Cuatro (4) días',
             line = list(color = '#008f6a',
                         dash = "dash",
                         width=3.5),
-            text = "Casos se duplican en tres (4) días",
+            text = "Casos se duplican en cuatro (4) días",
             hoverinfo = "text",
-            legendgroup = 'group2')  %>% 
-  layout(title = '<b>Total de casos acumulados</b>',
-         titlefont=list(color="white"),
-         xaxis = list(title = "<b>Días desde el primer reporte</b>",
+            legendgroup = 'group2')%>%
+  add_trace(x = ~dat, y = ~pos, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Casos Acumulados',
+            line = list(color = '#ffa600'), 
+            marker = list(color = '#ffa600'),
+            hovertemplate = ~paste("<br><b>Casos Acumulados: %{y:.d0}</b></br><extra></extra>"),
+            legendgroup = 'group1')   %>% 
+  layout(title = list(text= '<b>Tiempo de duplicación de casos acumulados</b>',
+                      font = list(
+                        size = 20,
+                        color="white")),
+         xaxis = list(title = list(text="<b>Días desde el primer reporte</b>",
+                                   standoff = 15),
                       range = c(as.Date(min(f.date)),max(date+15)),
-                      color ="white"),
-         yaxis = list(side = 'left', title = '<b>Total de casos acumulados</b>', type="log", range = c(min(0),
-                                 max(6)),
-                      showgrid = FALSE, zeroline = FALSE,
+                      color ="white",
+                      tickformat= "%d-%b", 
+                      showgrid = F, zeroline = F),
+         yaxis = list(side = 'left', 
+                      title = list(text= '<b>Total de casos acumulados</b>', 
+                                   font = list(size = 16,
+                                               color = "ffd29f"),
+                                   standoff = 15),   
+                      type="log", automargin = T,
+                      range = c(min(0),max(6)), 
+                      showgrid = T, gridcolor = "#818181", zeroline = FALSE,
                       tickmode = "linear",
-                      color ="white"),
-         legend = list(orientation = "h",  
-                       xanchor = "center",
+                      tick0 = 0,
+                      color ="ffd29f"),
+         legend = list(title=list(text="<b>Casos acumulados se duplican en...</b>",
+                                  font = list(color="white"),
+                                  side="top"),
+                       orientation = "h",
+                       yref = "paper",
+                       xref = "paper",
+                       xanchor = "right",
                        yanchor = "bottom",  
-                       x = 0.5,
-                       y = -0.25,
-                       font = list(color = "white")),
-         paper_bgcolor="black",
-         plot_bgcolor="black",
-         hovermode = "closest",
-         hoverdistance = 50,
+                       x = 1,
+                       y = 0.1,
+                       font = list(color = "white",
+                                   size = 10),
+                       bgcolor= 'rgba(0,0,0,0.7)', 
+                       automargin = T),
+         annotations = list(xref='paper',
+                            yref='paper',
+                            x=0,
+                            y=-0.1,
+                            xanchor='left',
+                            yanchor='bottom',
+                            text='',
+                            showarrow=FALSE,
+                            font = list(size = 16,
+                                        color = "white"))
+  ) %>%
+  plotly_config( ) %>% 
+  plotly_layout ()
+
+```
+### LATAM
+
+
+```{r}
+CA_1_1 <- LATAM %>%
+  dplyr::filter(date>=as.Date("2020-03-06")) %>%
+  highlight_key(~location) %>%
+  plot_ly(x = ~date, text = ~location, colors = "YlOrRd",split=~location)%>%
+    add_lines( y = ~total_cases,
+               mode="lines",
+              yaxis="y2",
+            showlegend=F
+    ) %>%
+  highlight(on = "plotly_hover", off = "plotly_doubleclick") %>%
+    layout(title = list(text= '',
+                      font = list(
+                        size = 20,
+                        color="white")),
+           xaxis = list(range = c(as.Date("2020-03-06"),
+                                  c.date),
+                        color = "white",
+                        title ="<b>Fecha de Reporte</b>",
+                        tickformat= "%d-%b"),
+         yaxis2 = list(side = 'right',
+                       title = '', 
+                      showgrid = T, gridcolor = "#818181", zeroline = F,
+                       color = "#ffd29f",
+                       range=list(0, roundUpNice(max(LATAM$total_cases))),
+                      autotick=F,
+                      tick0=0,
+                      dtick=roundUpNice(max(LATAM$total_cases))/5),
+           annotations = list(text = "<b>Casos acumulados - América Latina</b>",
+                              x = 0.5, y = 1.05,
+                              yref = "paper",xref = "paper",
+                              xanchor = "middle",yanchor = "middle",
+                              showarrow = FALSE,
+                              font = list(size = 20,
+                                          color = "white")),
+           paper_bgcolor="black",
+           plot_bgcolor="black",
+           # legend = list(orientation = "h",  
+           #               xanchor = "center",
+           #               yanchor = "bottom",
+           #               x = 0.5,
+           #               y = -0.125,
+           #               font = list(color = "white")),
          dragmode="pan",
-         margin = list(l=50, r=50, b=30, t=50)
-  ) %>% plotly_config
-
+         margin = list(l=75, r=0, b=65, t=65),
+            showlegend=F) %>%
+  config(locale = "es",
+         displaylogo=F,
+         modeBarButtonsToRemove = c("select2d","zoom2d","lasso2d",
+                                    "drawclosedpath","drawopenpath",
+                                    "hoverClosestCartesian","hoverCompareCartesian",
+                                    "toggleHover","toggleSpikelines")
+  )
 ```
 
+### AA
+```{r}
+fig <- subplot(CA_1_1,CA_2_1, nrows = 2, shareX=T,titleX=F,margin=0.04) 
+fig <- fig %>% layout(xaxis2 = list(domain=list(x=c(0,1),y=c(0,0.5))),
+                      xaxis = list(domain=list(x=c(0,1),y=c(0.5,1))),
+            legend = list(orientation = "h",  
+                         xanchor = "center",
+                         yanchor = "bottom",
+                          x = 0.5,
+                          y = -0.125,
+                          font = list(color = "white")),
+         annotations = list(
+           list(text = "<b>Fecha de reporte</b>",
+                x = 0.5,
+                y = -0.09,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 16,
+                            color = "white")),
+           list(text = "<b>Casos nuevos por día</b>",
+                x = -0.125,
+                y = 0.1,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 16,
+                            color ="#98cbe1"),
+                textangle = -90),
+           list(text = "<b>Casos acumulados (lineal)</b>",
+                x = 1.125,
+                y = 0.8,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 16,
+                            color ="#ffd29f"),
+                textangle = -90)),
+            margin = list(l=50, r=50, b=20, t=50))
 
-Regional {.tabset data-width=350} 
+fig
+```
+
+Regional {.tabset data-width=500} 
 -------------------------------------
-```{r, message=F, warning=F}
-y<- dep.pos.imp.new 
-colnames(y) <- paste(colnames(y), "2", sep = "_")
-
-y<- y %>% 
-  select(-c("dat_2","days.end_2")) %>% 
-  cbind(dep.pos)
-
-```
 
 ### Acumulados - Lineal
 
 ```{r, message=F, warning=F}
 
 plots <- lapply(vars.pos, function(var) {
-
-  plot_ly(y) %>%
+  
+ plot_ly(dep.pos_dep.pos.imp.new)%>%
+    add_trace(x = ~dat, y = as.formula(paste0("~", var,"_2")),
+              type = 'bar', name = 'Casos Nuevos',
+              marker = list(color = '#006b7d'), 
+              text = paste(dep.pos.imp.new$days.end, "días desde hoy"),
+              hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                    '<br><b>Nuevos Casos:</b> %{y}</br>',
+                                    '<b>%{text}</b><extra></extra>'),
+              showlegend = ifelse(var == last.pos,TRUE,FALSE),
+              yaxis="y"
+    )  %>%
     add_lines(x = ~dat, 
               y = as.formula(paste0("~", var)),
               text = paste(dep.pos$days.end, "días desde hoy"),
@@ -706,7 +792,8 @@ plots <- lapply(vars.pos, function(var) {
               legendgroup = 'group1',
               showlegend = ifelse(var == last.pos,TRUE,FALSE), 
               line = list(color = "#ffa600", 
-                          width = 4)
+                          width = 4),
+              yaxis="y2"
     ) %>%
     add_segments(x = "2020-04-08", xend = "2020-04-08", 
                  y = 0, yend = max(dep.pos[var],na.rm = T),
@@ -717,20 +804,28 @@ plots <- lapply(vars.pos, function(var) {
                  line = list(color = "#7aa82a", 
                              width = 3, 
                              dash = "dot")
-    )%>%
-    add_trace(x = ~dat, y = as.formula(paste0("~", var,"_2")),
-              type = 'bar', name = 'Casos Nuevos',
-              marker = list(color = '#006b7d'), 
-              text = paste(dep.pos.imp.new$days.end, "días desde hoy"),
-              hovertemplate = paste('<b>Fecha</b>: %{x}',
-                                    '<br><b>Nuevos Casos:</b> %{y}</br>',
-                                    '<b>%{text}</b><extra></extra>'),
-              showlegend = ifelse(var == last.pos,TRUE,FALSE)
-              ) %>%
+    ) %>%
     layout(xaxis = list(range = c(min(dep.pos.imp.new$dat),
                                   max(dep.pos.imp.new$dat)),
-                        color = "white"),
-           yaxis = list(color = "white"),
+                        color = "white",
+                      tickformat= "%d-%b"),
+           yaxis = list(side = 'left', title = '<b>Casos Nuevos por día</b>', 
+                        showgrid = T, gridcolor = "#818181", zeroline = F,
+                        color = "#98cbe1",
+                        range=list(0, roundUpNice(max(dep.pos_dep.pos.imp.new[paste0(var,"_2")],na.rm = T))),
+                        autotick=F,
+                        tick0=0,
+                        dtick=roundUpNice(max(dep.pos_dep.pos.imp.new[paste0(var,"_2")],na.rm = T))/5),
+           yaxis2 = list(side = 'right', overlaying = paste0("y",ifelse(which(vars.pos==var)==1,
+                                                                        "",
+                                                                        2*which(vars.pos==var)-1)),
+                         title = '', 
+                         showgrid = F, zeroline = F,
+                         color = "#ffd29f",
+                         range=list(0, roundUpNice(max(dep.pos_dep.pos.imp.new[var],na.rm = T))),
+                         autotick=F,
+                         tick0=0,
+                         dtick=roundUpNice(max(dep.pos_dep.pos.imp.new[var],na.rm = T))/5),
            annotations = list(text = ifelse(var=="LA_LIBERTAD","<b>LA LIBERTAD<b>",
                                             ifelse(var=="MADRE_DE_DIOS","<b>MADRE DE DIOS<b>",
                                                    ifelse(var=="SAN_MARTIN","<b>SAN MARTIN<b>",paste0("<b>",var,"<b>")))),
@@ -751,7 +846,8 @@ plots <- lapply(vars.pos, function(var) {
            showlegend =T)
 })
 
-subplot(plots,nrows=5, shareX = T, titleX = F) %>%
+subplot(plots,nrows=5, shareX = T,titleX=F,
+        margin = 0.0375) %>%
   layout(title = list(text = "<b>Total de casos confirmados - Acumulado Lineal</b>",
                       font = list(size = 24,
                                   color="white")),
@@ -764,19 +860,28 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
                 showarrow = FALSE,
                 font = list(size = 16,
                             color = "white")),
-           list(text = "<b>Total de casos confirmados</b>",
+           list(text = "<b>Casos nuevos por día</b>",
                 x = -0.05,
-                y = 0.5,
+                y = 0.7,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
                 font = list(size = 16,
-                            color ="white"),
+                            color ="#98cbe1"),
+                textangle = -90),
+           list(text = "<b>Casos acumulados (lineal)</b>",
+                x = 1.05,
+                y = 0.7,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 16,
+                            color ="#ffd29f"),
                 textangle = -90)),
          hovermode = "closest",
          hoverdistance = 10,
          dragmode="pan",
-         margin = list(l=75, r=0, b=65, t=60)
+         margin = list(l=50, r=50, b=75, t=60)
   ) %>%
   config(locale = "es",
          displaylogo=F,
@@ -787,6 +892,8 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
   )
 
 ```
+
+
 
 ### Acumulados - Logaritmico
 
