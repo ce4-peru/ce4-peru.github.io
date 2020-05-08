@@ -1193,11 +1193,11 @@ valueBox("Datos actualizados al:", icon = "fa-calendar", color = 'teal')
 ```{r}
 if (sum(dep$pos.new, na.rm = T) > sum(y.dep$pos.new, na.rm = T)) {
   valueBox(paste0(format(sum(dep$pos, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pos.new, na.rm = T), big.mark = ",")),  
-           icon = "fa-sort-up",
+           icon = "fa-arrow-up",
            color = 'orange')
 } else {
   valueBox(paste0(format(sum(dep$pos, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pos.new, na.rm = T), big.mark = ",")), 
-           icon = "fa-sort-down",
+           icon = "fa-arrow-down",
            color = 'teal')
 }
 ```
@@ -1207,11 +1207,11 @@ if (sum(dep$pos.new, na.rm = T) > sum(y.dep$pos.new, na.rm = T)) {
 ```{r}
 if (sum(dep$pas.new, na.rm = T) > sum(y.dep$pas.new, na.rm = T)) {
   valueBox(paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pas.new, na.rm = T), big.mark = ",")), 
-           icon = "fa-sort-up",
+           icon = "fa-arrow-up",
            color = 'orange')
 } else {
   valueBox(paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pas.new, na.rm = T), big.mark = ",")), 
-           icon = "fa-sort-down",
+           icon = "fa-arrow-down",
            color = 'teal')
 }
 ```
