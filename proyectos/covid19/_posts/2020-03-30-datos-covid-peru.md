@@ -67,7 +67,7 @@ github: https://github.com/ce4-peru/covid19
             };
             //--------------------------------------->
             //Aqui se tiene que actualizar la fecha-->
-            actualizarFecha('08 de mayo 23:00 hora de Perú');
+            actualizarFecha('09 de mayo 23:40 hora de Perú');
             //--------------------------------------->
         </script>  
 </body>		
