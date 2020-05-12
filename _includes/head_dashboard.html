@@ -1,0 +1,31 @@
+<head>
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=1890, initial-scale=1">
+    <title>{% if page.title %}
+			{{ page.title }}
+		{% elsif page.tag %}
+			{% assign catdata = site.data.categories | where: "id", page.tag %}
+			{% if catdata.size == 1 %}
+				{% assign catname = catdata | map: "name" %}
+			{% else %}
+				{% assign catname = page.tag %}
+			{% endif %}
+			{{ catname }}
+		{% else %}
+			Consorcio en Epidemiología y Ecología Espacial de Enfermedades
+		{% endif %}&nbsp;| {{ site.title }}</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+	<!-- use bootstrap -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	<link href="https://fonts.googleapis.com/css?family=Merriweather|Open+Sans&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="/assets/css/styles.css" />
+	<link rel="icon" type="media/png" href="/assets/media/Favicon/favicon-16x16.png" sizes="16x16">
+	<link rel="icon" type="media/png" href="/assets/media/Favicon/favicon-32x32.png" sizes="32x32">
+	<link rel="icon" type="media/png" href="/assets/media/Favicon/favicon-96x96.png" sizes="96x96">
+
+
+	{% if page.rmarkdown_html_fragment == true %}
+		{% include research_post_rmarkdown_scripts_head.html %}
+	{% endif %}
+</head>
