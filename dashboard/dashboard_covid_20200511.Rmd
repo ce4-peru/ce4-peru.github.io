@@ -505,7 +505,10 @@ leaflet(dep) %>%
     icon="fa-info-circle", title="Información",
     onClick=JS("function(gd) { 
       alert('Muestra la tasa de casos por 100 mil habitantes por departamento. El gradiente de colores indica mayor tasa de casos en colores más oscuros.');
-    }"))) 
+    }")))  %>%
+  suspendScroll(sleep = TRUE, sleepTime = 750, wakeTime = 750,
+  sleepNote = TRUE, hoverToWake = F,
+  wakeMessage = "Click para utilizar el mapa", sleepOpacity = 0.7)
 
   
 ```
@@ -548,7 +551,10 @@ leaflet(dep) %>%
     icon="fa-info-circle", title="Información",
     onClick=JS("function(gd) { 
       alert('Muestra los casos nuevos por departamento. El gradiente de colores indica mayor cantidad de casos nuevos en colores más oscuros. Departamentos sin color no han reportado casos nuevos.');
-    }"))) 
+    }")))  %>%
+  suspendScroll(sleep = TRUE, sleepTime = 750, wakeTime = 750,
+  sleepNote = TRUE, hoverToWake = F,
+  wakeMessage = "Click para utilizar el mapa", sleepOpacity = 0.7)
  
 
 
@@ -593,7 +599,10 @@ leaflet(dep) %>%
     icon="fa-info-circle", title="Información",
     onClick=JS("function(gd) { 
       alert('Muestra el total de fallecidos por departamento. El gradiente de colores indica mayor total de fallecidos en colores más oscuros.');
-    }"))) 
+    }")))  %>%
+  suspendScroll(sleep = TRUE, sleepTime = 750, wakeTime = 750,
+  sleepNote = TRUE, hoverToWake = F,
+  wakeMessage = "Click para utilizar el mapa", sleepOpacity = 0.7)
 
  
 ```
@@ -636,7 +645,10 @@ leaflet(dep) %>%
     icon="fa-info-circle", title="Información",
     onClick=JS("function(gd) { 
       alert('Muestra número de fallecidos nuevos por departamento. El gradiente de colores indica mayor número fallecidos nuevos en colores más oscuros.');
-    }"))) 
+    }")))  %>%
+  suspendScroll(sleep = TRUE, sleepTime = 750, wakeTime = 750,
+  sleepNote = TRUE, hoverToWake = F,
+  wakeMessage = "Click para utilizar el mapa", sleepOpacity = 0.7)
 
 ```
 
@@ -678,7 +690,10 @@ leaflet(dep) %>%
     icon="fa-info-circle", title="Información",
     onClick=JS("function(gd) { 
       alert('Muestra el total pruebas realizadas por departamento. El gradiente de colores indica mayor total de pruebas realizadas en colores más oscuros.');
-    }"))) 
+    }")))  %>%
+  suspendScroll(sleep = TRUE, sleepTime = 750, wakeTime = 750,
+  sleepNote = TRUE, hoverToWake = F,
+  wakeMessage = "Click para utilizar el mapa", sleepOpacity = 0.7)
 ```
 
 ### Pruebas / 100k hab
@@ -719,7 +734,8 @@ leaflet(dep) %>%
     icon="fa-info-circle", title="Información",
     onClick=JS("function(gd) { 
       alert('Muestra la tasa de pruebas realizadas por 100 mil habitantes por departamento. El gradiente de colores indica mayor tasa de pruebas por 100 mil habitantes realizadas en colores más oscuros.');
-    }")))
+    }"))) %>%
+  suspendScroll(wakeMessage = "Click para utilizar el mapa")
 ```
 
 ### Nuevas pruebas
@@ -760,7 +776,10 @@ leaflet(dep) %>%
     icon="fa-info-circle", title="Información",
     onClick=JS("function(gd) { 
       alert('Muestra número de nuevas pruebas realizadas por departamento. El gradiente de colores indica mayor número de pruebas realizadas en colores más oscuros.');
-    }")))
+    }"))) %>%
+  suspendScroll(sleep = TRUE, sleepTime = 750, wakeTime = 750,
+  sleepNote = TRUE, hoverToWake = F,
+  wakeMessage = "Click para utilizar el mapa", sleepOpacity = 0.7)
 ```
 
 ### Tasa de positivos nuevos
@@ -801,7 +820,8 @@ leaflet(dep) %>%
     icon="fa-info-circle", title="Información",
     onClick=JS("function(gd) { 
       alert('Muestra proporción de pruebas positivas entre todas las pruebas nuevas realizadas por departamento. El gradiente de colores indica mayor proporción de pruebas positivas en colores más oscuros.');
-    }")))
+    }"))) %>%
+  suspendScroll()
 ```
 
 Column 2 {.tabset data-width=400 vertical_layout=scroll}
@@ -844,7 +864,7 @@ plot_ly(nac1) %>%
                                    '<b>%{text}</b>'))  %>%
   add_segments(x = "2020-04-08", xend = "2020-04-08", 
                y = 0, yend=max(nac1$pos_new),
-               text="2020-04-08",name="Inicio de P.R's",
+               text="2020-04-08",name="Inicio de Pruebas Rápidas",
                hovertemplate = paste('<b>%{text}</b>'),
                legendgroup = 'group2',
                width=2, 
@@ -942,7 +962,7 @@ plot_ly(nac1) %>%
                                    '<b>%{text}</b>')) %>%
   add_segments(x = "2020-04-08", xend = "2020-04-08", 
                y = 0, yend=max(nac1$pos_new),
-               text="2020-04-08",name="Inicio de P.R's",
+               text="2020-04-08",name="Inicio de Pruebas Rápidas",
                hovertemplate = paste('<b>%{text}</b>'),
                legendgroup = 'group2',
                width=2, 
@@ -1038,7 +1058,7 @@ plot_ly(nac3) %>%
                                    '<b>%{text}</b>'))  %>%
   add_segments(x = "2020-04-08", xend = "2020-04-08", 
                y = 0, yend=max(nac3$pos_new),
-               text="2020-04-08",name="Inicio de P.R's",
+               text="2020-04-08",name="Inicio de Pruebas Rápidas",
                hovertemplate = paste('<b>%{text}</b>'),
                legendgroup = 'group2',
                width=2, 
@@ -1168,7 +1188,7 @@ plot_ly(y)%>%
             line = list(color = '#008f6a',
                         dash = "dash",
                         width=3.5),
-            text = "Casos se duplican en tres (4) días",
+            text = "Casos se duplican en cuatro (4) días",
             hoverinfo = "text",
             legendgroup = 'group2')  %>% 
   layout(title = '<b>Total de casos acumulados desde el inicio de los casos</b>',
@@ -1318,18 +1338,24 @@ fig <- plot_ly(nac5, x = ~Dia, y = ~per_fallecidos, name = 'Fallecidos',
                type = 'scatter', mode = 'lines+markers', stackgroup = 'one', 
                groupnorm = 'percent', fillcolor = '#ffa600',
                marker = list(color =  'rgba(0,0,0,0)'),
-               line = list(color = '#bbac00'))
+               line = list(color = '#bbac00'),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Fallecidos: %{y:.2f}%</b></br><extra></extra>"))
 
 fig <- fig %>% add_trace(y = ~per_recuperados, 
                          name = 'Recuperados', fillcolor = '#7aa82a',
                          marker = list(color =  'rgba(0,0,0,0)'),
-                         line = list(color = '#006b7d'))
+                         line = list(color = '#7aa82a'),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Casos Recuperados: %{y:.2f}%</b></br><extra></extra>"))
 
 fig <- fig %>% add_trace(y = ~per_activos, 
                          name = 'Activos', mode = 'none', 
                          fillcolor = '#035871',
                          marker = list(color = 'rgba(0,0,0,0)'),
-                         line = list(color = 'rgba(0,0,0,0)'))
+                         line = list(color = 'rgba(0,0,0,0)'),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Casos Activos: %{y:.2f}%</b></br><extra></extra>"))
 
 fig <- fig %>% 
   layout(title ="<b>Proporción de casos Activos, Recuperados, y Fallecidos</b>",
@@ -1523,7 +1549,7 @@ plots <- lapply(vars_mav_new, function(var) {
     ) %>%
     add_segments(x = "2020-04-08", xend = "2020-04-08", 
                  y = 0, yend = max(deps4[paste0(var,"_2")],na.rm = T),
-                 text="2020-04-08", name="Inicio de P.R's",
+                 text="2020-04-08", name="Inicio de Pruebas Rápidas",
                  hovertemplate = paste('<b>%{text}</b>'),
                  legendgroup = 'group2',
                  showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE), 
@@ -1662,7 +1688,7 @@ plots <- lapply(vars_pmav_new, function(var) {
     ) %>%
     add_segments(x = "2020-04-08", xend = "2020-04-08", 
                  y = 0, yend = max(deps1$pmav_new,na.rm = T),
-                 text="2020-04-08",name="Inicio de P.R's",
+                 text="2020-04-08",name="Inicio de Pruebas Rápidas",
                  hovertemplate = paste('<b>%{text}</b>'),
                  legendgroup = 'group2',
                  showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE),
@@ -1783,7 +1809,7 @@ plots <- lapply(vars_mav_new, function(var) {
     ) %>%
     add_segments(x = "2020-04-08", xend = "2020-04-08", 
                  y = 0, yend = max(deps1$pmav_new,na.rm = T),
-                 text="2020-04-08",name="Inicio de P.R's",
+                 text="2020-04-08",name="Inicio de Pruebas Rápidas",
                  hovertemplate = paste('<b>%{text}</b>'),
                  legendgroup = 'group2',
                  showlegend = ifelse(var == vars[length(vars)],TRUE,FALSE),
@@ -2139,7 +2165,7 @@ LATAM %>%ungroup() %>%
                                     "hoverClosestCartesian","hoverCompareCartesian",
                                     "toggleHover","toggleSpikelines"),
          responsive = T,
-         modeBarButtonsToAdd = list(infobutton_5),
+         modeBarButtonsToAdd = list(infobutton_10),
          displayModeBar = TRUE
   )%>% 
   partial_bundle() %>% 
