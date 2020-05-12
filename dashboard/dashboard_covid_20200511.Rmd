@@ -152,6 +152,8 @@ library(plyr)
 library(extrafont)
 library(waffle)
 library(RColorBrewer)
+library(leaflet.extras)
+
 options(scipen=999)
 
 
@@ -457,7 +459,10 @@ leaflet(dep) %>%
     icon="fa-info-circle", title="Información",
     onClick=JS("function(gd) { 
       alert('Muestra los casos acumulados por departamento. El gradiente de colores indica mayor casos acumulados en colores más oscuros.');
-    }")))  
+    }")))  %>%
+  suspendScroll(sleep = TRUE, sleepTime = 750, wakeTime = 750,
+  sleepNote = TRUE, hoverToWake = F,
+  wakeMessage = "Click para utilizar el mapa", sleepOpacity = 0.7)
 
   
 ```
