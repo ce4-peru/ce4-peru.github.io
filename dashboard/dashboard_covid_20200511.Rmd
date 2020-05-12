@@ -124,6 +124,11 @@ overflow: auto;
 overflow: auto; 
 }
 
+.tab-content { 
+   color: white;
+}
+
+
 </style>
 
 ```{r libraries}
@@ -1906,12 +1911,12 @@ deps %>%
   scale_color_manual(
     name = NULL,
     values = c("#0e5871", "#ffa600"),
-    labels = c("Lima Metropolitana 92%", "Regiones")
+    labels = c("Lima Metropolitana 92%", "Regiones 8%")
   ) +
   scale_label_pictogram(
     name = NULL,
     values = c("male", "male"),
-    labels = c("Lima Metropolitana", "Regiones")
+    labels = c("Lima Metropolitana 92%", "Regiones 8%")
   ) +
   theme_ipsum_rc(grid="") +
   theme_enhance_waffle() +
@@ -2003,7 +2008,7 @@ LATAM %>%
             hovertemplate = paste('<b>Fecha</b>: %{x}',
                                   '<br><b>Media Móvil</b>: %{y:.2f}<br>',
                                   '<b>%{text}</b>'),
-            name = ifelse(var == vars[length(vars)],"Media Móvil",var),
+            name = ifelse(var == vars_latam_mav[length(vars_latam_mav)],"Media Móvil",var),
             showlegend = ifelse(var == vars_latam_mav[length(vars_latam_mav)],TRUE,FALSE), 
             line = list(color = "#ffa600", width = 4)
   ) %>%
@@ -2035,7 +2040,7 @@ LATAM %>%
 
 
 subplot(plots, nrows = 3, shareX = T, titleX = F,shareY=T)%>%
-  layout(title = list(text = "<b>Media móvil de casos nuevos - Latinoamerica</b>",
+  layout(title = list(text = "<b>Media móvil de casos nuevos - América Latina</b>",
                       font = list(size = 24,
                                   color = "white")),
          annotations = list(
@@ -2142,4 +2147,40 @@ LATAM %>%ungroup() %>%
 
 
 
+# Acerca de
 
+## Columna única
+
+**Dashboard COVID-19 del Consorcio en Epidemiología y Ecología Espacial de Enfermedades**
+
+Este dashboard y sus visualizaciones han sido diseñadas para asistir en el análisis de las tendencias que la pandemia de COVID-19 tiene en el Perú.
+
+Última actualización: `r c.date`
+
++ Detalles técnicos 
+
+Se utilizó la interfaz [Rmarkdown](https://rmarkdown.rstudio.com/) y el lenguaje de programación [R](https://www.r-project.org/) para producir las visualizaciones aquí presentes.
+
+Principales paquetes utilizados
+
+  + Tablero - [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/) 
+  + Tablas - [DT](https://rstudio.github.io/DT/)
+  + Mapas - [Leaflet](https://leafletjs.com/)
+  + Visualizaciones interactivas - [Plotly](https://plotly.com/)
+  + Manipulación de datos - [tidyverse](https://www.tidyverse.org/)
+
+
++ Fuente de datos
+
+Los datos de Perú provienen del [Handbook Covid-19 Perú](https://jincio.github.io/COVID_19_PERU/index.html).
+Esta base de datos a sido construida utilizando los [reportes del Ministerio de Salud de Perú (MINSA)](https://covid19.minsa.gob.pe/sala_situacional.asp) a nivel nacional y regional.
+
+Los datos de América Latina provienen de [Our World in Data](https://ourworldindata.org/coronavirus) de la [Universidad de Oxford](https://www.oxfordmartin.ox.ac.uk/global-development).
+
++ Código fuente
+
+La documentación y código fuente se encuentran en [github](https://github.com/ce4-peru/ce4-peru.github.io).
+
++ Registro de cambios
+
+11 de Mayo de 2020 - Lanzamiento 
