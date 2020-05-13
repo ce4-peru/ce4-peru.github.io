@@ -216,9 +216,12 @@ dep <-
                 pos.imp.new = abs(pos.imp - pos.imp.lag),
                 pas.new = abs(pas - pas.lag),
                 smp.new = abs(smp - smp.lag),
-                ratio.new = signif(pos.new/smp.new), digits = 3)
+                ratio.new = signif(pos.new/smp.new), digits = 3,
+                pos.new.log = log(pos.new),
+                pas.new.log = log(pas.new)) %>% 
+  mutate(pos.new.log = replace(pos.new.log, pos.new == 0, 0),
+         pas.new.log = replace(pas.new.log, pas.new == 0, 0))
 
-dep[dep$pos.new == 0, ]$pos.new <- NA
 
 y.dep <- 
   deps %>% 
@@ -520,12 +523,12 @@ labels.new <- sprintf(
   "<strong>%s</strong><br/<strong>Casos: </strong>%s",
   dep$dep, dep$pos.new) %>% lapply(htmltools::HTML)
 
-pal.newcases <- colorNumeric( palette="RdPu", domain = log(dep$pos.new), na.color="transparent")
+pal.newcases <- colorNumeric( palette="RdPu", domain = dep$pos.new.log, na.color="transparent")
 
 leaflet(dep) %>%
   addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
            options = providerTileOptions(minZoom = 5, maxZoom = 6)) %>%
-  addPolygons(fillColor = pal.newcases(log(dep$pos.new)),
+  addPolygons(fillColor = pal.newcases(dep$pos.new.log),
               weight = 2,
               opacity = 1,
               color = "white",
@@ -542,7 +545,7 @@ leaflet(dep) %>%
                 style = list("font-weight" = "normal", padding = "3px 8px"),
                 textsize = "15px",
                 direction = "auto")) %>%
-  addLegend("bottomleft", pal=pal.newcases, values = log(dep$pos.new), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  addLegend("bottomleft", pal=pal.newcases, values = dep$pos.new.log, title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
   setMaxBounds(lng1 = -90.648918,
                lat1 = 4.991423,
                lng2 = -59.605965,
@@ -1433,29 +1436,29 @@ Column 3 {data-width=250}
 valueBox("Datos actualizados al:", icon = "fa-calendar", color = 'teal')
 ```
 
-### Total de casos / Casos en las últimas 24 horas
+### `r paste0(format(sum(dep$pos, na.rm = T), big.mark = ","), ' Casos en las últimas 24 horas')`
 
 ```{r}
 if (sum(dep$pos.new, na.rm = T) > sum(y.dep$pos.new, na.rm = T)) {
-  valueBox(paste0(format(sum(dep$pos, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pos.new, na.rm = T), big.mark = ",")),  
+  valueBox(paste0(format(sum(dep$pos.new, na.rm = T), big.mark = ","), ' Casos confirmados totales'),  
            icon = "fa-arrow-up",
            color = 'orange')
 } else {
-  valueBox(paste0(format(sum(dep$pos, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pos.new, na.rm = T), big.mark = ",")), 
+  valueBox(paste0(format(sum(dep$pos.new, na.rm = T), big.mark = ","), ' Casos confirmados totales'),   
            icon = "fa-arrow-down",
            color = 'teal')
 }
 ```
 
-### Total de fallecidos / Fallecidos en las últimas 24 horas
+### `r paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), 'Fallecidos en las últimas 24 horas')`
 
 ```{r}
 if (sum(dep$pas.new, na.rm = T) > sum(y.dep$pas.new, na.rm = T)) {
-  valueBox(paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pas.new, na.rm = T), big.mark = ",")), 
+  valueBox(paste0(format(sum(dep$pas.new, na.rm = T), big.mark = ","), 'Total de fallecidos'), 
            icon = "fa-arrow-up",
            color = 'orange')
 } else {
-  valueBox(paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), ' / ', format(sum(dep$pas.new, na.rm = T), big.mark = ",")), 
+  valueBox(paste0(format(sum(dep$pas.new, na.rm = T), big.mark = ","), 'Total de fallecidos'), 
            icon = "fa-arrow-down",
            color = 'teal')
 }
