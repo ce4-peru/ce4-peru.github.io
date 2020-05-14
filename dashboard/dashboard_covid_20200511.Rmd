@@ -153,6 +153,7 @@ library(extrafont)
 library(waffle)
 library(RColorBrewer)
 library(leaflet.extras)
+library(rmapshaper)
 
 options(scipen=999)
 
@@ -248,7 +249,8 @@ y.dep <-
 shp <- st_read("Limite_departamental", stringsAsFactors = F)
 shp <- shp %>% 
   st_transform(4326) %>% 
-  select(Departamento = NOMBDEP)
+  select(Departamento = NOMBDEP) %>%
+  rmapshaper::ms_simplify()
 
 # Append
 dep <- merge(dep, shp, by.y = 'Departamento', by.x = 'dep', all.x = T)
@@ -1450,15 +1452,15 @@ if (sum(dep$pos.new, na.rm = T) > sum(y.dep$pos.new, na.rm = T)) {
 }
 ```
 
-### `r paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), 'Fallecidos en las últimas 24 horas')`
+### `r paste0(format(sum(dep$pas, na.rm = T), big.mark = ","), ' Fallecidos en las últimas 24 horas')`
 
 ```{r}
 if (sum(dep$pas.new, na.rm = T) > sum(y.dep$pas.new, na.rm = T)) {
-  valueBox(paste0(format(sum(dep$pas.new, na.rm = T), big.mark = ","), 'Total de fallecidos'), 
+  valueBox(paste0(format(sum(dep$pas.new, na.rm = T), big.mark = ","), ' Total de fallecidos'), 
            icon = "fa-arrow-up",
            color = 'orange')
 } else {
-  valueBox(paste0(format(sum(dep$pas.new, na.rm = T), big.mark = ","), 'Total de fallecidos'), 
+  valueBox(paste0(format(sum(dep$pas.new, na.rm = T), big.mark = ","), ' Total de fallecidos'), 
            icon = "fa-arrow-down",
            color = 'teal')
 }
