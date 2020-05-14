@@ -125,396 +125,20 @@ overflow: auto;
 }
 
 </style>
-
-```{r libraries, message=F, warning=F}
-library(flexdashboard)
-library(rio)
-library(tidyverse)
-library(XML)
-library(httr)
-library(RCurl)
-library(sf)
-library(lubridate)
-library(leaflet)
-library(colorspace)
-library(DT)
-library(zoo)
-library(slider)
-library(plotly)
-library(waffle)
-library(extrafont)
-library(plyr)
-library(extrafont)
-library(waffle)
-library(RColorBrewer)
-library(fontawesome)
-options(scipen=999)
+```{r imports, include=FALSE}
+source('_scripts/import.R', echo = TRUE) # Importa librerias, bases de datos, variables globales y funciones.
 ```
 
-```{r imports, message=F, warning=F, include = F, echo =F}
-nac <- rio::import("https://github.com/jincio/COVID_19_PERU/blob/master/reportes_minsa.xlsx?raw=true")
+```{r plotly, message=F, warning=F, include=FALSE}
+source('_scripts/infobutton.R', echo = TRUE) # Importa las variables para los botones información
 
-dep <- rio::import("https://github.com/jincio/COVID_19_PERU/blob/master/reportes_minsa.xlsx?raw=true", sheet = 2)
+source('_scripts/plotly.R', echo = TRUE) # Importa configuraciones para los gráficos en plotly
 
-pop <- read_csv("data/peru_pop_stratum.csv") %>%
-  group_by(dep_adm1) %>%
-  dplyr::summarise(pop = sum(N)) %>%
-  dplyr::mutate(REGION = toupper(dep_adm1))
-
-
-Paises_LATAM <- c("Argentina","Bolivia","Brazil","Chile","Colombia","Ecuador","Mexico","Peru","Uruguay","Venezuela")
-LATAM <- read_csv ("https://covid.ourworldindata.org/data/owid-covid-data.csv") 
-
-shp <- st_read("Limite_departamental", stringsAsFactors = F)%>% 
-  st_transform(4326) %>% 
-  dplyr::select(Departamento = NOMBDEP)
+source('_scripts/leaflet.R', echo = TRUE) # Importa configuraciones para los mapas en leaflet
 ```
 
-```{r global, message=F, warning=F}
-c.date <- max(dep$Fecha)
-y.date <- as.Date(c.date) - 1 
-today <- ymd(Sys.Date())
-f.date <- min(dep$Fecha)
-
-# https://stackoverflow.com/questions/6461209/how-to-round-up-to-the-nearest-10-or-100-or-x
-# Rounds Up to a nice number, defined as a number divisible by those in the vector.
-# Some other good choices of the "nice" vector above are: 1:10, c(1,5,10), seq(1, 10, 0.1),c(1,2,4,5,6,8,10)
-
-roundUpNice <- function(x, nice=c(1,2,5,6,10)) {
-  if(length(x) != 1) stop("'x' must be of length 1")
-  10^floor(log10(x)) * nice[[which(x <= 10^floor(log10(x)) * nice)[[1]]]]
-}
-# roundUpNice(max(nac$pos.new))/5
-
-```
-
-```{r plotly, message=F, warning=F}
-icon_svg_path <- "M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"
-# icon_svg_path = "M19.404,6.65l-5.998-5.996c-0.292-0.292-0.765-0.292-1.056,0l-2.22,2.22l-8.311,8.313l-0.003,0.001v0.003l-0.161,0.161c-0.114,0.112-0.187,0.258-0.21,0.417l-1.059,7.051c-0.035,0.233,0.044,0.47,0.21,0.639c0.143,0.14,0.333,0.219,0.528,0.219c0.038,0,0.073-0.003,0.111-0.009l7.054-1.055c0.158-0.025,0.306-0.098,0.417-0.211l8.478-8.476l2.22-2.22C19.695,7.414,19.695,6.941,19.404,6.65z M8.341,16.656l-0.989-0.99l7.258-7.258l0.989,0.99L8.341,16.656z M2.332,15.919l0.411-2.748l4.143,4.143l-2.748,0.41L2.332,15.919z M13.554,7.351L6.296,14.61l-0.849-0.848l7.259-7.258l0.423,0.424L13.554,7.351zM10.658,4.457l0.992,0.99l-7.259,7.258L3.4,11.715L10.658,4.457z M16.656,8.342l-1.517-1.517V6.823h-0.003l-0.951-0.951l-2.471-2.471l1.164-1.164l4.942,4.94L16.656,8.342z"
-
-
-icon_svg_path <-"M12.871,9.337H7.377c-0.304,0-0.549,0.246-0.549,0.549c0,0.303,0.246,0.55,0.549,0.55h5.494c0.305,0,0.551-0.247,0.551-0.55C13.422,9.583,13.176,9.337,12.871,9.337z M15.07,6.04H5.179c-0.304,0-0.549,0.246-0.549,0.55c0,0.303,0.246,0.549,0.549,0.549h9.891c0.303,0,0.549-0.247,0.549-0.549C15.619,6.286,15.373,6.04,15.07,6.04z M17.268,1.645H2.981c-0.911,0-1.648,0.738-1.648,1.648v10.988c0,0.912,0.738,1.648,1.648,1.648h4.938l2.205,2.205l2.206-2.205h4.938c0.91,0,1.648-0.736,1.648-1.648V3.293C18.916,2.382,18.178,1.645,17.268,1.645z M17.816,13.732c0,0.607-0.492,1.1-1.098,1.1h-4.939l-1.655,1.654l-1.656-1.654H3.531c-0.607,0-1.099-0.492-1.099-1.1v-9.89c0-0.607,0.492-1.099,1.099-1.099h13.188c0.605,0,1.098,0.492,1.098,1.099V13.732z"
-
-infobutton <- list(
-  name = "Información",
-  icon = list(
-    path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
-  ),
-  click = htmlwidgets::JS(
-    "function(gd) { 
-      alert('Muestra los casos acumulados en escala logarítmica desde el día del primer reporte a nivel nacional. Las líneas punteadas corresponden a las pendientes de duplicación de casos cada 1 a 4 días; una pendiente más inclinada implica la duplicación de casos en menor tiempo.');
-    }"
-  )
-)
-
-plotly_config <- function(x) {
-  x %>% config(locale = "es",
-               displaylogo=F,
-               modeBarButtonsToRemove = c("select2d","zoom2d","lasso2d",
-                                          "drawclosedpath","drawopenpath",
-                                          "hoverClosestCartesian","hoverCompareCartesian",
-                                          "toggleHover","toggleSpikelines"),
-               modeBarButtonsToAdd = list(infobutton),
-               responsive = T
-  )
-}
-
-
-plotly_layout <- function(x) {
-  x %>% layout(paper_bgcolor="black",
-               plot_bgcolor="black",
-               hoverdistance = 50,
-               hovermode = "closest",
-               dragmode="pan",
-               margin = list(l=65, r=65, b=40, t=50),
-               autosize=T
-  )
-}
-
-# %>%
-#   add_segments(x = "2020-03-15", xend = "2020-03-15", 
-#                y = 0, yend=roundUpNice(max(nac$pos.new)),
-#                text="2020-04-08",name="Estado de Emergencia",
-#                hovertemplate = paste('<b>%{text}</b>'),
-#                legendgroup = 'group2',
-#                width=2, 
-#                line = list(color = "#7aa82a", 
-#                            width = 3, 
-#                            dash = "dot")
-#   ) %>%
-#   add_segments(x = "2020-03-26", xend = "2020-03-26", 
-#                y = 0, yend=roundUpNice(max(nac$pos.new)),
-#                text="2020-04-08",name="1ra ampliación",
-#                hovertemplate = paste('<b>%{text}</b>'),
-#                legendgroup = 'group2',
-#                width=2, 
-#                line = list(color = "#7aa82a", 
-#                            width = 3, 
-#                            dash = "dot")
-#                ) %>%
-#   add_segments(x = "2020-04-23", xend = "2020-04-23", 
-#                y = 0, yend=roundUpNice(max(nac$pos.new)),
-#                text="2020-04-08",name="3ra ampliación",
-#                hovertemplate = paste('<b>%{text}</b>'),
-#                legendgroup = 'group2',
-#                width=2, 
-#                line = list(color = "#7aa82a", 
-#                            width = 3, 
-#                            dash = "dot")
-#                ) 
-
-```
-
-```{r maps, message=F, warning=F}
-map_tiles <- function(x) {
-  x %>% 
-    addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-             options = providerTileOptions(minZoom = 5, maxZoom = 6))
-}
-
-map_bounds <- function(x) {
-  x %>% setMaxBounds(lng1 = -90.648918,
-                     lat1 = 4.991423,
-                     lng2 = -59.605965,
-                     lat2 = -23.920121) 
-}
-
-map_poly <-  function(x,y,z) {
-  x %>%
-    addPolygons(fillColor = pal.cases(log(y)),
-                weight = 2,
-                opacity = 1,
-                color = "white",
-                dashArray = "",
-                fillOpacity = 0.7,
-                highlight = highlightOptions(
-                  weight = 5,
-                  color = "#666",
-                  dashArray = "",
-                  fillOpacity = 0.7,
-                  bringToFront = TRUE),
-                label = z,
-                labelOptions = labelOptions(
-                  style = list("font-weight" = "normal", padding = "3px 8px"),
-                  textsize = "15px",
-                  direction = "auto")) 
-  
-}
-
-```
-
-```{r deps, message=F, warning=F}
-#### Procesamiento de los datos por región. ####
-
-dep <- 
-  dep %>% 
-  dplyr::select(dat = Fecha,
-                dep = REGION, 
-                pos = Positivos_totales, 
-                pos.imp = PositivosImputados_totales,
-                pas =Fallecidos, 
-                smp =Total_muestras
-  ) %>% 
-  dplyr::mutate(pas = pas %>% if_else(is.na(.), 0, .),
-                dat = as.Date(dat)
-  ) %>% 
-  group_by(dep
-  ) %>% 
-  dplyr::mutate(pos.new = pos - lag(pos, n = 1),
-                pos.imp.new = pos.imp - lag(pos.imp, n = 1),
-                pas.new = lag(pas, n = 1),
-                smp.new = lag(smp, n = 1),
-                ratio.new = signif(pos.new/smp.new), digits = 3,
-                days.start =as.numeric(dat-first(dat), unit="days"),
-                dummy = days.start+20,
-                dup.1 = exp((log(2)/1)*days.start),
-                dup.2 = exp((log(2)/2)*days.start),
-                dup.3 = exp((log(2)/3)*days.start),
-                dup.4 = exp((log(2)/4)*days.start),
-                days.end = difftime(today, dat , units = c("days")),
-                mav.pos.new = slide_dbl(pos.new, ~mean(.x, na.rm = TRUE), .before = 6),
-  ) %>%
-  merge(pop %>% 
-          select(dep = REGION, pop)
-  ) %>% 
-  dplyr::mutate(pos.hab = pos/pop*100000,
-                smp.hab = smp/pop*100000,
-                pos.new.hab = smp/pop*100000,
-                mav.pos.new.hab = mav.pos.new/pop*1000000)
-
-dup.dep <- data.frame(dat = as.Date(seq(1,30, 1)+as.Date(c.date))) %>%
-  dplyr::mutate(days.start = as.numeric(difftime(dat,f.date), units="days"),
-                dummy = days.start+20,
-                dup.1 = exp((log(2)/1)*days.start),
-                dup.2 = exp((log(2)/2)*days.start),
-                dup.3 = exp((log(2)/3)*days.start),
-                dup.4 = exp((log(2)/4)*days.start),
-                dep= "LIMA",
-                days.end = difftime(today, dat , units = c("days"))
-  ) %>%
-  bind_rows(dep)
-#### Poligonos y data regional - Mapas #### 
-
-geom.dep <- dep %>% 
-  merge(shp, by.y = 'Departamento', by.x = 'dep', all.x = T) %>%
-  st_as_sf(sf_column_name = 'geometry') 
-
-rm(shp) # No more use for shp
-
-#### Datos a nivel Nacional #### 
-
-nac <- dep %>%
-  select(-c("dep")) %>%
-  group_by(dat) %>%
-  dplyr::mutate_at(vars(-c("dat","dup.1","dup.2","dup.3","dup.4")),sum, na.rm = T) %>%
-  dplyr::summarize_all(list(max)) %>%
-  dplyr::mutate(days.end = difftime(today, dat , units = c("days")),
-                days.start = as.numeric(difftime(dat,f.date), units="days"))
-
-dup.nac <- data.frame(dat = as.Date(seq(1,30, 1)+today)) %>%
-  dplyr::mutate(days.start = as.numeric(difftime(dat,f.date), units="days"),
-                dummy = days.start+20,
-                dup.1 = exp((log(2)/1)*days.start),
-                dup.2 = exp((log(2)/2)*days.start),
-                dup.3 = exp((log(2)/3)*days.start),
-                dup.4 = exp((log(2)/4)*days.start)
-  ) %>%
-  bind_rows(nac)
-
-#### Datos del día de hoy #### 
-c.dep <- geom.dep %>%
-  dplyr::filter(dat == c.date)
-
-####  Formato Regiones Wide #### 
-dep.pos <-  dep %>%
-  select(dat,dep,pos,days.end) %>%
-  spread(dep, pos) %>% 
-  dplyr::rename(LA_LIBERTAD = `LA LIBERTAD`,
-                MADRE_DE_DIOS = `MADRE DE DIOS`,
-                SAN_MARTIN = `SAN MARTIN`) 
-
-dep.pos2 <-  dep %>%
-  select(dat,dep,pos,days.end,days.start) %>%
-  spread(dep, pos) %>% 
-  dplyr::rename(LA_LIBERTAD = `LA LIBERTAD`,
-                MADRE_DE_DIOS = `MADRE DE DIOS`,
-                SAN_MARTIN = `SAN MARTIN`) 
-
-dep.mav.pos.new<-  dep %>%
-  dplyr::select(dat,dep,days.end,mav.pos.new) %>%
-  spread(dep, mav.pos.new) %>% 
-  dplyr::rename(LA_LIBERTAD = `LA LIBERTAD`,
-                MADRE_DE_DIOS = `MADRE DE DIOS`,
-                SAN_MARTIN = `SAN MARTIN`) 
-
-
-dep.pos.imp.new <- dep %>%
-  select(dat,dep,days.end,pos.imp.new) %>%
-  spread(dep, pos.imp.new) %>% 
-  dplyr::rename(LA_LIBERTAD = `LA LIBERTAD`,
-                MADRE_DE_DIOS = `MADRE DE DIOS`,
-                SAN_MARTIN = `SAN MARTIN`) 
-######################################
-y<- dep.pos.imp.new 
-colnames(y) <- paste(colnames(y), "2", sep = "_")
-
-dep.pos_dep.pos.imp.new<- y %>% 
-  select(-c("dat_2","days.end_2")) %>% 
-  cbind(dep.pos)
-######################################
-
-### Wide dup 1 inicial
-dep.pos2[nrow(dep.pos2)+30,] <- NA
-dup.dep.1 <- dup.dep %>%
-  select(dat,dep,days.end,days.start,dup.1) %>%
-  spread(dep, dup.1) %>% 
-  dplyr::rename(LA_LIBERTAD = `LA LIBERTAD`,
-                MADRE_DE_DIOS = `MADRE DE DIOS`,
-                SAN_MARTIN = `SAN MARTIN`) 
-
-y<- dup.dep.1
-colnames(y) <- paste(colnames(y), "2", sep = "_")
-
-dup.dep.wide <- y %>% 
-  select(-c("dat_2","days.end_2","days.start_2")) %>% 
-  cbind(dep.pos2)
-
-rm(dep.pos2)
-### Wide dup 2
-dup.dep.2 <- dup.dep %>%
-  select(dat,dep,days.end,days.start,dup.2) %>%
-  spread(dep, dup.2) %>% 
-  dplyr::rename(LA_LIBERTAD = `LA LIBERTAD`,
-                MADRE_DE_DIOS = `MADRE DE DIOS`,
-                SAN_MARTIN = `SAN MARTIN`) 
-
-y<- dup.dep.2
-colnames(y) <- paste(colnames(y), "3", sep = "_")
-
-dup.dep.wide <- y %>% 
-  select(-c("dat_3","days.end_3","days.start_3")) %>% 
-  cbind(dup.dep.wide)
-
-### Wide dup 3
-dup.dep.3 <- dup.dep %>%
-  select(dat,dep,days.end,days.start,dup.3) %>%
-  spread(dep, dup.3) %>% 
-  dplyr::rename(LA_LIBERTAD = `LA LIBERTAD`,
-                MADRE_DE_DIOS = `MADRE DE DIOS`,
-                SAN_MARTIN = `SAN MARTIN`) 
-
-y<- dup.dep.3
-colnames(y) <- paste(colnames(y), "4", sep = "_")
-
-dup.dep.wide <- y %>% 
-  select(-c("dat_4","days.end_4","days.start_4")) %>% 
-  cbind(dup.dep.wide)
-### Wide dup 4
-dup.dep.4 <- dup.dep %>%
-  select(dat,dep,days.end,days.start,dup.4) %>%
-  spread(dep, dup.4) %>% 
-  dplyr::rename(LA_LIBERTAD = `LA LIBERTAD`,
-                MADRE_DE_DIOS = `MADRE DE DIOS`,
-                SAN_MARTIN = `SAN MARTIN`) 
-
-y<- dup.dep.4
-colnames(y) <- paste(colnames(y), "5", sep = "_")
-
-dup.dep.wide <- y %>% 
-  select(-c("dat_5","days.end_5","days.start_5")) %>% 
-  cbind(dup.dep.wide)
-
-#### LATAM #### 
-LATAM <- LATAM %>%
-  dplyr::filter(location %in% Paises_LATAM) %>%
-  dplyr::mutate()%>% 
-  group_by(location)%>% 
-  dplyr::mutate(mav_new = slide_dbl(new_cases, ~mean(.x, na.rm = TRUE), .before = 6),
-                days.end = difftime(today, date , units = c("days")),
-                days.start = as.numeric(difftime(date,f.date), units="days"),
-                dummy = days.start+20,
-                dup.1 = exp((log(2)/1)*days.start),
-                dup.2 = exp((log(2)/2)*days.start),
-                dup.3 = exp((log(2)/3)*days.start),
-                dup.4 = exp((log(2)/4)*days.start),
-                mav.pos.new = slide_dbl(new_cases, ~mean(.x, na.rm = TRUE), .before = 6),
-  )
-
-
-dup.LATAM <- data.frame(date = as.Date(seq(1,30, 1)+as.Date(c.date))) %>%
-  dplyr::mutate(days.start = as.numeric(difftime(date,f.date), units="days"),
-                dummy = days.start+20,
-                dup.1 = exp((log(2)/1)*days.start),
-                dup.2 = exp((log(2)/2)*days.start),
-                dup.3 = exp((log(2)/3)*days.start),
-                dup.4 = exp((log(2)/4)*days.start),
-                location= "Peru"
-  ) %>%
-  bind_rows(LATAM)
-
-
-
+```{r deps, message=F, warning=F, include=FALSE}
+source('_scripts/cleaning.R', echo = TRUE) # Importa las bases a utilizar procesadas.
 ```
 
 ```{r, message=F, warning=F}
@@ -579,7 +203,7 @@ palette_1 <- c("#ffffff",
                "#65150d",
                "#4e0000")
 
-labels.total <-  sprintf(
+labels <-  sprintf(
   "<strong>%s</strong><br/<strong>Casos: </strong>%s",
   c.dep$dep, c.dep$pos) %>% lapply(htmltools::HTML)
 
@@ -587,7 +211,7 @@ pal.cases <- colorNumeric( palette=palette_1, domain = log(c.dep$pos), na.color=
 
 leaflet(c.dep) %>%
   map_tiles() %>%
-  map_poly (c.dep$pos,labels.total)  %>%
+  map_poly (c.dep$pos)  %>%
   addLegend("bottomleft", pal = pal.cases, values = log(c.dep$pos), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x)))) %>% 
   map_bounds ()
 
@@ -596,7 +220,7 @@ leaflet(c.dep) %>%
 ### Casos / 100k hab
 
 ```{r, message=F, warning=F}
-labels.pos.hab <- sprintf(
+labels <- sprintf(
   "<strong>%s</strong><br/<strong>Casos/100k hab: </strong>%s",
   c.dep$dep, round(c.dep$pos.hab)) %>% lapply(htmltools::HTML)
 
@@ -604,7 +228,7 @@ pal.cases <- colorNumeric( palette=palette_1, domain = log(c.dep$pos.hab), na.co
 
 leaflet(c.dep) %>%
   map_tiles () %>%
-  map_poly (c.dep$pos.hab,labels.pos.hab) %>%
+  map_poly (c.dep$pos.hab) %>%
   addLegend("bottomleft", pal = pal.cases, values = log(c.dep$pos.hab), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x)))) %>% map_bounds
 ```
 
@@ -1474,7 +1098,7 @@ Mapas {.tabset data-width=250}
 x <- c.dep %>% dplyr::mutate(pos.new = ifelse(pos.new==0,NA, pos.new)) %>% .$pos.new
 
 
-labels.new <- sprintf(
+labels <- sprintf(
   "<strong>%s</strong><br/<strong>Casos: </strong>%s",
   c.dep$dep, c.dep$pos.new) %>% lapply(htmltools::HTML)
 
@@ -1483,8 +1107,7 @@ pal.cases <- colorNumeric( palette="RdPu",
 
 leaflet(c.dep) %>%
   map_tiles() %>%
-  map_poly (y=x,
-            z=labels.new) %>%
+  map_poly (x) %>%
   addLegend("bottomleft", pal=pal.cases, values = log(x), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
   map_bounds()
 

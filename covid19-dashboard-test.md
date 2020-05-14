@@ -8,7 +8,7 @@ layout: dashboard
 
 
 
-<iframe src="https://ce4-peru.github.io/dashboard/dashboard_covid_20200511.html" height="905" width="1890" allowfullscreen="" frameborder="0">
+<iframe src="https://ce4-peru.github.io/dashboard/dashboard_covid_20200514.html" height="905" width="1890" allowfullscreen="" frameborder="0">
 Cargando... Esto puede tomar varios minutos
 </iframe>
 
