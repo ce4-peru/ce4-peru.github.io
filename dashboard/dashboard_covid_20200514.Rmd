@@ -360,14 +360,14 @@ leaflet(c.dep) %>%
 ```{r}
 labels<- sprintf(
   "<strong>%s</strong><br/<strong>Pruebas: </strong>%s",
-  c.dep$dep, c.dep$smp.new) %>% lapply(htmltools::HTML)
+  c.dep$dep, c.dep$smp.imp.new) %>% lapply(htmltools::HTML)
 
-pal.cases <-  colorNumeric( palette="Blues", domain = log(c.dep$smp.new), na.color="transparent")
+pal.cases <-  colorNumeric( palette="Blues", domain = log(c.dep$smp.imp.new), na.color="transparent")
 
 leaflet(c.dep) %>% 
   map_tiles()  %>%
-  map_poly(c.dep$smp.new)%>%
-  addLegend("bottomleft", pal=pal.cases, values = log(c.dep$smp.new), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  map_poly(c.dep$smp.imp.new)%>%
+  addLegend("bottomleft", pal=pal.cases, values = log(c.dep$smp.imp.new), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
   map_bounds()  %>%
   addEasyButton(easyButton(
     icon="fa-info-circle", title="Información",
@@ -1034,16 +1034,20 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
 
 plots <- lapply(vars.pmav.new, function(var) {
   dep %>%
+  arrange(dat) %>%
     group_by(dep) %>%
-    plot_ly(x = ~dat, y = ~mav.pos.new.hab) %>%
-    add_lines(name = "Otras regiones", hoverinfo = "none", 
+    plot_ly() %>%
+    add_lines(x = ~dat, y = ~mav.pos.new.hab,
+              name = "Otras regiones", hoverinfo = "none", 
               line = list(color = "#007e7b"),
               width = 0.5,
               showlegend = ifelse(var == last.mav.new,T,F)) %>%
     filter(dep == ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
                             ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
-                                   ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>%
-    add_lines(text = paste(dep %>% filter(dep==ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
+                                   ifelse(var=="SAN_MARTIN","SAN MARTIN",var))))%>%
+    group_by(dep) %>%
+    add_lines(x = ~dat, y = ~mav.pos.new.hab,
+              text = paste(dep %>% filter(dep==ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
                                                            ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
                                                                   ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>% dplyr::select(days.end) %>% .$days.end, "días desde hoy"),
               hovertemplate = paste('<b>Fecha</b>: %{x}',
@@ -1430,11 +1434,11 @@ Se utilizó la interfaz [Rmarkdown](https://rmarkdown.rstudio.com/) y el lenguaj
 
 Principales paquetes utilizados
 
-  - Tablero - [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/) 
-  - Tablas - [DT](https://rstudio.github.io/DT/)
-  - Mapas - [Leaflet](https://leafletjs.com/)
-  - Visualizaciones interactivas - [Plotly](https://plotly.com/)
-  - Manipulación de datos - [tidyverse](https://www.tidyverse.org/)
+-Tablero - [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/) 
+-Tablas - [DT](https://rstudio.github.io/DT/)
+-Mapas - [Leaflet](https://leafletjs.com/)
+-Visualizaciones interactivas - [Plotly](https://plotly.com/)
+-Manipulación de datos - [tidyverse](https://www.tidyverse.org/)
 
 
 + Fuente de datos

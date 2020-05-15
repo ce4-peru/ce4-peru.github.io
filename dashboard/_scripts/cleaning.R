@@ -7,7 +7,8 @@ dep <-
                 pos = Positivos_totales, 
                 pos.imp = PositivosImputados_totales,
                 pas =Fallecidos, 
-                smp =Total_muestras
+                smp =Total_muestras,
+                smp.imp =MuestrasImputadas_totales
   ) %>% 
   dplyr::mutate(pas = pas %>% if_else(is.na(.), 0, .),
                 dat = as.Date(dat)
@@ -18,6 +19,7 @@ dep <-
                 pos.imp.new = pos.imp - lag(pos.imp, n = 1),
                 pas.new = pas -lag(pas, n = 1),
                 smp.new = smp - lag(smp, n = 1),
+                smp.imp.new = smp.imp - lag(smp.imp, n = 1),
                 ratio.new = signif(pos.new/smp.new), digits = 3,
                 pos.new.log = replace(log(pos.new), pos.new == 0, 0),
                 pas.new.log = replace(log(pas.new), pas.new == 0, 0),

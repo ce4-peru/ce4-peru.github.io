@@ -43,7 +43,7 @@ LATAM <- read_csv ("https://covid.ourworldindata.org/data/owid-covid-data.csv")
 shp <- st_read("Limite_departamental", stringsAsFactors = F)%>% 
   st_transform(4326) %>% 
   dplyr::select(Departamento = NOMBDEP)%>%
-  ms_simplify(keep=0.01)
+  ms_simplify(keep=0.0075)
 
 
 # Variables globales
