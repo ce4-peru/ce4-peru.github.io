@@ -643,7 +643,7 @@ plot_ly(dup.nac)%>%
             line = list(color = '#ffa600'), 
             marker = list(color = '#ffa600'),
             hovertemplate = ~paste("<br><b>Casos Acumulados: %{y:.d0}</b></br><extra></extra>"))   %>% 
-  layout(title = list(text= '',
+  layout(title = list(text= 'Casos acumulados y tiempo de duplicación',
                       font = list(
                         size = 20,
                         color="white")),
@@ -816,6 +816,61 @@ plot_ly(nac_2, x = ~Dia, y = ~per_fallecidos, name = 'Fallecidos',
 
 ```
 
+### Pruebas
+
+```{r, message=F, warning=F}
+plot_ly(nac, x = ~dat) %>% 
+  add_trace(y = ~smp.new, type = 'bar', 
+            name = 'Pruebas negativas',
+            marker = list(color = '#007e7b')) %>%
+  add_trace(y = ~pos.new, type = 'bar',
+            name = 'Pruebas positivas',
+            marker = list(color = '#7aa82a')) %>%
+   add_trace(y = ~mav.pos.new, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Media móvil - Casos Nuevos', 
+            yaxis = 'y2',
+            line = list(color = '#ffa600'), 
+            marker = list(color = '#ffa600'),
+            text = paste(nac$days.end, "días desde hoy"),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Casos nuevos (media móvil): %{y:.0f}</b></br><extra></extra>",
+                                   '<b>%{text}</b>')) %>%
+  layout(title = '<b>Pruebas realizadas y casos nuevos - Perú</b>',
+         titlefont=list(color="white"),
+         barmode = 'stack',
+         xaxis = list(title = "<b>Fecha de Reporte</b>",
+                      color = "white",
+                      tickformat= "%d-%b"),
+         yaxis = list(side = 'left', title = '<b>Pruebas realizadas</b>', 
+                      showgrid = T, gridcolor = "#818181", zeroline = F,
+                      color = "#71be9f",
+                      range=list(0, roundUpNice(max(nac$smp.new))),
+                      autotick=F,
+                      tick0=0,
+                      dtick=roundUpNice(max(nac$smp.new))/5, 
+                      barmode = 'stack'),
+         yaxis2 = list(side = 'right', overlaying = "y",
+                       title = '<b>Casos nuevos por día - Media móvil</b>', 
+                       showgrid = F, zeroline = F,
+                       color = "#ffd29f",
+                       range=list(0, roundUpNice(max(nac$mav.pos.new))),
+                       autotick=F,
+                       tick0=0,
+                       dtick=roundUpNice(max(nac$mav.pos.new))/5),
+         legend = list(orientation = "h",  
+                       xanchor = "center",
+                       yanchor = "bottom",
+                       x = 0.5,
+                       y = -0.125,
+                       font = list(color = "white")))%>%
+  plotly_layout() %>%
+  plotly_config(infobutton) %>% 
+  plotly_end()
+```
+
+
 Column 3 {data-width=250}
 -------------------------------------
 
@@ -855,12 +910,13 @@ if (sum(c.dep$pas.new, na.rm = T) > sum(y.dep$pas.new, na.rm = T)) {
 
 ### Tabla por región {.bg}
 ```{r}
-dep %>% 
+c.dep %>% 
   select(Region = dep,
          Casos = pos,
          Fallecidos = pas,
          Pruebas = smp) %>% 
-  arrange(desc(Casos)) %>%  
+  arrange(desc(Casos)) %>% 
+  st_set_geometry(NULL)%>%  
   DT::datatable(options = list(
     bPaginate = FALSE, 
     dom = 't'), 
@@ -1212,14 +1268,15 @@ dep %>%
 
 ### Tabla por región {.bg}
 ```{r}
-dep %>% 
+c.dep %>% 
   select(Region = dep,
          Casos = pos,
          `Casos nuevos` = pos.new,
          Fallecidos = pas,
          `Fallecidos nuevos` = pas.new,
          Pruebas = smp) %>% 
-  arrange(desc(Casos)) %>%  
+  arrange(desc(Casos))%>% 
+  st_set_geometry(NULL) %>%  
   DT::datatable(options = list(
     bPaginate = FALSE, 
     dom = 't'), 
@@ -1296,7 +1353,7 @@ subplot(plots, nrows = 3, shareX = T, titleX = F,shareY=T)%>%
                 font = list(size = 16,
                             color = "white")),
            list(text = "<b>Media móvil - Nuevos casos por día</b>",
-                x = -0.05,
+                x = -0.08,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1336,7 +1393,7 @@ LATAM %>%ungroup() %>%
                         title = "", type ="log", tickmode="linear"
                         ),
            annotations = list(text = "<b>Media móvil de nuevos casos por país</b>",
-                              x = -0.03, y = 0.5,
+                              x = -0.08, y = 0.5,
                               yref = "paper",xref = "paper",
                               xanchor = "middle",yanchor = "middle",
                               showarrow = FALSE,
@@ -1373,11 +1430,11 @@ Se utilizó la interfaz [Rmarkdown](https://rmarkdown.rstudio.com/) y el lenguaj
 
 Principales paquetes utilizados
 
-  + Tablero - [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/) 
-  + Tablas - [DT](https://rstudio.github.io/DT/)
-  + Mapas - [Leaflet](https://leafletjs.com/)
-  + Visualizaciones interactivas - [Plotly](https://plotly.com/)
-  + Manipulación de datos - [tidyverse](https://www.tidyverse.org/)
+  - Tablero - [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/) 
+  - Tablas - [DT](https://rstudio.github.io/DT/)
+  - Mapas - [Leaflet](https://leafletjs.com/)
+  - Visualizaciones interactivas - [Plotly](https://plotly.com/)
+  - Manipulación de datos - [tidyverse](https://www.tidyverse.org/)
 
 
 + Fuente de datos
@@ -1393,4 +1450,8 @@ La documentación y código fuente se encuentran en [github](https://github.com/
 
 + Registro de cambios
 
-11 de Mayo de 2020 - Lanzamiento 
+14 de Mayo de 2020 - Lanzamiento 
+
+
+
+

@@ -13,7 +13,7 @@ infobutton <- list(
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
-      alert('Muestra los casos acumulados en escala logarítmica desde el día del primer reporte a nivel nacional. Las líneas punteadas corresponden a las pendientes de duplicación de casos cada 1 a 4 días; una pendiente más inclinada implica la duplicación de casos en menor tiempo.');
+      alert('Muestra ...');
     }"
   )
 )

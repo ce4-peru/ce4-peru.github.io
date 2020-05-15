@@ -17,7 +17,7 @@ dep <-
   dplyr::mutate(pos.new = pos - lag(pos, n = 1),
                 pos.imp.new = pos.imp - lag(pos.imp, n = 1),
                 pas.new = pas -lag(pas, n = 1),
-                smp.new = lag(smp, n = 1),
+                smp.new = smp - lag(smp, n = 1),
                 ratio.new = signif(pos.new/smp.new), digits = 3,
                 pos.new.log = replace(log(pos.new), pos.new == 0, 0),
                 pas.new.log = replace(log(pas.new), pas.new == 0, 0),
