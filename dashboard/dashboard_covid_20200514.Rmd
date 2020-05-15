@@ -136,7 +136,7 @@ source('_scripts/import.R', echo = TRUE) # Importa librerias, bases de datos, va
 ```
 
 ```{r plotly, message=F, warning=F, include =F}
-source('_scripts/infobutton.R', echo = TRUE) # Importa las variables para los botones información
+source('_scripts/infobutton.R', echo = TRUE, encoding="UTF-8") # Importa las variables para los botones información
 
 source('_scripts/plotly.R', echo = TRUE) # Importa configuraciones para los gráficos en plotly
 
