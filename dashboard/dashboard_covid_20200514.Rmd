@@ -360,14 +360,15 @@ leaflet(c.dep) %>%
 ```{r}
 labels<- sprintf(
   "<strong>%s</strong><br/<strong>Pruebas: </strong>%s",
-  c.dep$dep, c.dep$smp.imp.new) %>% lapply(htmltools::HTML)
+  c.dep$dep, c.dep$smp.imp.new.nozero) %>% lapply(htmltools::HTML)
 
-pal.cases <-  colorNumeric( palette="Blues", domain = log(c.dep$smp.imp.new), na.color="transparent")
+pal.cases <-  colorNumeric( palette="Blues", domain = c.dep$smp.imp.new.log, na.color="transparent")
 
+# Removidos los negativos
 leaflet(c.dep) %>% 
   map_tiles()  %>%
-  map_poly(c.dep$smp.imp.new)%>%
-  addLegend("bottomleft", pal=pal.cases, values = log(c.dep$smp.imp.new), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  map_poly_log(c.dep$smp.imp.new.log)%>%
+  addLegend("bottomleft", pal=pal.cases, values = c.dep$smp.imp.new.log, title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
   map_bounds()  %>%
   addEasyButton(easyButton(
     icon="fa-info-circle", title="Información",
@@ -1435,9 +1436,13 @@ Se utilizó la interfaz [Rmarkdown](https://rmarkdown.rstudio.com/) y el lenguaj
 Principales paquetes utilizados
 
 -Tablero - [flexdashboard](https://rmarkdown.rstudio.com/flexdashboard/) 
+
 -Tablas - [DT](https://rstudio.github.io/DT/)
+
 -Mapas - [Leaflet](https://leafletjs.com/)
+
 -Visualizaciones interactivas - [Plotly](https://plotly.com/)
+
 -Manipulación de datos - [tidyverse](https://www.tidyverse.org/)
 
 

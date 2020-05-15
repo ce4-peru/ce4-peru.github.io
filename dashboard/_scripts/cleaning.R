@@ -20,7 +20,9 @@ dep <-
                 pas.new = pas -lag(pas, n = 1),
                 smp.new = smp - lag(smp, n = 1),
                 smp.imp.new = smp.imp - lag(smp.imp, n = 1),
-                ratio.new = signif(pos.new/smp.new), digits = 3,
+                smp.imp.new.nozero = ifelse(smp.imp.new<0,0,smp.imp.new),
+                ratio.new = signif(pos.imp.new/smp.imp.new.nozero), digits = 3,
+                ratio.new = ifelse(is.finite(ratio.new),ratio.new,0),#Esta utilizando imputados para evitar negativos y reemplazando smaples con menos de 0
                 pos.new.log = replace(log(pos.new), pos.new == 0, 0),
                 pas.new.log = replace(log(pas.new), pas.new == 0, 0),
                 days.start =as.numeric(dat-first(dat), unit="days"),
@@ -30,7 +32,7 @@ dep <-
                 dup.3 = exp((log(2)/3)*days.start),
                 dup.4 = exp((log(2)/4)*days.start),
                 days.end = difftime(today, dat , units = c("days")),
-                mav.pos.new = slide_dbl(pos.new, ~mean(.x, na.rm = TRUE), .before = 6)
+                mav.pos.new = slide_dbl(pos.imp.new, ~mean(.x, na.rm = TRUE), .before = 6) #  Media móvil esta usando Imputados 
   ) %>%
   merge(pop %>% 
           select(dep = REGION, pop)
@@ -98,7 +100,9 @@ dup.nac <- data.frame(dat = as.Date(seq(1,30, 1)+today)) %>%
 
 #### Datos del día de hoy y ayer #### 
 c.dep <- geom.dep %>%
-  dplyr::filter(dat == c.date)
+  dplyr::filter(dat == c.date)%>%
+  mutate(smp.imp.new.log = replace(log(smp.imp.new), smp.imp.new <= 0, 0))
+
 y.dep <- geom.dep %>%
   dplyr::filter(dat == y.date)
 ####  Formato Regiones Wide #### 
