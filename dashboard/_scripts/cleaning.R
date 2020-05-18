@@ -19,7 +19,7 @@ dep <-
                 pos.imp.new = pos.imp - lag(pos.imp, n = 1),
                 pas.new = pas -lag(pas, n = 1),
                 smp.new = smp - lag(smp, n = 1),
-                smp.imp.new = smp.imp - lag(smp.imp, n = 1),
+                smp.imp.new = ifelse(!is.na(smp.imp), smp.imp - lag(smp.imp, n = 1),lag(smp.imp, n = 1)),
                 smp.imp.new.nozero = ifelse(smp.imp.new<0,0,smp.imp.new),
                 ratio.new = signif(pos.imp.new/smp.imp.new.nozero), digits = 3,
                 ratio.new = ifelse(is.finite(ratio.new),ratio.new,0),#Esta utilizando imputados para evitar negativos y reemplazando smaples con menos de 0
@@ -97,6 +97,7 @@ dup.nac <- data.frame(dat = as.Date(seq(1,30, 1)+today)) %>%
                 dup.4 = exp((log(2)/4)*days.start)
   ) %>%
   bind_rows(nac)
+
 
 #### Datos del día de hoy y ayer #### 
 c.dep <- geom.dep %>%

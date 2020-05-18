@@ -216,8 +216,14 @@ leaflet(c.dep) %>%
     icon="fa-info-circle", title="Información",
     onClick=JS("function(gd) { 
       alert('Muestra los casos acumulados por departamento. El gradiente de colores indica mayor casos acumulados en colores más oscuros.');
-    }"))) 
-  
+    }")))  #%>%
+  # Layers control
+  # addLayersControl(
+  #   baseGroups = c("OSM (default)", "Toner", "Toner Lite"),
+  #   overlayGroups = c("Quakes", "Outline"),
+  #   options = layersControlOptions(collapsed = FALSE)
+  # )
+  # 
 ```
 
 ### Casos / 100k hab
