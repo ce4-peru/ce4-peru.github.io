@@ -366,7 +366,7 @@ leaflet(c.dep) %>%
 ```{r}
 labels<- sprintf(
   "<strong>%s</strong><br/<strong>Pruebas: </strong>%s",
-  c.dep$dep, c.dep$smp.imp.new.nozero) %>% lapply(htmltools::HTML)
+  c.dep$dep, c.dep$smp.imp.new) %>% lapply(htmltools::HTML)
 
 pal.cases <-  colorNumeric( palette="Blues", domain = c.dep$smp.imp.new.log, na.color="transparent")
 
@@ -650,11 +650,14 @@ plot_ly(dup.nac)%>%
             line = list(color = '#ffa600'), 
             marker = list(color = '#ffa600'),
             hovertemplate = ~paste("<br><b>Casos Acumulados: %{y:.d0}</b></br><extra></extra>"))   %>% 
-  layout(title = list(text= 'Casos acumulados y tiempo de duplicación',
-                      font = list(
-                        size = 20,
-                        color="white")),
-         xaxis = list(title = list(text="<b>Días desde el primer reporte</b>",
+  layout(
+    #title = list(text= 'Casos acumulados y tiempo de duplicación',
+     #                 font = list(
+      #                  size = 20,
+       #                 color="white")),
+        title = '<b>Casos acumulados y tiempo de duplicación</b>',
+         titlefont=list(color="white"),
+        xaxis = list(title = list(text="<b>Días desde el primer reporte</b>",
                                    standoff = 15),
                       range = c(as.Date(min(f.date)),max(today+15)),
                       color ="white",
@@ -873,7 +876,7 @@ plot_ly(nac, x = ~dat) %>%
                        y = -0.125,
                        font = list(color = "white")))%>%
   plotly_layout() %>%
-  plotly_config(infobutton) %>% 
+  plotly_config(infobutton11) %>% 
   plotly_end()
 ```
 

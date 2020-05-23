@@ -163,3 +163,19 @@ infobutton_10 <- list(
     }"
   )
 )
+
+
+
+# Prueba
+infobutton11 <- list(
+  name = "Información",
+  icon = list(
+    path = icon_svg_path,
+    transform = "scale(0.84) translate(-1, 0)"
+  ),
+  click = htmlwidgets::JS(
+    "function(gd) { 
+      alert('Muestra la proporción de resultados pruebas realizadas por día (barras) y la media móvil de casos nuevos (línea naranja) a 7 días a nivel nacional. La media móvil muestra el valor promedio de los casos reportados en un periodo determinado.');
+    }"
+  )
+)

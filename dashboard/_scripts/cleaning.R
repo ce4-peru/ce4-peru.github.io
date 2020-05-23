@@ -16,14 +16,16 @@ dep <-
   group_by(dep
   ) %>% 
   dplyr::mutate(pos.new = pos - lag(pos, n = 1),
-                pos.imp.new = pos.imp - lag(pos.imp, n = 1),
+                pos.imp.new = ifelse(!is.na(pos.imp), 
+                                     pos.imp - lag(pos.imp, n = 1),
+                                     pos - lag(pos, n = 1)),
                 pas.new = pas -lag(pas, n = 1),
                 smp.new = smp - lag(smp, n = 1),
                 smp.imp.new = ifelse(!is.na(smp.imp), 
                                      smp.imp - lag(smp.imp, n = 1),
-                                     smp.new - lag(smp.new, n = 1)),
-                smp.imp.new.nozero = ifelse(smp.imp.new<0,0,smp.imp.new),
-                ratio.new = signif(pos.imp.new/smp.imp.new.nozero), digits = 3,
+                                     smp - lag(smp, n = 1)),
+               #smp.imp.new.nozero = ifelse(smp.imp.new<0,0,smp.imp.new),
+                ratio.new = signif(pos.imp.new/smp.imp.new), digits = 3,
                 ratio.new = ifelse(is.finite(ratio.new),ratio.new,0),#Esta utilizando imputados para evitar negativos y reemplazando smaples con menos de 0
                 pos.new.log = replace(log(pos.new), pos.new == 0, 0),
                 pas.new.log = replace(log(pas.new), pas.new == 0, 0),

@@ -11,7 +11,7 @@ map_bounds <- function(x) {
                      lat2 = -23.920121) 
 }
 
-map_poly <-  function(x,y,z,label) {
+map_poly <-  function(x,y) {
   x %>%
     addPolygons(fillColor = pal.cases(log(y)),
                 weight = 2,
@@ -24,12 +24,12 @@ map_poly <-  function(x,y,z,label) {
                                              dashArray = "",
                                              fillOpacity = 0.7,
                                              bringToFront = TRUE),
-                label = label,
+                label = labels,
                 labelOptions = labelOptions(style = list("font-weight" = "normal",
                                                          padding = "3px 8px"),
                                             textsize = "15px",
-                                            direction = "auto"), 
-                group = z) 
+                                            direction = "auto")
+                ) 
   
 }
 
