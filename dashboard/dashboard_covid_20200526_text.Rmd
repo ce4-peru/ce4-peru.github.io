@@ -467,8 +467,8 @@ Column 2 {.tabset data-width=400 vertical_layout=scroll}
                        font = list(color = "white")),
          annotations = list(
            list(text = "Muestra los casos nuevos por día (barras) y casos acumulados (línea naranja) en escala lineal a nivel nacional. La escala lineal sirve para visualizar la suma contínua de casos.",
-                x = 0,
-                y = -0.1,
+                x = -0.3,
+                y = -0.2,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
