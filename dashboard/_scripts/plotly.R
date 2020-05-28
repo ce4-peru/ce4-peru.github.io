@@ -31,7 +31,7 @@ plotly_layout_2 <- function(x) {
                hoverdistance = 50,
                hovermode = "closest",
                dragmode="pan",
-               margin = list(l=65, r=65, b=150, t=50),
+               margin = list(l=65, r=65, b=100, t=50),
                autosize=T
   )
 }
