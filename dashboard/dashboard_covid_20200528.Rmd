@@ -480,7 +480,7 @@ annot <- list(list(text = "<i>Tipo de Gráfico</i>",font=list(color="white"),
                    xanchor="center",yanchor="top"))
 
 
-fig %>% layout(title = '<b>Casos nuevos y acumulados - Perú</b>',
+fig %>% layout(title = '<b>Casos acumulados y nuevos - Perú</b>',
          titlefont=list(color="white"),
          xaxis = list(title = "<b>Fecha de reporte</b>",
                       color ="white",
@@ -556,7 +556,7 @@ plot_ly(nac) %>%
                                 as.Date(c.date))),
          yaxis = list(side = 'left', title = '<b>Casos nuevos por día</b>', 
                       showgrid = T, gridcolor = "#818181", zeroline = F,
-                      color = "#98cbe1",
+                      color = "white",
                       range=list(0, roundUpNice(max(nac$pos.new))),
                       autotick=F,
                       tick0=0,
@@ -659,7 +659,7 @@ plot_ly(dup.nac)%>%
                        xanchor = "center",
                        yanchor = "bottom",  
                        x = 0.5,
-                       y = -0.25,
+                       y = -0.2,
                        font = list(color = "white")),
          # legend = list(title=list(text="<b>Casos acumulados se duplican en...</b>",
          #                          font = list(color="white"),
