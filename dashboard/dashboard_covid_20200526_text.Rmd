@@ -474,7 +474,8 @@ Column 2 {.tabset data-width=400 vertical_layout=scroll}
                 xref = "paper",
                 showarrow = FALSE,
                 font = list(size = 8,
-                            color = "white")))
+                            color = "white"),
+                align = "left"))
   ) %>%
   plotly_layout_2() %>%
   plotly_config(infobutton_1) %>% 
