@@ -515,7 +515,7 @@ fig %>% layout(title = '<b>Casos nuevos y acumulados - Perú</b>',
 ```
 
 
-### Media Móvil
+### Casos nuevos
 
 ```{r, message=F, warning=F}
 plot_ly(nac) %>%
@@ -546,7 +546,8 @@ plot_ly(nac) %>%
                            width = 3, 
                            dash = "dot")
   )%>% 
-  layout(title = '<b>Media móvil (7d) y casos nuevos por día - Perú</b>',
+  layout(title = '<br> <b> Media móvil de casos nuevos por día - Perú</b> </br>
+         (Media móvil de 7 días)',
          titlefont=list(color="white"),
          xaxis = list(title = "<b>Fecha de reporte</b>",
                       color="white",
@@ -570,7 +571,7 @@ plot_ly(nac) %>%
                        xanchor = "center",
                        yanchor = "bottom",  
                        x = 0.5,
-                       y = -0.15,
+                       y = -0.128,
                        font = list(color = "white"))
   )  %>%
   plotly_layout() %>%
