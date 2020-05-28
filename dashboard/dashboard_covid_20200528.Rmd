@@ -546,8 +546,7 @@ plot_ly(nac) %>%
                            width = 3, 
                            dash = "dot")
   )%>% 
-  layout(title = '<br> <b> Media móvil de casos nuevos por día - Perú</b> </br>
-         (Media móvil de 7 días)',
+  layout(title = '<br><b>Media móvil de casos nuevos por día - Perú</b></br>(Media móvil de 7 días)',
          titlefont=list(color="white"),
          xaxis = list(title = "<b>Fecha de reporte</b>",
                       color="white",
