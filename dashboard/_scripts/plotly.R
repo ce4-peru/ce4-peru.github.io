@@ -25,6 +25,17 @@ plotly_layout <- function(x) {
   )
 }
 
+plotly_layout_2 <- function(x) {
+  x %>% layout(paper_bgcolor="black",
+               plot_bgcolor="black",
+               hoverdistance = 50,
+               hovermode = "closest",
+               dragmode="pan",
+               margin = list(l=65, r=65, b=40, t=50),
+               autosize=T
+  )
+}
+
 plotly_end<- function(x) {
   x %>% partial_bundle() %>% 
   htmlwidgets::onRender('function(el, x) {

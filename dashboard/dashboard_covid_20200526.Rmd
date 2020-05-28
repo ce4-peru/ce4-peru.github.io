@@ -536,6 +536,114 @@ Column 2 {.tabset data-width=400 vertical_layout=scroll}
   plotly_end()
 ```
 
+### Casos acumulados 
+
+```{r}
+ fig <- nac %>%
+  plot_ly()  %>%
+  add_trace(x = ~dat, y = ~pos.new, 
+            type = 'bar', name = 'Casos nuevos',
+            marker = list(color = '#006b7d'), 
+            text = paste(nac$days.end, "días desde hoy"),
+            hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                  '<br><b>Nuevos Casos:</b> %{y}</br>',
+                                  '<b>%{text}</b><extra></extra>'))%>% 
+  add_trace(x = ~dat, y = ~pos, 
+            type = 'scatter',
+            mode = 'lines+markers', 
+            name = 'Casos acumulados', 
+            yaxis = 'y2',
+            line = list(color = '#ffa600'), 
+            marker = list(color = '#ffa600'),
+            text = paste(nac$days.end, "días desde hoy"),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Casos Acumulados: %{y:.0f}</b></br><extra></extra>",
+                                   '<b>%{text}</b>'))  %>%
+  add_segments(x = "2020-04-08", xend = "2020-04-08", 
+               y = 0, yend=max(nac$pos.new),
+               text="2020-04-08",name="Inicio de Pruebas Rápidas",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+               width=2, 
+               line = list(color = "#7aa82a", 
+                           width = 3, 
+                           dash = "dot")
+  )
+
+
+chart_types <- list(
+  type = "buttons",
+  direction = "right",
+  xanchor = 'center',
+  yanchor = "top",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0.1,
+  y = 1.1,
+  buttons = list(
+
+    list(method = "relayout",
+         args = list(list(yaxis2 = list(side = 'right', overlaying = "y",
+                       title = '<b>Casos acumulados por día (lineal)</b>', 
+                       showgrid = F, zeroline = F,
+                       color = "#ffd29f",
+                       range=list(0, roundUpNice(max(nac$pos))),
+                       autotick=F,
+                       tick0=0,
+                       dtick=roundUpNice(max(nac$pos))/5))),
+         label = "Lineal"),
+
+    list(method = "relayout",
+         args = list(list(yaxis2 = list(side = 'right', overlaying = "y", type = "log",
+                       title = '<b>Casos acumulados (logaritmica)</b>', 
+                       showgrid = F, zeroline = F,
+                       color = "#ffd29f",
+                       range=list(1, 6),
+                       autotick=F,
+                       tick0=0))),
+         label = "Logaritmica")
+  ))
+
+annot <- list(list(text = "<i>Tipo de Gráfico</i>",font=list(color="white"),
+                   x=-0.1, y=1.15, 
+                   xref='paper', yref='paper', showarrow=FALSE))
+
+
+fig %>% layout(title = '<b>Casos nuevos y acumulados - Perú</b>',
+         titlefont=list(color="white"),
+         xaxis = list(title = "<b>Fecha de reporte</b>",
+                      color ="white",
+                      tickformat= "%d-%b"),
+         yaxis = list(side = 'left', title = '<b>Casos nuevos por día</b>', 
+                      showgrid = T, gridcolor = "#818181", zeroline = F,
+                      color = "#98cbe1",
+                      range=list(0, roundUpNice(max(nac$pos.new))),
+                      autotick=F,
+                      tick0=0,
+                      dtick=roundUpNice(max(nac$pos.new))/5),
+         yaxis2 = list(side = 'right', overlaying = "y",
+                       title = '<b>Casos acumulados por día (lineal)</b>', 
+                       showgrid = F, zeroline = F,
+                       color = "#ffd29f",
+                       range=list(0, roundUpNice(max(nac$pos))),
+                       autotick=F,
+                       tick0=0,
+                       dtick=roundUpNice(max(nac$pos))/5),
+         legend = list(orientation = "h",  
+                       xanchor = "center",
+                       yanchor = "bottom",
+                       x = 0.5,
+                       y = -0.125,
+                       font = list(color = "white")),
+  updatemenus = list(chart_types),
+  annotations = annot) %>%
+  plotly_layout()
+
+
+
+
+```
+
+
 ### Media Móvil
 
 ```{r, message=F, warning=F}
