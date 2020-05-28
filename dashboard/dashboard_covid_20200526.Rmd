@@ -577,8 +577,8 @@ chart_types <- list(
   xanchor = 'center',
   yanchor = "top",
   pad = list('r'= 0, 't'= 10, 'b' = 10),
-  x = 0.1,
-  y = 0.8,
+  x = 0.15,
+  y = 0.9,
   buttons = list(
 
     list(method = "relayout",
@@ -604,8 +604,9 @@ chart_types <- list(
   ))
 
 annot <- list(list(text = "<i>Tipo de Gráfico</i>",font=list(color="white"),
-                   x=0.1, y=0.8, 
-                   xref='paper', yref='paper', showarrow=FALSE))
+                   x=0.15, y=0.92, 
+                   xref='paper', yref='paper', showarrow=FALSE,
+                   xanchor="center",yanchor="top"))
 
 
 fig %>% layout(title = '<b>Casos nuevos y acumulados - Perú</b>',
