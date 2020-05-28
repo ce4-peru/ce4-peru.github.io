@@ -1,0 +1,3005 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+<title>CE4 - Dashboard COVID-19</title>
+
+<meta property="og:title" content="CE4 - Dashboard COVID-19" />
+
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+
+<link rel="icon" href="data:image/x-icon;" type="image/x-icon">
+
+
+<script type="text/javascript">
+window.FlexDashboardComponents = [];
+</script>
+
+<script id="flexdashboard-navbar" type="application/json">
+[{"icon":"fa-share-alt","items":[{"title":"Twitter","icon":"fa-twitter"},{"title":"Facebook","icon":"fa-facebook"},{"title":"Google+","icon":"fa-google-plus"},{"title":"LinkedIn","icon":"fa-linkedin"},{"title":"Pinterest","icon":"fa-pinterest"}]},{"title":"Source Code","icon":"fa-code","href":"source_embed","align":"right"}]
+</script>
+<script src="test_files/jquery-1.12.4/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="test_files/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="test_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="test_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="test_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="test_files/stickytableheaders-0.1.19/jquery.stickytableheaders.min.js"></script>
+<link href="test_files/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="test_files/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link href="test_files/featherlight-1.3.5/featherlight.min.css" rel="stylesheet" />
+<script src="test_files/featherlight-1.3.5/featherlight.min.js"></script>
+<link href="test_files/prism-1.4.1/prism.css" rel="stylesheet" />
+<script src="test_files/prism-1.4.1/prism.js"></script>
+<script src="test_files/htmlwidgets-1.5.1/htmlwidgets.js"></script>
+<link href="test_files/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="test_files/leaflet-1.3.1/leaflet.js"></script>
+<link href="test_files/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="test_files/Proj4Leaflet-1.0.1/proj4-compressed.js"></script>
+<script src="test_files/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="test_files/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="test_files/leaflet-binding-2.0.3/leaflet.js"></script>
+<link href="test_files/leaflet-easybutton-1.3.1/easy-button.css" rel="stylesheet" />
+<script src="test_files/leaflet-easybutton-1.3.1/easy-button.js"></script>
+<script src="test_files/leaflet-easybutton-1.3.1/EasyButton-binding.js"></script>
+<link href="test_files/fontawesome-4.7.0/font-awesome.min.css" rel="stylesheet" />
+<style type="text/css">
+
+/*
+ Dashboard CSS from Keen IO Dashboards
+ (https://github.com/keen/dashboards)
+*/
+
+body {
+  background: #f2f2f2;
+  padding: 60px 0 0 8px; /* padding-top overridden by theme */
+}
+
+body hr {
+  border-color: #d7d7d7;
+  margin: 10px 0;
+}
+
+.navbar-inverse .navbar-nav > li > a,
+.navbar .navbar-brand {
+  text-decoration: none;
+}
+
+.navbar-logo {
+  margin-top: 1px;
+}
+
+.navbar-logo img {
+  margin-right: 12px;
+}
+
+.navbar-author {
+  margin-left: 10px;
+  font-size: 15px;
+}
+
+.navbar .dropdown-menu .fa {
+  min-width: 20px;
+}
+
+.navbar .dropdown-menu {
+  min-width: 150px;
+  max-height: 500px;
+  overflow: auto;
+}
+
+.chart-wrapper,
+.nav-tabs-custom,
+.sbframe-commentary
+{
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 3px;
+  margin-bottom: 8px;
+  margin-right: 8px;
+}
+
+.chart-title {
+  border-bottom: 1px solid #d7d7d7;
+  color: #666;
+  font-size: 14px;
+  font-weight: 300;
+  padding: 7px 10px 4px;
+}
+
+.chart-wrapper .chart-title:empty {
+  display: none;
+}
+
+.chart-wrapper .chart-stage {
+  overflow: hidden;
+  padding: 5px 10px;
+  position: relative;
+}
+
+.chart-wrapper .chart-notes {
+  background: #fbfbfb;
+  border-top: 1px solid #e2e2e2;
+  color: #808080;
+  font-size: 12px;
+  padding: 8px 10px 5px;
+}
+
+/*
+ CSS for handling flexbox layout
+*/
+
+#dashboard-container {
+  visibility: hidden;
+}
+
+.tab-content>.dashboard-page-wrapper.active {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.dashboard-page-wrapper {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.dashboard-row-orientation {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.dashboard-row {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.dashboard-row-flex {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+
+.dashboard-column-orientation {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: row;
+      -ms-flex-direction: row;
+          flex-direction: row;
+}
+
+.dashboard-column {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.chart-wrapper-flex {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+
+.chart-stage-flex {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  position: relative;
+}
+
+.chart-shim {
+  position: absolute;
+  left: 8px; top: 8px; right: 8px; bottom: 8px;
+}
+
+.no-padding .chart-shim {
+  left: 0; top: 0; right: 0; bottom: 0;
+}
+
+.flowing-content-shim {
+  overflow: auto;
+  left: 0; top: 0; right: 0; bottom: 0;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.flowing-content-container {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+.chart-stage .table-bordered {
+  border: none;
+}
+
+.chart-stage .table-bordered > tbody > tr > th,
+.chart-stage .table-bordered > tfoot > tr > th,
+.chart-stage .table-bordered > tbody > tr > td,
+.chart-stage .table-bordered > tfoot > tr > td {
+  border: none;
+}
+
+.chart-stage .table-bordered > tbody > tr > td {
+  border-top: 1px solid #dddddd;
+}
+
+.chart-stage .table-bordered > thead > tr > th {
+  border: none;
+  border-bottom: 2px solid #dddddd;
+}
+
+.bootstrap-table table>thead {
+  background-color: #fff;
+}
+
+.bootstrap-table table.data,
+.bootstrap-table table.shiny-table {
+  width: inherit !important;
+}
+
+.bootstrap-table table.data>tbody>tr>th,
+.bootstrap-table table.shiny-table>tbody>tr>th {
+  border-top: none;
+  border-bottom: 2px solid #dddddd;
+  padding: 5px;
+}
+
+.bootstrap-table .data td[align=right] {
+  font-family: inherit;
+}
+
+.chart-wrapper form {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.shiny-input-container label {
+  font-weight: normal;
+}
+
+.chart-stage .html-widget {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-stage .html-widget-static-bound {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.chart-stage .shiny-bound-output {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Omit display of empty paragraphs */
+
+.chart-shim>p:empty {
+  display: none;
+}
+
+.chart-stage>p:empty {
+  display: none;
+}
+
+/* Omit display of special knitr options div*/
+
+.chart-stage .knitr-options {
+  display: none;
+}
+
+/* Automatically resizing images */
+
+.image-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+}
+
+.image-container img {
+  opacity: 0;
+  overflow: hidden;
+}
+
+/* Value box */
+
+.value-box {
+  border-radius: 2px;
+  position: relative;
+  display: block;
+  margin-right: 8px;
+  margin-bottom: 8px;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.value-box > .inner {
+  padding: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.value-box .value {
+  font-size: 38px;
+  font-weight: bold;
+  margin: 0 0 3px 0;
+  white-space: nowrap;
+  padding: 0;
+}
+
+.value-box .caption {
+  font-size: 15px;
+}
+.value-box .caption > small {
+  display: block;
+  font-size: 13px;
+  margin-top: 5px;
+}
+
+.value-box .icon i {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 80px;
+  color: rgba(0, 0, 0, 0.15);
+}
+
+.linked-value:hover {
+  cursor: pointer;
+}
+
+.value-box.linked-value:hover {
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* STORYBOARD */
+
+.storyboard-nav button {
+  background: transparent;
+  border: 0;
+  opacity: .3;
+  outline: none;
+  padding: 0;
+}
+
+.storyboard-nav button:hover,
+.storyboard-nav button:hover {
+  opacity: .5;
+}
+
+.storyboard-nav button:disabled,
+.storyboard-nav button:disabled {
+  opacity: .1;
+}
+
+.storyboard-nav .sbnext,
+.storyboard-nav .sbprev {
+  float: left;
+  width: 2%;
+  height: 120px;
+  font-size: 50px;
+}
+
+.storyboard-nav .sbprev {
+  text-align: left;
+  width: 2%;
+}
+
+.storyboard-nav .sbnext {
+  float: right;
+  text-align: right;
+  margin-right: 8px;
+}
+
+.storyboard-nav .sbframelist {
+  margin: 0 auto;
+  width: 94%;
+  height: 120px;
+  overflow: hidden;
+  text-shadow: none;
+  margin-bottom: 8px;
+}
+
+.storyboard-nav .sbframelist ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.storyboard-nav .sbframelist ul li {
+  float: left;
+  width: 270px;
+  height: 100%;
+  padding: 10px 10px 10px 10px;
+  margin-right: 8px;
+  background: #fff;
+  border: 1px solid #e2e2e2;
+  border-radius: 3px;
+  color: #3a3c47;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.storyboard-nav .sbframelist ul li:last-child {
+  margin-right: 0px;
+}
+
+.storyboard-nav .sbframelist ul li.active {
+  color: #fff;
+  background: #B8B8B8;
+}
+
+.sbframe-commentary {
+  width: 300px;
+  background: #fbfbfb;
+  font-size: 14px;
+}
+
+.sbframe-commentary ul {
+  padding-left: 22px;
+}
+
+.sbframe.active {
+  display: flex;
+}
+
+.sbframe:not(.active) {
+  display: none;
+}
+
+/* NAV TABS */
+
+.nav-tabs-custom > .nav-tabs {
+  margin: 0;
+  border-bottom: 1px solid #d7d7d7;
+  color: #666;
+  font-size: 14px;
+  font-weight: 300;
+  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
+}
+.nav-tabs-custom > .nav-tabs > li {
+  border-top: 3px solid transparent;
+  margin-bottom: -1px;
+  margin-right: 5px;
+}
+.nav-tabs-custom > .nav-tabs > li > a,
+.nav-tabs-custom > .nav-tabs > li > a:active {
+  color: #666;
+  font-weight: 300;
+  font-size: 14px;
+  border-radius: 0;
+  padding: 3px 10px 5px;
+  text-transform: none;
+}
+
+.nav-tabs-custom > .nav-tabs > li:not(.active) > a {
+  border-bottom-color: transparent;
+}
+
+.nav-tabs-custom > .nav-tabs > li > a.text-muted {
+  color: #999;
+}
+.nav-tabs-custom > .nav-tabs > li > a,
+.nav-tabs-custom > .nav-tabs > li > a:hover {
+  background: transparent;
+  margin: 0;
+}
+.nav-tabs-custom > .nav-tabs > li > a:hover {
+  color: #999;
+}
+.nav-tabs-custom > .nav-tabs > li:not(.active) > a:hover,
+.nav-tabs-custom > .nav-tabs > li:not(.active) > a:focus,
+.nav-tabs-custom > .nav-tabs > li:not(.active) > a:active {
+  border-color: transparent;
+}
+.nav-tabs-custom > .nav-tabs > li.active {
+  border-top-color: #3c8dbc;
+}
+.nav-tabs-custom > .nav-tabs > li.active > a,
+.nav-tabs-custom > .nav-tabs > li.active:hover > a {
+  background-color: #fff;
+  color: #666;
+}
+.nav-tabs-custom > .nav-tabs > li.active > a {
+  border-top-color: transparent;
+  border-left-color: #d7d7d7;
+  border-right-color: #d7d7d7;
+}
+.nav-tabs-custom > .nav-tabs > li:first-of-type {
+  margin-left: 0;
+}
+.nav-tabs-custom > .nav-tabs > li:first-of-type.active > a {
+  border-left-color: transparent;
+}
+.nav-tabs-custom > .nav-tabs.pull-right {
+  float: none !important;
+}
+.nav-tabs-custom > .nav-tabs.pull-right > li {
+  float: right;
+}
+.nav-tabs-custom > .nav-tabs.pull-right > li:first-of-type {
+  margin-right: 0;
+}
+.nav-tabs-custom > .nav-tabs.pull-right > li:first-of-type > a {
+  border-left-width: 1px;
+}
+.nav-tabs-custom > .nav-tabs.pull-right > li:first-of-type.active > a {
+  border-left-color: #d7d7d7;
+  border-right-color: transparent;
+}
+.nav-tabs-custom > .nav-tabs > li.header {
+  line-height: 35px;
+  padding: 0 10px;
+  font-size: 20px;
+  color: #666;
+}
+.nav-tabs-custom > .nav-tabs > li.header > .fa,
+.nav-tabs-custom > .nav-tabs > li.header > .glyphicon,
+.nav-tabs-custom > .nav-tabs > li.header > .ion {
+  margin-right: 5px;
+}
+.nav-tabs-custom > .tab-content {
+  background: #fff;
+  padding: 0;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 3px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.nav-tabs-custom > .tab-content > .chart-wrapper {
+  background: #fff;
+  border: none;
+  margin: 0;
+}
+
+
+.nav-tabs-custom > .tab-content > .active {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.nav-tabs-custom .dropdown.open > a:active,
+.nav-tabs-custom .dropdown.open > a:focus {
+  background: transparent;
+  color: #999;
+}
+
+
+@media (max-width: 767px) {
+  .value-box {
+    text-align: center;
+    margin-right: 8px;
+  }
+  .value-box .icon {
+    display: none;
+  }
+}
+
+/* Fixed position sidebar */
+
+.section.sidebar {
+  position: fixed;
+  top: 51px; /* overridden by theme */
+  left: 0;
+  bottom: 0;
+  border-right: 1px solid #e2e2e2;
+  background-color: white; /* overridden by theme */
+  padding-left: 10px;
+  padding-right: 10px;
+  visibility: hidden;
+  overflow: auto;
+}
+
+.section.sidebar form p:first-child {
+  margin-top: 10px;
+}
+
+/* Embedded source code */
+
+#flexdashboard-source-code {
+  display: none;
+}
+
+.featherlight-content #flexdashboard-source-code {
+  display: inline-block;
+}
+
+.featherlight-content {
+  width: 80%;
+  max-width: 800px;
+  padding: 0 !important;
+  border-bottom: none !important;
+}
+
+.featherlight:last-of-type {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.featherlight-inner {
+  width: 100%;
+}
+
+.featherlight-content pre {
+  margin: 0;
+  border: 0;
+  background: #fff;
+  font-size: 12px;
+}
+
+.unselectable {
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: -moz-none;
+  -o-user-select: none;
+  user-select: none;
+}
+
+#flexdashboard-source-code code {
+  -ms-user-select: text;
+  -webkit-user-select: text;
+  -khtml-user-select: text;
+  -moz-user-select: text;
+  -o-user-select: text;
+  user-select: text;
+}
+
+/* DataTables Tweaks */
+
+.dataTables_filter input[type="search"] {
+  -webkit-appearance: searchfield;
+  outline: none;
+}
+
+.dataTables_wrapper.no-footer
+.dataTables_info {
+  padding-top: 0;
+}
+
+
+table.dataTable thead th {
+  border-bottom: 1px solid #d7d7d7;
+}
+
+.dataTables_wrapper.no-footer .dataTables_scrollBody {
+  border-bottom: 1px solid #d7d7d7;
+}
+
+/* Mobile phone only CSS */
+
+.desktop-layout div.section.mobile {
+  display: none;
+}
+
+.mobile-layout div.section.no-mobile {
+  display: none;
+}
+
+.mobile-figure {
+  display: none;
+}
+
+
+
+body {
+  padding-top: 60px;
+}
+
+.section.sidebar {
+  top: 51px;
+  background-color: rgba(39, 128, 227, 0.1);
+}
+
+.value-box {
+  color: #f9f9f9;
+}
+
+.bg-primary {
+  background-color: rgba(39, 128, 227, 0.7);
+}
+
+.storyboard-nav .sbframelist ul li.active {
+  background-color: rgba(39, 128, 227, 0.7);
+}
+
+.nav-tabs-custom > .nav-tabs > li.active {
+  border-top-color: rgba(39, 128, 227, 0.7);
+}
+
+.bg-info {
+  background-color: rgba(153, 84, 187, 0.7);
+}
+
+.bg-warning {
+  background-color: rgba(255, 117, 24, 0.7);
+}
+
+.bg-danger {
+  background-color: rgba(255, 0, 57, 0.7);
+}
+
+.bg-success {
+  background-color: rgba(63, 182, 24, 0.7);
+}
+
+.chart-title {
+  font-weight: 500;
+}
+
+.nav-tabs-custom > .nav-tabs > li > a,
+.nav-tabs-custom > .nav-tabs > li > a:active {
+  font-weight: 500;
+}
+
+@media only screen and (min-width: 768px) {
+html, body {
+  height: 100%;
+}
+
+#dashboard-container {
+  height: 100%;
+}
+}
+</style>
+
+
+
+</head>
+
+<body>
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<div class="container-fluid">
+<div class="navbar-header">
+
+<button id="navbar-button" type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+
+<span class="navbar-logo pull-left">
+  
+</span>
+<span class="navbar-brand">
+  CE4 - Dashboard COVID-19
+  <span class="navbar-author">
+        </span>
+</span>
+
+</div>
+<div id="navbar" class="navbar-collapse collapse">
+<ul class="nav navbar-nav navbar-left">
+</ul>
+<ul class="nav navbar-nav navbar-right">
+</ul>
+</div><!--/.nav-collapse-->
+</div><!--/.container-->
+</div><!--/.navbar-->
+
+<script type="text/javascript">
+
+
+var FlexDashboard = (function () {
+
+  // initialize options
+  var _options = {};
+
+  var FlexDashboard = function() {
+
+    // default options
+    _options = $.extend(_options, {
+      theme: "cosmo",
+      fillPage: false,
+      orientation: 'columns',
+      storyboard: false,
+      defaultFigWidth: 576,
+      defaultFigHeight: 461,
+      defaultFigWidthMobile: 360,
+      defaultFigHeightMobile: 461,
+      isMobile: false,
+      isPortrait: false
+    });
+  };
+
+  function init(options) {
+
+    // extend default options
+    $.extend(true, _options, options);
+
+    // add ids to sections that don't have them (pandoc won't assign ids
+    // to e.g. sections with titles consisting of only chinese characters)
+    var nextId = 1;
+    $('.level1:not([id]),.level2:not([id]),.level3:not([id])').each(function() {
+      $(this).attr('id', 'dashboard-' + nextId++);
+    });
+
+    // find navbar items
+    var navbarItems = $('#flexdashboard-navbar');
+    if (navbarItems.length)
+      navbarItems = JSON.parse(navbarItems.html());
+    addNavbarItems(navbarItems);
+
+    // find the main dashboard container
+    var dashboardContainer = $('#dashboard-container');
+
+    // resolve mobile classes
+    resolveMobileClasses(dashboardContainer);
+
+    // one time global initialization for components
+    componentsInit(dashboardContainer);
+
+    // look for a global sidebar
+    var globalSidebar = dashboardContainer.find(".section.level1.sidebar");
+    if (globalSidebar.length > 0) {
+
+      // global layout for fullscreen displays
+      if (!isMobilePhone()) {
+
+         // hoist it up to the top level
+         globalSidebar.insertBefore(dashboardContainer);
+
+         // lay it out (set width/positions)
+         layoutSidebar(globalSidebar, dashboardContainer);
+
+      // tuck sidebar into first page for mobile phones
+      } else {
+
+        // convert it into a level3 section
+        globalSidebar.removeClass('sidebar');
+        globalSidebar.removeClass('level1');
+        globalSidebar.addClass('level3');
+        var h1 = globalSidebar.children('h1');
+        var h3 = $('<h3></h3>');
+        h3.html(h1.html());
+        h3.insertBefore(h1);
+        h1.remove();
+
+        // move it into the first page
+        var page = dashboardContainer.find('.section.level1').first();
+        if (page.length > 0)
+          page.prepend(globalSidebar);
+      }
+    }
+
+    // look for pages to layout
+    var pages = $('div.section.level1');
+    if (pages.length > 0) {
+
+        // find the navbar and collapse on clicked
+        var navbar = $('#navbar');
+        navbar.on("click", "a[data-toggle!=dropdown]", null, function () {
+           navbar.collapse('hide');
+        });
+
+        // envelop the dashboard container in a tab content div
+        dashboardContainer.wrapInner('<div class="tab-content"></div>');
+
+        pages.each(function(index) {
+
+          // lay it out
+          layoutDashboardPage($(this));
+
+          // add it to the navbar
+          addToNavbar($(this), index === 0);
+
+        });
+
+    } else {
+
+      // remove the navbar and navbar button if we don't
+      // have any navbuttons
+      if (navbarItems.length === 0) {
+        $('#navbar').remove();
+        $('#navbar-button').remove();
+      }
+
+      // add the storyboard class if requested
+      if (_options.storyboard)
+        dashboardContainer.addClass('storyboard');
+
+      // layout the entire page
+      layoutDashboardPage(dashboardContainer);
+    }
+
+    // if we are in shiny we need to trigger a window resize event to
+    // force correct layout of shiny-bound-output elements
+    if (isShinyDoc())
+      $(window).trigger('resize');
+
+    // make main components visible
+    $('.section.sidebar').css('visibility', 'visible');
+    dashboardContainer.css('visibility', 'visible');
+
+    // handle location hash
+    handleLocationHash();
+
+    // intialize prism highlighting
+    initPrismHighlighting();
+
+    // record mobile and orientation state then register a handler
+    // to refresh if it changes
+    _options.isMobile = isMobilePhone();
+    _options.isPortrait = isPortrait();
+    $(window).on('resize', function() {
+      if (_options.isMobile !== isMobilePhone() ||
+          _options.isPortrait !== isPortrait()) {
+        window.location.reload();
+      }
+    });
+
+    // trigger layoutcomplete event
+    dashboardContainer.trigger('flexdashboard:layoutcomplete');
+  }
+
+  function resolveMobileClasses(dashboardContainer) {
+     // add top level layout class
+    dashboardContainer.addClass(isMobilePhone() ? 'mobile-layout' :
+                                                  'desktop-layout');
+
+    // look for .mobile sections and add .no-mobile to their peers
+    var mobileSections = $('.section.mobile');
+    mobileSections.each(function() {
+       var id = $(this).attr('id');
+       var nomobileId = id.replace(/-\d+$/, '');
+       $('#' + nomobileId).addClass('no-mobile');
+    });
+  }
+
+  function addNavbarItems(navbarItems) {
+
+    var navbarLeft = $('ul.navbar-left');
+    var navbarRight = $('ul.navbar-right');
+
+    for (var i = 0; i<navbarItems.length; i++) {
+
+      // get the item
+      var item = navbarItems[i];
+
+      // determine the container
+      var container = null;
+      if (item.align === "left")
+        container = navbarLeft;
+      else
+        container = navbarRight;
+
+      // navbar menu if we have multiple items
+      if (item.items) {
+        var menu = navbarMenu(null, item.icon, item.title, container);
+        for (var j = 0; j<item.items.length; j++) {
+          var subItem = item.items[j];
+          var li = $('<li></li>');
+          li.append(navbarLink(subItem.icon, subItem.title, subItem.href, subItem.target));
+          menu.append(li);
+        }
+      } else {
+        var li = $('<li></li>');
+        li.append(navbarLink(item.icon, item.title, item.href, item.target));
+        container.append(li);
+      }
+    }
+  }
+
+  // create or get a reference to an existing dropdown menu
+  function navbarMenu(id, icon, title, container) {
+    var existingMenu = [];
+    if (id)
+      existingMenu = container.children('#' + id);
+    if (existingMenu.length > 0) {
+      return existingMenu.children('ul');
+    } else {
+      var li = $('<li></li>');
+      if (id)
+        li.attr('id', id);
+      li.addClass('dropdown');
+      // auto add "Share" title on mobile if necessary
+      if (!title && icon && (icon === "fa-share-alt") && isMobilePhone())
+        title = "Share";
+      if (title) {
+        title = title + ' <span class="caret"></span>';
+      }
+      var a = navbarLink(icon, title, "#");
+      a.addClass('dropdown-toggle');
+      a.attr('data-toggle', 'dropdown');
+      a.attr('role', 'button');
+      a.attr('aria-expanded', 'false');
+      li.append(a);
+      var ul = $('<ul class="dropdown-menu"></ul>');
+      ul.attr('role', 'menu');
+      li.append(ul);
+      container.append(li);
+      return ul;
+    }
+  }
+
+  function addToNavbar(page, active) {
+
+    // capture the id and data-icon attribute (if any)
+    var id = page.attr('id');
+    var icon = page.attr('data-icon');
+    var navmenu = page.attr('data-navmenu');
+
+    // get hidden state (transfer this to navbar)
+    var hidden = page.hasClass('hidden');
+    page.removeClass('hidden');
+
+    // sanitize the id for use with bootstrap tabs
+    id = id.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_');
+    page.attr('id', id);
+
+    // get the wrapper
+    var wrapper = page.closest('.dashboard-page-wrapper');
+
+    // move the id to the wrapper
+    page.removeAttr('id');
+    wrapper.attr('id', id);
+
+    // add the tab-pane class to the wrapper
+    wrapper.addClass('tab-pane');
+    if (active)
+      wrapper.addClass('active');
+
+    // get a reference to the h1, discover it's id and title, then remove it
+    var h1 = wrapper.find('h1').first();
+    var title = h1.html();
+    h1.remove();
+
+    // create a navbar item
+    var li = $('<li></li>');
+    var a = navbarLink(icon, title, '#' + id);
+    a.attr('data-toggle', 'tab');
+    li.append(a);
+
+    // add it to the navbar (or navbar menu if specified)
+    var container = $('ul.navbar-left');
+    if (navmenu) {
+      var menuId = navmenu.replace(/\s+/g, '');
+      var menu = navbarMenu(menuId, null, navmenu, container);
+      menu.append(li);
+    } else {
+      container.append(li);
+    }
+
+    // hide it if requested
+    if (hidden)
+      li.addClass('hidden');
+  }
+
+  function navbarLink(icon, title, href, target) {
+
+    var a = $('<a></a>');
+    if (icon) {
+
+      // get the name of the icon set and icon
+      var dashPos = icon.indexOf("-");
+      var iconSet = icon.substring(0, dashPos);
+      var iconName = icon.substring(dashPos + 1);
+
+      // create the icon
+      var iconElement = $('<span class="' + iconSet + ' ' + icon + '"></span>');
+      if (title)
+        iconElement.css('margin-right', '7px');
+      a.append(iconElement);
+      // if href is null see if we can auto-generate based on icon (e.g. social)
+      if (!href)
+        maybeGenerateLinkFromIcon(iconName, a);
+    }
+    if (title)
+      a.append(title);
+
+    // add the href.
+    if (href) {
+      if (href === "source_embed") {
+        a.attr('href', '#');
+        a.attr('data-featherlight', "#flexdashboard-source-code");
+        a.featherlight({
+            beforeOpen: function(event){
+              $('body').addClass('unselectable');
+            },
+            afterClose: function(event){
+              $('body').removeClass('unselectable');
+            }
+        });
+      } else {
+        a.attr('href', href);
+      }
+    }
+
+    // add the arget
+    if (target)
+      a.attr('target', target);
+
+    return a;
+  }
+
+  // auto generate a link from an icon name (e.g. twitter) when possible
+  function maybeGenerateLinkFromIcon(iconName, a) {
+
+     var serviceLinks = {
+      "twitter": "https://twitter.com/share?text=" + encodeURIComponent(document.title) + "&url="+encodeURIComponent(location.href),
+      "facebook": "https://www.facebook.com/sharer/sharer.php?s=100&p[url]="+encodeURIComponent(location.href),
+      "google-plus": "https://plus.google.com/share?url="+encodeURIComponent(location.href),
+      "linkedin": "https://www.linkedin.com/shareArticle?mini=true&url="+encodeURIComponent(location.href) + "&title=" + encodeURIComponent(document.title),
+      "pinterest": "https://pinterest.com/pin/create/link/?url="+encodeURIComponent(location.href) + "&description=" + encodeURIComponent(document.title)
+    };
+
+    var makeSocialLink = function(a, href) {
+      a.attr('href', '#');
+      a.on('click', function(e) {
+        e.preventDefault();
+        window.open(href);
+      });
+    };
+
+    $.each(serviceLinks, function(key, value) {
+      if (iconName.indexOf(key) !== -1)
+        makeSocialLink(a, value);
+    });
+  }
+
+  // layout a dashboard page
+  function layoutDashboardPage(page) {
+
+    // use a page wrapper so that free form content above the
+    // dashboard appears at the top rather than the side (as it
+    // would without the wrapper in a column orientation)
+    var wrapper = $('<div class="dashboard-page-wrapper"></div>');
+    page.wrap(wrapper);
+
+    // if there are no level2 or level3 headers synthesize a level3
+    // header to contain the (e.g. frame it, scroll container, etc.)
+    var headers = page.find('h2,h3');
+    if (headers.length === 0)
+      page.wrapInner('<div class="section level3"></div>');
+
+    // hoist up any content before level 2 or level 3 headers
+    var children = page.children();
+    children.each(function(index) {
+      if ($(this).hasClass('level2') || $(this).hasClass('level3'))
+        return false;
+      $(this).insertBefore(page);
+    });
+
+    // determine orientation and fillPage behavior for distinct media
+    var orientation, fillPage, storyboard;
+
+    // media: mobile phone
+    if (isMobilePhone()) {
+
+      // if there is a sidebar we need to ensure it's content
+      // is properly framed as an h3
+      var sidebar = page.find('.section.sidebar');
+      sidebar.removeClass('sidebar');
+      sidebar.wrapInner('<div class="section level3"></div>');
+      var h2 = sidebar.find('h2');
+      var h3 = $('<h3></h3>');
+      h3.html(h2.html());
+      h3.insertBefore(h2);
+      h2.remove();
+
+      // wipeout h2 elements then enclose them in a single h2
+      var level2 = page.find('div.section.level2');
+      level2.each(function() {
+        level2.children('h2').remove();
+        level2.children().unwrap();
+      });
+      page.wrapInner('<div class="section level2"></div>');
+
+      // substitute mobile images
+      if (isPortrait()) {
+        var mobileFigures = $('img.mobile-figure');
+        mobileFigures.each(function() {
+          // get the src (might be base64 encoded)
+          var src = $(this).attr('src');
+
+          // find it's peer
+          var id = $(this).attr('data-mobile-figure-id');
+          var img = $('img[data-figure-id=' + id + "]");
+          img.attr('src', src)
+             .attr('width', _options.defaultFigWidthMobile)
+             .attr('height', _options.defaultFigHeightMobile);
+        });
+      }
+
+      // hoist storyboard commentary into it's own section
+      if (page.hasClass('storyboard')) {
+        var commentaryHR = page.find('div.section.level3 hr');
+        commentaryHR.each(function() {
+          var commentary = $(this).nextAll().detach();
+          var commentarySection = $('<div class="section level3"></div>');
+          commentarySection.append(commentary);
+          commentarySection.insertAfter($(this).closest('div.section.level3'));
+          $(this).remove();
+        });
+      }
+
+      // force a non full screen layout by columns
+      orientation = _options.orientation = 'columns';
+      fillPage = _options.fillPage = false;
+      storyboard = _options.storyboard = false;
+
+    // media: desktop
+    } else {
+
+      // determine orientation
+      orientation = page.attr('data-orientation');
+      if (orientation !== 'rows' && orientation != 'columns')
+        orientation = _options.orientation;
+
+      // determine storyboard mode
+      storyboard = page.hasClass('storyboard');
+
+      // fillPage based on options (force for storyboard)
+      fillPage = _options.fillPage || storyboard;
+
+      // handle sidebar
+      var sidebar = page.find('.section.level2.sidebar');
+      if (sidebar.length > 0)
+        layoutSidebar(sidebar, page);
+    }
+
+    // give it and it's parent divs height: 100% if we are in fillPage mode
+    if (fillPage) {
+      page.addClass('vertical-layout-fill');
+      page.css('height', '100%');
+      page.parents('div').css('height', '100%');
+    } else {
+      page.addClass('vertical-layout-scroll');
+    }
+
+    // perform the layout
+    if (storyboard)
+      layoutPageAsStoryboard(page);
+    else if (orientation === 'rows')
+      layoutPageByRows(page, fillPage);
+    else if (orientation === 'columns')
+      layoutPageByColumns(page, fillPage);
+  }
+
+  function layoutSidebar(sidebar, content) {
+
+    // get it out of the header hierarchy
+    sidebar = sidebar.first();
+    if (sidebar.hasClass('level1')) {
+      sidebar.removeClass('level1');
+      sidebar.children('h1').remove();
+    } else if (sidebar.hasClass('level2')) {
+      sidebar.removeClass('level2');
+      sidebar.children('h2').remove();
+    }
+
+    // determine width
+    var sidebarWidth = isTablet() ? 220 : 250;
+    var dataWidth = parseInt(sidebar.attr('data-width'));
+    if (dataWidth)
+      sidebarWidth = dataWidth;
+
+    // set the width and shift the page right to accomodate the sidebar
+    sidebar.css('width', sidebarWidth + 'px');
+    content.css('padding-left', sidebarWidth + 'px');
+
+    // wrap it's contents in a form
+    sidebar.wrapInner($('<form></form>'));
+  }
+
+  function layoutPageAsStoryboard(page) {
+
+    // create storyboard navigation
+    var nav = $('<div class="storyboard-nav"></div>');
+
+    // add navigation buttons
+    var prev = $('<button class="sbprev"><i class="fa fa-angle-left"></i></button>');
+    nav.append(prev);
+    var next= $('<button class="sbnext"><i class="fa fa-angle-right"></i></button>');
+    nav.append(next);
+
+    // add navigation frame
+    var frameList = $('<div class="sbframelist"></div>');
+    nav.append(frameList);
+    var ul = $('<ul></ul>');
+    frameList.append(ul);
+
+     // find all the level3 sections (those are the storyboard frames)
+    var frames = page.find('div.section.level3');
+    frames.each(function() {
+
+      // mark it
+      $(this).addClass('sbframe');
+
+      // divide it into chart content and (optional) commentary
+      $(this).addClass('dashboard-column-orientation');
+
+      // stuff the chart into it's own div w/ flex
+      $(this).wrapInner('<div class="sbframe-component"></div>');
+      setFlex($(this), 1);
+      var frame = $(this).children('.sbframe-component');
+
+      // extract the title from the h3
+      var li = $('<li></li>');
+      var h3 = frame.children('h3');
+      li.html(h3.html());
+      h3.remove();
+      ul.append(li);
+
+      // extract commentary
+      var hr = frame.children('hr');
+      if (hr.length) {
+        var commentary = hr.nextAll().detach();
+        hr.remove();
+        var commentaryFrame = $('<div class="sbframe-commentary"></div>');
+        commentaryFrame.addClass('flowing-content-shim');
+        commentaryFrame.addClass('flowing-content-container');
+        commentaryFrame.append(commentary);
+        $(this).append(commentaryFrame);
+
+        // look for a data-commentary-width attribute
+        var commentaryWidth = $(this).attr('data-commentary-width');
+        if (commentaryWidth)
+          commentaryFrame.css('width', commentaryWidth + 'px');
+      }
+
+      // layout the chart (force flex)
+      var result = layoutChart(frame, true);
+
+      // ice the notes if there are none
+      if (!result.notes)
+        frame.find('.chart-notes').remove();
+
+      // set flex on chart
+      setFlex(frame, 1);
+    });
+
+    // create a div to hold all the frames
+    var frameContent = $('<div class="sbframe-content"></div>');
+    frameContent.addClass('dashboard-row-orientation');
+    frameContent.append(frames.detach());
+
+    // row orientation to stack nav and frame content
+    page.addClass('dashboard-row-orientation');
+    page.append(nav);
+    page.append(frameContent);
+    setFlex(frameContent, 1);
+
+    // initialize sly
+    var sly = new Sly(frameList, {
+    		horizontal: true,
+    		itemNav: 'basic',
+    		smart: true,
+    		activateOn: 'click',
+    		startAt: 0,
+    		scrollBy: 1,
+    		activatePageOn: 'click',
+    		speed: 200,
+    		moveBy: 600,
+    		dragHandle: true,
+    		dynamicHandle: true,
+    		clickBar: true,
+    		keyboardNavBy: 'items',
+    		next: next,
+    		prev: prev
+    	}).init();
+
+    // make first frame active
+    frames.removeClass('active');
+    frames.first().addClass('active');
+
+    // subscribe to frame changed events
+    sly.on('active', function (eventName, itemIndex) {
+      frames.removeClass('active');
+      frames.eq(itemIndex).addClass('active')
+                          .trigger('shown');
+    });
+  }
+
+  function layoutPageByRows(page, fillPage) {
+
+    // row orientation
+    page.addClass('dashboard-row-orientation');
+
+    // find all the level2 sections (those are the rows)
+    var rows = page.find('div.section.level2');
+
+    // if there are no level2 sections then treat the
+    // entire page as if it's a level 2 section
+    if (rows.length === 0) {
+      page.wrapInner('<div class="section level2"></div>');
+      rows = page.find('div.section.level2');
+    }
+
+    rows.each(function () {
+
+      // flags
+      var haveNotes = false;
+      var haveFlexHeight = true;
+
+      // remove the h2
+      $(this).children('h2').remove();
+
+      // check for a tabset
+      var isTabset = $(this).hasClass('tabset');
+      if (isTabset)
+        layoutTabset($(this));
+
+      // give it row layout semantics if it's not a tabset
+      if (!isTabset)
+        $(this).addClass('dashboard-row');
+
+      // find all of the level 3 subheads
+      var columns = $(this).find('div.section.level3');
+
+      // determine figureSizes sizes
+      var figureSizes = chartFigureSizes(columns);
+
+      // fixup the columns
+      columns.each(function(index) {
+
+        // layout the chart (force flex if we are in a tabset)
+        var result = layoutChart($(this), isTabset);
+
+        // update flexHeight state
+        if (!result.flex)
+          haveFlexHeight = false;
+
+        // update state
+        if (result.notes)
+          haveNotes = true;
+
+        // set the column flex based on the figure width
+        // (value boxes will just get the default figure width)
+        var chartWidth = figureSizes[index].width;
+        setFlex($(this), chartWidth + ' ' + chartWidth + ' 0px');
+
+      });
+
+      // remove empty chart note divs
+      if (isTabset)
+        $(this).find('.chart-notes').filter(function() {
+            return $(this).html() === "&nbsp;";
+        }).remove();
+      if (!haveNotes)
+        $(this).find('.chart-notes').remove();
+
+       // make it a flexbox row
+      if (haveFlexHeight)
+        $(this).addClass('dashboard-row-flex');
+
+      // now we can set the height on all the wrappers (based on maximum
+      // figure height + room for title and notes, or data-height on the
+      // container if specified). However, don't do this if there is
+      // no flex on any of the constituent columns
+      var flexHeight = null;
+      var dataHeight = parseInt($(this).attr('data-height'));
+      if (dataHeight)
+        flexHeight = adjustedHeight(dataHeight, columns.first());
+      else if (haveFlexHeight)
+        flexHeight = maxChartHeight(figureSizes, columns);
+      if (flexHeight) {
+        if (fillPage)
+          setFlex($(this), flexHeight + ' ' + flexHeight + ' 0px');
+        else {
+          $(this).css('height', flexHeight + 'px');
+          setFlex($(this), '0 0 ' + flexHeight + 'px');
+        }
+      }
+
+    });
+  }
+
+  function layoutPageByColumns(page, fillPage) {
+
+    // column orientation
+    page.addClass('dashboard-column-orientation');
+
+    // find all the level2 sections (those are the columns)
+    var columns = page.find('div.section.level2');
+
+    // if there are no level2 sections then treat the
+    // entire page as if it's a level 2 section
+    if (columns.length === 0) {
+      page.wrapInner('<div class="section level2"></div>');
+      columns = page.find('div.section.level2');
+    }
+
+    // layout each column
+    columns.each(function (index) {
+
+      // remove the h2
+      $(this).children('h2').remove();
+
+      // make it a flexbox column
+      $(this).addClass('dashboard-column');
+
+      // check for a tabset
+      var isTabset = $(this).hasClass('tabset');
+      if (isTabset)
+        layoutTabset($(this));
+
+      // find all the h3 elements
+      var rows = $(this).find('div.section.level3');
+
+      // get the figure sizes for the rows
+      var figureSizes = chartFigureSizes(rows);
+
+      // column flex is the max row width (or data-width if specified)
+      var flexWidth;
+      var dataWidth = parseInt($(this).attr('data-width'));
+      if (dataWidth)
+        flexWidth = dataWidth;
+      else
+        flexWidth = maxChartWidth(figureSizes);
+      setFlex($(this), flexWidth + ' ' + flexWidth + ' 0px');
+
+      // layout each chart
+      rows.each(function(index) {
+
+        // perform the layout
+        var result = layoutChart($(this), false);
+
+        // ice the notes if there are none
+        if (!result.notes)
+          $(this).find('.chart-notes').remove();
+
+        // set flex height based on figHeight, then adjust
+        if (result.flex) {
+          var chartHeight = figureSizes[index].height;
+          chartHeight = adjustedHeight(chartHeight, $(this));
+          if (fillPage)
+            setFlex($(this), chartHeight + ' ' + chartHeight + ' 0px');
+          else {
+            $(this).css('height', chartHeight + 'px');
+            setFlex($(this), chartHeight + ' ' + chartHeight + ' ' + chartHeight + 'px');
+          }
+        }
+      });
+    });
+  }
+
+  function chartFigureSizes(charts) {
+
+    // sizes
+    var figureSizes = new Array(charts.length);
+
+    // check each chart
+    charts.each(function(index) {
+
+      // start with default
+      figureSizes[index] = {
+        width: _options.defaultFigWidth,
+        height: _options.defaultFigHeight
+      };
+
+      // look for data-height or data-width then knit options
+      var dataWidth = parseInt($(this).attr('data-width'));
+      var dataHeight = parseInt($(this).attr('data-height'));
+      var knitrOptions = $(this).find('.knitr-options:first');
+      var knitrWidth, knitrHeight;
+      if (knitrOptions) {
+        knitrWidth = parseInt(knitrOptions.attr('data-fig-width'));
+        knitrHeight =  parseInt(knitrOptions.attr('data-fig-height'));
+      }
+
+      // width
+      if (dataWidth)
+        figureSizes[index].width = dataWidth;
+      else if (knitrWidth)
+        figureSizes[index].width = knitrWidth;
+
+      // height
+      if (dataHeight)
+        figureSizes[index].height = dataHeight;
+      else if (knitrHeight)
+        figureSizes[index].height = knitrHeight;
+    });
+
+    // return sizes
+    return figureSizes;
+  }
+
+  function maxChartHeight(figureSizes, charts) {
+
+    // first compute the maximum height
+    var maxHeight = _options.defaultFigHeight;
+    for (var i = 0; i<figureSizes.length; i++)
+      if (figureSizes[i].height > maxHeight)
+        maxHeight = figureSizes[i].height;
+
+    // now add offests for chart title and chart notes
+    if (charts.length)
+      maxHeight = adjustedHeight(maxHeight, charts.first());
+
+    return maxHeight;
+  }
+
+  function adjustedHeight(height, chart) {
+    if (chart.length > 0) {
+      var chartTitle = chart.find('.chart-title');
+      if (chartTitle.length)
+        height += chartTitle.first().outerHeight();
+      var chartNotes = chart.find('.chart-notes');
+      if (chartNotes.length)
+        height += chartNotes.first().outerHeight();
+    }
+    return height;
+  }
+
+  function maxChartWidth(figureSizes) {
+    var maxWidth = _options.defaultFigWidth;
+    for (var i = 0; i<figureSizes.length; i++)
+      if (figureSizes[i].width > maxWidth)
+        maxWidth = figureSizes[i].width;
+    return maxWidth;
+  }
+
+  // layout a chart
+  function layoutChart(chart, forceFlex) {
+
+    // state to return
+    var result = {
+      notes: false,
+      flex: false
+    };
+
+    // extract the title
+    var title = extractTitle(chart);
+
+    // find components that apply to this container
+    var components = componentsFind(chart);
+
+    // if it's a custom component then call it and return
+    var customComponents = componentsCustom(components);
+    if (customComponents.length) {
+      componentsLayout(customComponents, title, chart);
+      result.notes = false;
+      result.flex = forceFlex || componentsFlex(customComponents);
+      return result;
+    }
+
+    // put all the content in a chart wrapper div
+    chart.addClass('chart-wrapper');
+    chart.wrapInner('<div class="chart-stage"></div>');
+    var chartContent = chart.children('.chart-stage');
+
+    // flex the content if appropriate
+    result.flex = forceFlex || componentsFlex(components);
+    if (result.flex) {
+      // add flex classes
+      chart.addClass('chart-wrapper-flex');
+      chartContent.addClass('chart-stage-flex');
+
+      // additional shim to break out of flexbox sizing
+      chartContent.wrapInner('<div class="chart-shim"></div>');
+      chartContent = chartContent.children('.chart-shim');
+    }
+
+    // set custom data-padding attribute
+    var pad = chart.attr('data-padding');
+    if (pad) {
+      if (pad === "0")
+        chart.addClass('no-padding');
+      else {
+        pad = pad + 'px';
+        chartContent.css('left', pad)
+                    .css('top', pad)
+                    .css('right', pad)
+                    .css('bottom', pad)
+      }
+    }
+
+    // call compoents
+    componentsLayout(components, title, chartContent);
+
+    // also activate components on shiny output
+    findShinyOutput(chartContent).on('shiny:value',
+      function(event) {
+        var element = $(event.target);
+        setTimeout(function() {
+
+          // see if we opted out of flex based on our output (for shiny
+          // we can't tell what type of output we have until after the
+          // value is bound)
+          var components = componentsFind(element);
+          var flex = forceFlex || componentsFlex(components);
+          if (!flex) {
+            chart.css('height', "");
+            setFlex(chart, "");
+            chart.removeClass('chart-wrapper-flex');
+            chartContent.removeClass('chart-stage-flex');
+            chartContent.children().unwrap();
+          }
+
+          // perform layout
+          componentsLayout(components, title, element.parent());
+        }, 10);
+      });
+
+    // add the title
+    var chartTitle = $('<div class="chart-title"></div>');
+    chartTitle.html(title);
+    chart.prepend(chartTitle);
+
+    // add the notes section
+    var chartNotes = $('<div class="chart-notes"></div>');
+    chartNotes.html('&nbsp;');
+    chart.append(chartNotes);
+
+    // attempt to extract notes if we have a component
+    if (components.length)
+      result.notes = extractChartNotes(chartContent, chartNotes);
+
+    // return result
+    return result;
+  }
+
+  // build a tabset from a section div with the .tabset class
+  function layoutTabset(tabset) {
+
+    // check for fade option
+    var fade = tabset.hasClass("tabset-fade");
+    var navClass = "nav-tabs";
+
+    // determine the heading level of the tabset and tabs
+    var match = tabset.attr('class').match(/level(\d) /);
+    if (match === null)
+      return;
+    var tabsetLevel = Number(match[1]);
+    var tabLevel = tabsetLevel + 1;
+
+    // find all subheadings immediately below
+    var tabs = tabset.find("div.section.level" + tabLevel);
+    if (!tabs.length)
+      return;
+
+    // create tablist and tab-content elements
+    var tabList = $('<ul class="nav ' + navClass + '" role="tablist"></ul>');
+    $(tabs[0]).before(tabList);
+    var tabContent = $('<div class="tab-content"></div>');
+    $(tabs[0]).before(tabContent);
+
+    // build the tabset
+    tabs.each(function(i) {
+
+      // get the tab div
+      var tab = $(tabs[i]);
+
+      // get the id then sanitize it for use with bootstrap tabs
+      var id = tab.attr('id');
+
+      // sanitize the id for use with bootstrap tabs
+      id = id.replace(/[.\/?&!#<>]/g, '').replace(/\s/g, '_');
+      tab.attr('id', id);
+
+      // get the heading element within it and grab it's text
+      var heading = tab.find('h' + tabLevel + ':first');
+      var headingText = heading.html();
+
+      // build and append the tab list item
+      var a = $('<a role="tab" data-toggle="tab">' + headingText + '</a>');
+      a.attr('href', '#' + id);
+      a.attr('aria-controls', id);
+      var li = $('<li role="presentation"></li>');
+      li.append(a);
+      if (i === 0)
+        li.attr('class', 'active');
+      tabList.append(li);
+
+      // set it's attributes
+      tab.attr('role', 'tabpanel');
+      tab.addClass('tab-pane');
+      tab.addClass('tabbed-pane');
+      tab.addClass('no-title');
+      if (fade)
+        tab.addClass('fade');
+      if (i === 0) {
+        tab.addClass('active');
+        if (fade)
+          tab.addClass('in');
+      }
+
+      // move it into the tab content div
+      tab.detach().appendTo(tabContent);
+    });
+
+    // add nav-tabs-custom
+    tabset.addClass('nav-tabs-custom');
+
+    // internal layout is dashboard-column with tab-content flexing
+    tabset.addClass('dashboard-column');
+    setFlex(tabContent, 1);
+  }
+
+  // one time global initialization for components
+  function componentsInit(dashboardContainer) {
+    for (var i=0; i<window.FlexDashboardComponents.length; i++) {
+      var component = window.FlexDashboardComponents[i];
+      if (component.init)
+        component.init(dashboardContainer);
+    }
+  }
+
+  // find components that apply within a container
+  function componentsFind(container) {
+
+    // look for components
+    var components = [];
+    for (var i=0; i<window.FlexDashboardComponents.length; i++) {
+      var component = window.FlexDashboardComponents[i];
+      if (component.find(container).length)
+        components.push(component);
+    }
+
+    // if there were none then use a special flowing content component
+    // that just adds a scrollbar in fillPage mode
+    if (components.length == 0) {
+      components.push({
+        find: function(container) {
+          return container;
+        },
+
+        flex: function(fillPage) {
+          return fillPage;
+        },
+
+        layout: function(title, container, element, fillPage) {
+          if (fillPage) {
+            container.addClass('flowing-content-shim');
+            container.addClass('flowing-content-container');
+          }
+        }
+      });
+    }
+
+    return components;
+  }
+
+  // if there is a custom component then pick it out
+  function componentsCustom(components) {
+    var customComponent = [];
+    for (var i=0; i<components.length; i++)
+      if (components[i].type === "custom") {
+        customComponent.push(components[i]);
+        break;
+      }
+    return customComponent;
+  }
+
+  // query all components for flex
+  function componentsFlex(components) {
+
+    // no components at all means no flex
+    if (components.length === 0)
+      return false;
+
+    // otherwise query components (assume true unless we see false)
+    var isMobile = isMobilePhone();
+    for (var i=0; i<components.length; i++)
+      if (components[i].flex && !components[i].flex(_options.fillPage))
+        return false;
+    return true;
+  }
+
+  // layout all components
+  function componentsLayout(components, title, container) {
+    var isMobile = isMobilePhone();
+    for (var i=0; i<components.length; i++) {
+      var element = components[i].find(container);
+      if (components[i].layout) {
+        // call layout (don't call other components if it returns false)
+        var result = components[i].layout(title, container, element, _options.fillPage);
+        if (result === false)
+          return;
+      }
+    }
+  }
+
+  // get a reference to the h3, discover it's inner html, and remove it
+  function extractTitle(container) {
+    var h3 = container.children('h3').first();
+    var title = '';
+    if (!container.hasClass('no-title'))
+      title = h3.html();
+    h3.remove();
+    return title;
+  }
+
+  // extract chart notes
+  function extractChartNotes(chartContent, chartNotes) {
+    // look for a terminating blockquote or image caption
+    var blockquote = chartContent.children('blockquote:last-child');
+    var caption = chartContent.children('div.image-container')
+                              .children('p.caption');
+    if (blockquote.length) {
+      chartNotes.html(blockquote.children('p:first-child').html());
+      blockquote.remove();
+      return true;
+    } else if (caption.length) {
+      chartNotes.html(caption.html());
+      caption.remove();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  function findShinyOutput(chartContent) {
+    return chartContent.find('.shiny-text-output, .shiny-html-output');
+  }
+
+  // safely detect rendering on a mobile phone
+  function isMobilePhone() {
+    try
+    {
+      return ! window.matchMedia("only screen and (min-width: 768px)").matches;
+    }
+    catch(e) {
+      return false;
+    }
+  }
+
+  function isFillPage() {
+    return _options.fillPage;
+  }
+
+  // detect portrait mode
+  function isPortrait() {
+    return ($(window).width() < $(window).height());
+  }
+
+  // safely detect rendering on a tablet
+  function isTablet() {
+    try
+    {
+      return window.matchMedia("only screen and (min-width: 769px) and (max-width: 992px)").matches;
+    }
+    catch(e) {
+      return false;
+    }
+  }
+
+  // test whether this is a shiny doc
+  function isShinyDoc() {
+    return (typeof(window.Shiny) !== "undefined" && !!window.Shiny.outputBindings);
+  }
+
+  // set flex using vendor specific prefixes
+  function setFlex(el, flex) {
+    el.css('-webkit-box-flex', flex)
+      .css('-webkit-flex', flex)
+      .css('-ms-flex', flex)
+      .css('flex', flex);
+  }
+
+  // support bookmarking of pages
+  function handleLocationHash() {
+
+    // restore tab/page from bookmark
+    var hash = window.location.hash;
+    if (hash.length > 0)
+      $('ul.nav a[href="' + hash + '"]').tab('show');
+    FlexDashboardUtils.manageActiveNavbarMenu();
+
+    // navigate to a tab when the history changes
+    window.addEventListener("popstate", function(e) {
+      var hash = window.location.hash;
+      var activeTab = $('ul.nav a[href="' + hash + '"]');
+      if (activeTab.length) {
+        activeTab.tab('show');
+      } else {
+        $('ul.nav a:first').tab('show');
+      }
+      FlexDashboardUtils.manageActiveNavbarMenu();
+    });
+
+    // add a hash to the URL when the user clicks on a tab/page
+    $('.navbar-nav a[data-toggle="tab"]').on('click', function(e) {
+      var baseUrl = FlexDashboardUtils.urlWithoutHash(window.location.href);
+      var hash = FlexDashboardUtils.urlHash($(this).attr('href'));
+      var href = baseUrl + hash;
+      FlexDashboardUtils.setLocation(href);
+    });
+
+    // handle clicks of other links that should activate pages
+    var navPages = $('ul.navbar-nav li a[data-toggle=tab]');
+    navPages.each(function() {
+      var href =  $(this).attr('href');
+      var links = $('a[href="' + href + '"][data-toggle!=tab]');
+      links.each(function() {
+        $(this).on('click', function(e) {
+          window.FlexDashboardUtils.showPage(href);
+        });
+      });
+    });
+  }
+
+  // tweak Prism highlighting
+  function initPrismHighlighting() {
+
+    if (window.Prism) {
+      Prism.languages.insertBefore('r', 'comment', {
+        'heading': [
+          {
+            // title 1
+        	  // =======
+
+        	  // title 2
+        	  // -------
+        	  pattern: /\w+.*(?:\r?\n|\r)(?:====+|----+)/,
+            alias: 'operator'
+          },
+          {
+            // ### title 3
+            pattern: /(^\s*)###[^#].+/m,
+            lookbehind: true,
+            alias: 'operator'
+          }
+        ]
+      });
+
+      // prism highlight
+      Prism.highlightAll();
+    }
+  }
+
+
+  // get theme color
+  var themeColors = {
+    bootstrap: {
+      primary: "rgba(51, 122, 183, 0.4)",
+      info: "rgb(217, 237, 247)",
+      success: "rgb(223, 240, 216)",
+      warning: "rgb(252, 248, 227)",
+      danger: "rgb(242, 222, 222)"
+    },
+    cerulean: {
+      primary: "rgb(47, 164, 231)",
+      info: "rgb(217, 237, 247)",
+      success: "rgb(223, 240, 216)",
+      warning: "rgb(252, 248, 227)",
+      danger: "rgb(242, 222, 222)"
+    },
+    journal: {
+      primary: "rgba(235, 104, 100, 0.70)",
+      info: "rgb(217, 237, 247)",
+      success: "rgb(223, 240, 216)",
+      warning: "rgb(252, 248, 227)",
+      danger: "rgb(242, 222, 222)"
+    },
+    flatly: {
+      primary: "rgba(44, 62, 80, 0.70)",
+      info: "rgba(52, 152, 219, 0.70)",
+      success: "rgba(24, 188, 156, 0.70)",
+      warning: "rgba(243, 156, 18, 0.70)",
+      danger: "rgba(231, 76, 60, 0.70)"
+    },
+    readable: {
+      primary: "rgba(69, 130, 236, 0.4)",
+      info: "rgb(217, 237, 247)",
+      success: "rgb(223, 240, 216)",
+      warning: "rgb(252, 248, 227)",
+      danger: "rgb(242, 222, 222)"
+    },
+    spacelab: {
+      primary: "rgba(68, 110, 155, 0.25)",
+      info: "rgb(217, 237, 247)",
+      success: "rgb(223, 240, 216)",
+      warning: "rgb(252, 248, 227)",
+      danger: "rgb(242, 222, 222)"
+    },
+    united: {
+      primary: "rgba(221, 72, 20, 0.30)",
+      info: "rgb(217, 237, 247)",
+      success: "rgb(223, 240, 216)",
+      warning: "rgb(252, 248, 227)",
+      danger: "rgb(242, 222, 222)"
+    },
+    cosmo: {
+      primary: "rgba(39, 128, 227, 0.7)",
+      info: "rgba(153, 84, 187, 0.7)",
+      success: "rgba(63, 182, 24, 0.7)",
+      warning: "rgba(255, 117, 24, 0.7)",
+      danger: "rgba(255, 0, 57, 0.7)"
+    },
+    lumen: {
+      primary: "rgba(21, 140, 186, 0.70)",
+      info: "rgba(117, 202, 235, 0.90)",
+      success: "rgba(40, 182, 44, 0.70)",
+      warning: "rgba(255, 133, 27, 0.70)",
+      danger: "rgba(255, 65, 54, 0.70)"
+    },
+    paper: {
+      primary: "rgba(33, 150, 243, 0.35)",
+      info: "rgb(225, 190, 231)",
+      success: "rgb(223, 240, 216)",
+      warning: "rgb(255, 224, 178)",
+      danger: "rgb(249, 189, 187)"
+    },
+    sandstone: {
+      primary: "rgba(50, 93, 136, 0.3)",
+      info: "rgb(217, 237, 247)",
+      success: "rgb(223, 240, 216)",
+      warning: "rgb(252, 248, 227)",
+      danger: "rgb(242, 222, 222)"
+    },
+    simplex: {
+      primary: "rgba(217, 35, 15, 0.25)",
+      info: "rgb(217, 237, 247)",
+      success: "rgb(223, 240, 216)",
+      warning: "rgb(252, 248, 227)",
+      danger: "rgb(242, 222, 222)"
+    },
+    yeti: {
+      primary: "rgba(0, 140, 186, 0.298039)",
+      info: "rgb(217, 237, 247)",
+      success: "rgb(223, 240, 216)",
+      warning: "rgb(252, 248, 227)",
+      danger: "rgb(242, 222, 222)"
+    }
+  }
+  function themeColor(color) {
+    return themeColors[_options.theme][color];
+  }
+
+  FlexDashboard.prototype = {
+    constructor: FlexDashboard,
+    init: init,
+    isMobilePhone: isMobilePhone,
+    isFillPage: isFillPage,
+    themeColor: themeColor
+  };
+
+  return FlexDashboard;
+
+})();
+
+// utils
+window.FlexDashboardUtils = {
+  resizableImage: function(img) {
+    var src = img.attr('src');
+    var url = 'url("' + src + '")';
+    img.parent().css('background', url)
+                .css('background-size', 'contain')
+                .css('background-repeat', 'no-repeat')
+                .css('background-position', 'center')
+                .addClass('image-container');
+  },
+  setLocation: function(href) {
+    if (history && history.pushState) {
+      history.pushState(null, null, href);
+    } else {
+      window.location.replace(href);
+    }
+    setTimeout(function() {
+        window.scrollTo(0, 0);
+    }, 10);
+    this.manageActiveNavbarMenu();
+  },
+  showPage: function(href) {
+    $('ul.navbar-nav li a[href="' + href + '"]').tab('show');
+    var baseUrl = this.urlWithoutHash(window.location.href);
+    var loc = baseUrl + href;
+    this.setLocation(loc);
+  },
+  showLinkedValue: function(href) {
+    // check for a page link
+    if ($('ul.navbar-nav li a[data-toggle=tab][href="' + href + '"]').length > 0)
+      this.showPage(href);
+    else
+      window.open(href);
+  },
+  urlWithoutHash: function(url) {
+    var hashLoc = url.indexOf('#');
+    if (hashLoc != -1)
+      return url.substring(0, hashLoc);
+    else
+      return url;
+  },
+  urlHash: function(url) {
+    var hashLoc = url.indexOf('#');
+    if (hashLoc != -1)
+      return url.substring(hashLoc);
+    else
+      return "";
+  },
+  manageActiveNavbarMenu: function () {
+    // remove active from anyone currently active
+    $('.navbar ul.nav').find('li').removeClass('active');
+    // find the active tab
+    var activeTab = $('.dashboard-page-wrapper.tab-pane.active');
+    if (activeTab.length > 0) {
+      var tabId = activeTab.attr('id');
+      if (tabId)
+        $(".navbar ul.nav a[href='#" + tabId + "']").parents('li').addClass('active');
+    }
+  }
+};
+
+window.FlexDashboard = new FlexDashboard();
+
+// empty content
+window.FlexDashboardComponents.push({
+  find: function(container) {
+    if (container.find('p').length == 0)
+      return container;
+    else
+      return $();
+  }
+})
+
+// plot image
+window.FlexDashboardComponents.push({
+
+  find: function(container) {
+    return container.children('p')
+                    .children('img:only-child');
+  },
+
+  layout: function(title, container, element, fillPage) {
+    FlexDashboardUtils.resizableImage(element);
+  }
+});
+
+// plot image (figure style)
+window.FlexDashboardComponents.push({
+
+  find: function(container) {
+    return container.children('div.figure').children('img');
+  },
+
+  layout: function(title, container, element, fillPage) {
+    FlexDashboardUtils.resizableImage(element);
+  }
+});
+
+// htmlwidget
+window.FlexDashboardComponents.push({
+
+  init: function(dashboardContainer) {
+    // trigger "shown" after initial layout to force static htmlwidgets
+    // in runtime: shiny to be resized after the dom has been transformed
+    dashboardContainer.on('flexdashboard:layoutcomplete', function(event) {
+      setTimeout(function() {
+        dashboardContainer.trigger('shown');
+      }, 200);
+    });
+  },
+
+  find: function(container) {
+    return container.children('div[id^="htmlwidget-"],div.html-widget');
+  }
+});
+
+// gauge
+window.FlexDashboardComponents.push({
+
+  find: function(container) {
+    return container.children('div.html-widget.gauge');
+  },
+
+  flex: function(fillPage) {
+    return false;
+  },
+
+  layout: function(title, container, element, fillPage) {
+
+
+  }
+
+});
+
+// shiny output
+window.FlexDashboardComponents.push({
+  find: function(container) {
+    return container.children('div[class^="shiny-"]');
+  }
+});
+
+// datatables
+window.FlexDashboardComponents.push({
+  find: function(container) {
+    return container.find('.datatables');
+  },
+  flex: function(fillPage) {
+    return fillPage;
+  }
+});
+
+// bootstrap table
+window.FlexDashboardComponents.push({
+
+  find: function(container) {
+    var bsTable = container.find('table.table');
+    if (bsTable.length !== 0)
+      return bsTable;
+    else
+      return container.find('tr.header').parent('thead').parent('table');
+  },
+
+  flex: function(fillPage) {
+    return fillPage;
+  },
+
+  layout: function(title, container, element, fillPage) {
+
+    // alias variables
+    var bsTable = element;
+
+    // fixup xtable generated tables with a proper thead
+    var headerRow = bsTable.find('tbody > tr:first-child > th').parent();
+    if (headerRow.length > 0) {
+      var thead = $('<thead></thead>');
+      bsTable.prepend(thead);
+      headerRow.detach().appendTo(thead);
+    }
+
+    // improve appearance
+    container.addClass('bootstrap-table');
+
+    // for fill page provide scrolling w/ sticky headers
+    if (fillPage) {
+      // force scrollbar on overflow
+      container.addClass('flowing-content-shim');
+
+      // stable table headers when scrolling
+      bsTable.stickyTableHeaders({
+        scrollableArea: container
+      });
+    }
+  }
+});
+
+// embedded shiny app
+window.FlexDashboardComponents.push({
+
+  find: function(container) {
+    return container.find('iframe.shiny-frame');
+  },
+
+  flex: function(fillPage) {
+    return fillPage;
+  },
+
+  layout: function(title, container, element, fillPage) {
+    if (fillPage) {
+      element.attr('height', '100%');
+    } else {
+      // provide default height if necessary
+      var height = element.get(0).style.height;
+      if (!height)
+        height = element.attr('height');
+      if (!height)
+        element.attr('height', 500);
+    }
+  }
+});
+
+// shiny fillRow or fillCol
+window.FlexDashboardComponents.push({
+
+  find: function(container) {
+    return container.find('.flexfill-container');
+  },
+
+  flex: function(fillPage) {
+    return fillPage;
+  },
+
+  layout: function(title, container, element, fillPage) {
+    if (fillPage)
+      element.css('height', '100%');
+    else {
+      // provide default height if necessary
+      var height = element.get(0).style.height;
+      if (height === "100%" || height === "auto" || height === "initial" ||
+          height === "inherit" || !height) {
+        element.css('height', 500);
+      }
+    }
+  }
+});
+
+// valueBox
+window.FlexDashboardComponents.push({
+
+  type: "custom",
+
+  find: function(container) {
+    if (container.find('span.value-output, .shiny-valuebox-output').length)
+      return container;
+    else
+      return $();
+  },
+
+  flex: function(fillPage) {
+    return false;
+  },
+
+  layout: function(title, container, element, fillPage) {
+
+    // alias variables
+    var chartTitle = title;
+    var valueBox = element;
+
+    // add value-box class to container
+    container.addClass('value-box');
+
+    // value paragraph
+    var value = $('<p class="value"></p>');
+
+    // if we have shiny-text-output then just move it in
+    var valueOutputSpan = [];
+    var shinyOutput = valueBox.find('.shiny-valuebox-output').detach();
+    if (shinyOutput.length) {
+      valueBox.children().remove();
+      shinyOutput.html("&mdash;");
+      value.append(shinyOutput);
+    } else {
+      // extract the value (remove leading vector index)
+      var chartValue = valueBox.text().trim();
+      chartValue = chartValue.replace("[1] ", "");
+      valueOutputSpan = valueBox.find('span.value-output').detach();
+      valueBox.children().remove();
+      value.text(chartValue);
+    }
+
+    // caption
+    var caption = $('<p class="caption"></p>');
+    caption.html(chartTitle);
+
+    // build inner div for value box and add it
+    var inner = $('<div class="inner"></div>');
+    inner.append(value);
+    inner.append(caption);
+    valueBox.append(inner);
+
+    // add icon if specified
+    var icon = $('<div class="icon"><i></i></div>');
+    valueBox.append(icon);
+    function setIcon(chartIcon) {
+      var iconLib = "";
+      var components = chartIcon.split("-");
+      if (components.length > 1)
+        iconLib = components[0];
+      icon.children('i').attr('class', iconLib + ' ' + chartIcon);
+    }
+    var chartIcon = valueBox.attr('data-icon');
+    if (chartIcon)
+      setIcon(chartIcon);
+
+    // set color based on data-background if necessary
+    var dataBackground = valueBox.attr('data-background');
+    if (dataBackground)
+      valueBox.css('background-color', bgColor);
+    else {
+      // default to bg-primary if no other background is specified
+      if (!valueBox.hasClass('bg-primary') &&
+          !valueBox.hasClass('bg-info') &&
+          !valueBox.hasClass('bg-warning') &&
+          !valueBox.hasClass('bg-success') &&
+          !valueBox.hasClass('bg-danger')) {
+        valueBox.addClass('bg-primary');
+      }
+    }
+
+    // handle data attributes in valueOutputSpan
+    function handleValueOutput(valueOutput) {
+
+      // caption
+      var dataCaption = valueOutput.attr('data-caption');
+      if (dataCaption)
+        caption.html(dataCaption);
+
+      // icon
+      var dataIcon = valueOutput.attr('data-icon');
+      if (dataIcon)
+        setIcon(dataIcon);
+
+      // color
+      var dataColor = valueOutput.attr('data-color');
+      if (dataColor) {
+        if (dataColor.indexOf('bg-') === 0) {
+          valueBox.css('background-color', '');
+          if (!valueBox.hasClass(dataColor)) {
+             valueBox.removeClass('bg-primary bg-info bg-warning bg-danger bg-success');
+             valueBox.addClass(dataColor);
+          }
+        } else {
+          valueBox.removeClass('bg-primary bg-info bg-warning bg-danger bg-success');
+          valueBox.css('background-color', dataColor);
+        }
+      }
+
+      // url
+      var dataHref = valueOutput.attr('data-href');
+      if (dataHref) {
+        valueBox.addClass('linked-value');
+        valueBox.off('click.value-box');
+        valueBox.on('click.value-box', function(e) {
+          window.FlexDashboardUtils.showLinkedValue(dataHref);
+        });
+      }
+    }
+
+    // check for a valueOutputSpan
+    if (valueOutputSpan.length > 0) {
+      handleValueOutput(valueOutputSpan);
+    }
+
+    // if we have a shinyOutput then bind a listener to handle
+    // new valueOutputSpan values
+    shinyOutput.on('shiny:value',
+      function(event) {
+        var element = $(event.target);
+        setTimeout(function() {
+          var valueOutputSpan = element.find('span.value-output');
+          if (valueOutputSpan.length > 0)
+            handleValueOutput(valueOutputSpan);
+        }, 10);
+      }
+    );
+  }
+});
+
+
+</script>
+
+<div id="dashboard-container">
+
+<style>                     
+.navbar {
+background-color:black;
+border-color:grey;
+}
+.navbar-brand {
+color:white!important;
+}
+.bg {
+background-color: black;
+color: white;
+}
+body {
+background: black;
+}
+
+body hr {
+border-color: black;
+margin: 10px 0;
+}
+
+.chart-title {
+border-bottom: 1px solid #d7d7d7;
+color: white!important;
+font-size: 14px;
+font-weight: 300;
+padding: 7px 10px 4px;
+}
+
+.nav-tabs-custom {
+background: black;
+border: 1px solid #c4c4c4;
+border-radius: 3px;
+margin-bottom: 8px;
+margin-right: 8px;
+}
+
+.nav-tabs-custom > .nav-tabs {
+margin: 0;
+border-bottom: 1px solid #d7d7d7;
+color: white;
+font-size: 14px;
+font-weight: 300;
+border-top-right-radius: 3px;
+border-top-left-radius: 3px;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a,
+.nav-tabs-custom > .nav-tabs > li.active:hover > a {
+background-color: black;
+color: white;
+}
+
+.nav-tabs-custom > .tab-content {
+background: black;
+padding: 0;
+border-bottom-right-radius: 3px;
+border-bottom-left-radius: 3px;
+display: -webkit-box;
+display: -webkit-flex;
+display: -ms-flexbox;
+display: flex;
+}
+
+.nav-tabs-custom > .tab-content > .chart-wrapper {
+background: black;
+border: none;
+margin: 0;
+}
+
+.value-box {
+border-radius: 1px;
+position: relative;
+display: block;
+margin-right: 4px;
+margin-bottom: 4px;
+box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.value-box > .inner {
+padding: 5px;
+padding-left: 20px;
+padding-right: 20px;
+}
+
+.value-box .value {
+font-size: 20px;
+font-weight: bold;
+margin: 0 0 3px 0;
+white-space: nowrap;
+padding: 0;
+}
+
+.value-box .caption {
+font-size: 20px;
+}
+
+.value-box .icon i {
+position: absolute;
+top: 15px;
+right: 15px;
+font-size: 40px;
+color: rgba(0, 0, 0, 0.5);
+}
+
+.content {
+overflow: auto;
+}
+
+.chart-wrapper { 
+overflow: auto; 
+}
+
+.tab-content { 
+   color: white;
+}
+
+
+</style>
+<div class="knitr-options" data-fig-width="576" data-fig-height="460">
+
+</div>
+<div id="nacional" class="section level1 bg">
+<h1>Nacional</h1>
+<div id="column-1" class="section level2 tabset" data-width="350">
+<h2>Column 1</h2>
+<div id="casos" class="section level3">
+<h3>Casos</h3>
+<div class="knitr-options" data-fig-width="576" data-fig-height="460">
+
+</div>
+<div id="htmlwidget-51ccf252e389b7de3d7a" style="width:576px;height:460.8px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-51ccf252e389b7de3d7a">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false,"minZoom":5,"maxZoom":6}]},{"method":"addPolygons","args":[[[[{"lng":[-77.7589336,-77.927528,-77.9995065,-78.0140639,-78.0581954,-78.1075991,-78.1360277,-78.255151,-78.333735,-78.3353861,-78.4381642,-78.518803,-78.5894427,-78.6603204,-78.7120154,-78.6837979,-78.604816,-78.5585152,-78.5151781,-78.5184024,-78.6044922,-78.6842441,-78.7091132,-78.7006242,-78.6196307,-78.6458202,-78.6006465,-78.6446614,-78.6379377,-78.7059551,-78.660806,-78.6340781,-78.652273,-78.6182441,-78.5813222,-78.5407924,-78.5661104,-78.4886691,-78.4765312,-78.4139074,-78.3876934,-78.3187402,-78.246211,-78.2147896,-78.1491694,-78.1712087,-77.9513671,-77.93251,-77.808616,-77.7785246,-77.7764789,-77.7605394,-77.6169356,-77.615623,-77.6518222,-77.5694049,-77.5417729,-77.5496557,-77.5855507,-77.5653869,-77.5859431,-77.655457,-77.6719454,-77.7718789,-77.7946219,-77.7935749,-77.7592897,-77.8246196,-77.6959779,-77.7395596,-77.6930801,-77.6959585,-77.7684512,-77.7657617,-77.7368906,-77.7737071,-77.7639291,-77.6778829,-77.6518906,-77.6692249,-77.5934564,-77.5338089,-77.4786152,-77.434463,-77.3954976,-77.346428,-77.2229851,-77.199996,-77.1327252,-77.1717325,-77.2731586,-77.3263566,-77.3351524,-77.3938699,-77.381733,-77.5440742,-77.6123367,-77.6933632,-77.7456065,-77.7617176,-77.7233249,-77.7589336],"lat":[-6.9645079,-6.9867092,-6.9705316,-6.8223032,-6.6761502,-6.6423322,-6.526302,-6.3947833,-6.3509777,-6.3186795,-6.1656928,-6.0714756,-6.0765358,-5.9555586,-5.8304431,-5.7070541,-5.6072078,-5.4990893,-5.4543492,-5.3992793,-5.3098985,-5.2674902,-5.1796288,-5.1040827,-5.0005251,-4.9622656,-4.7733867,-4.7364523,-4.6579818,-4.6238731,-4.5860631,-4.4132382,-4.3325127,-4.2942217,-4.1354981,-4.0738772,-3.9933011,-3.9336081,-3.8586933,-3.7926097,-3.554971,-3.3950695,-3.4023262,-3.5085937,-3.4807961,-3.3508278,-3.0905253,-3.0352843,-2.9861251,-3.1871762,-3.409131,-3.459803,-3.634302,-3.7077187,-3.7790097,-3.8727496,-3.9433342,-4.1098928,-4.251334,-4.3724625,-4.4750131,-4.518545,-4.6294685,-4.7175586,-4.7630068,-4.8499635,-4.9517813,-5.0317787,-5.1636602,-5.2125973,-5.2676855,-5.4110531,-5.4380487,-5.5389825,-5.6051388,-5.6852071,-5.8197087,-5.8596466,-5.935332,-5.9803651,-6.0093473,-6.0633713,-6.0008945,-6.0604117,-6.0393767,-6.1143411,-6.146896,-6.2311792,-6.3024211,-6.38117,-6.4065308,-6.4680273,-6.5223285,-6.6026882,-6.6975891,-6.6769961,-6.6122612,-6.6785253,-6.6651582,-6.8077483,-6.893456,-6.9645079]}]],[[{"lng":[-77.3174864,-77.164836,-77.1097969,-77.0371875,-76.9801016,-76.7885801,-76.7337344,-76.7257441,-76.7574882,-76.814375,-76.8422949,-76.9352362,-76.9380097,-77.0484882,-76.9013829,-76.895211,-76.8136757,-76.8084219,-76.9154649,-76.9062461,-77.0716116,-77.1746249,-77.1909882,-77.3106289,-77.39531,-77.41543,-77.4949599,-77.5771745,-77.5766504,-77.6407304,-77.6442597,-77.7367812,-77.68392,-77.5975931,-77.6923906,-77.7529219,-77.7602116,-77.7961777,-77.7713765,-77.8329892,-77.8862715,-77.9081601,-77.960623,-78.0106035,-78.0545469,-78.1022597,-78.1635704,-78.1753417,-78.2426485,-78.2260274,-78.2720097,-78.3218164,-78.3648535,-78.3679882,-78.4279414,-78.4253965,-78.4750645,-78.5089824,-78.4868105,-78.5722422,-78.5612695,-78.624791,-78.6449239,-78.5916625,-78.5653431,-78.4482284,-78.3548105,-78.2461349,-78.1935254,-78.2168787,-78.1394687,-78.11595,-78.0186347,-77.9332129,-77.8979042,-77.7194297,-77.6471114,-77.6365202,-77.5572167,-77.4588964,-77.4388962,-77.4003377,-77.3174864],"lat":[-8.5301524,-8.8890976,-8.9702051,-8.9992891,-9.0629181,-9.1362382,-9.2089669,-9.2566347,-9.3621972,-9.3260079,-9.2617344,-9.3985489,-9.5265781,-9.647461,-9.7704961,-9.8156016,-9.9615722,-10.0848457,-10.1199141,-10.2741856,-10.338104,-10.4646017,-10.5521329,-10.5676914,-10.66154,-10.72998,-10.7461026,-10.7285702,-10.5837481,-10.5962717,-10.5274091,-10.5632121,-10.431386,-10.3803641,-10.3209025,-10.3221544,-10.4302212,-10.4832929,-10.5716146,-10.5674831,-10.61192,-10.5442871,-10.4925195,-10.3746991,-10.3459551,-10.2001504,-10.1471914,-10.0458496,-9.8736465,-9.7954785,-9.7560704,-9.6617481,-9.6204707,-9.5553105,-9.4112891,-9.3412989,-9.3315391,-9.2788145,-9.2033476,-9.1715704,-9.1161525,-9.0780742,-8.9692285,-8.9459992,-8.792599,-8.7369267,-8.6732794,-8.6583632,-8.6001114,-8.556918,-8.427832,-8.3101,-8.2243165,-8.1970097,-8.0760156,-8.0734454,-8.0502812,-8.106192,-8.1937325,-8.335656,-8.4198624,-8.4819669,-8.5301524]}]],[[{"lng":[-72.4717712,-72.5772476,-72.6448211,-72.7247086,-72.7896957,-72.8468246,-72.865637,-72.9553066,-73.0094122,-73.106489,-73.2799501,-73.3508066,-73.4850274,-73.5652812,-73.571099,-73.510061,-73.5116504,-73.5689884,-73.51225,-73.6111016,-73.6564707,-73.7478877,-73.6695327,-73.7436197,-73.7919209,-73.846961,-73.8079555,-73.7970294,-73.7564396,-73.7262226,-73.5717597,-73.4809101,-73.3471634,-73.2339032,-73.2119292,-73.1033812,-73.0151257,-72.971462,-72.7934132,-72.7454489,-72.4213979,-72.4017481,-72.2991659,-72.2309267,-72.1353321,-72.0557312,-72.0566699,-72.0814882,-72.1871069,-72.2395156,-72.2495052,-72.3576254,-72.5029102,-72.4616995,-72.4717712],"lat":[-14.6613989,-14.6866169,-14.6672811,-14.6759005,-14.6502132,-14.7598239,-14.7106841,-14.6826836,-14.6373889,-14.6906542,-14.731632,-14.7040294,-14.8425704,-14.775834,-14.6872716,-14.6501007,-14.5636641,-14.45933,-14.2681582,-14.0887187,-13.9299512,-13.7633661,-13.7348487,-13.6555625,-13.6409596,-13.3974326,-13.3037957,-13.1999434,-13.1707149,-13.2686621,-13.341834,-13.4313711,-13.4348322,-13.476587,-13.4191019,-13.4485892,-13.4266689,-13.3902285,-13.4261245,-13.4828954,-13.6060797,-13.6595059,-13.7044454,-13.7052771,-13.7830647,-13.9301237,-14.1288106,-14.2023027,-14.3132236,-14.3484724,-14.4029262,-14.4359639,-14.551662,-14.6058696,-14.6613989]}]],[[{"lng":[-75.0733261,-74.9682007,-74.9398651,-74.870602,-74.7622986,-74.718605,-74.5525207,-74.3987197,-74.3878784,-74.409462,-74.3097185,-74.3284314,-74.3001236,-74.1937409,-74.0945206,-74.0372925,-74.0849304,-74.0686492,-73.945961,-73.8682709,-73.8748627,-73.807991,-73.6843644,-73.5574036,-73.4429016,-73.3921661,-73.2945251,-73.2849197,-73.1745452,-73.1107482,-73.0475616,-73.004242,-72.9866562,-73.0314636,-73.0027847,-72.9427261,-72.8468246,-72.7896957,-72.7247086,-72.6448211,-72.5772476,-72.4717712,-72.4709474,-72.4064789,-72.3154449,-72.1446991,-72.1286926,-72.0471267,-72.0418625,-71.987915,-71.9412155,-71.9586335,-71.8900499,-71.852089,-71.74596,-71.8029556,-71.6679535,-71.5876007,-71.5706272,-71.4858704,-71.5070496,-71.4308166,-71.3726805,-71.3156281,-71.2068405,-71.1435776,-71.1803894,-71.2018356,-71.1653976,-71.1511536,-71.1743316,-71.0717469,-71.038971,-70.9939575,-71.0081787,-70.917984,-70.9001312,-70.936142,-70.8201981,-70.8125686,-70.875061,-70.8538819,-70.98629,-70.9529265,-70.9924545,-71.07827,-71.1395187,-71.2456436,-71.2447967,-71.2791519,-71.289093,-71.425499,-71.4406357,-71.384613,-71.3394241,-71.3022461,-71.4409561,-71.490799,-71.6903686,-71.8122177,-71.9226456,-72.0389939,-72.0761566,-72.211525,-72.2882767,-72.2954177,-72.4472199,-72.7090454,-72.771904,-72.9162902,-72.986847,-73.1591569,-73.3048096,-73.3142014,-73.4512559,-73.7278824,-73.8693542,-74.0330811,-74.054451,-74.3279037,-74.4392929,-74.4628296,-74.6612777,-74.8307495,-75.0068436,-75.0733261],"lat":[-15.4429416,-15.2994222,-15.2060117,-15.1512291,-15.0980549,-15.135663,-15.1399412,-15.1814632,-15.2517796,-15.3084936,-15.3589372,-15.3909937,-15.4783946,-15.4916601,-15.3920031,-15.4560776,-15.5915356,-15.6298866,-15.4904031,-15.4261302,-15.3550654,-15.324275,-15.4374836,-15.4086115,-15.3561191,-15.398737,-15.3923301,-15.2949371,-15.3066072,-15.1861067,-15.1343479,-15.064127,-14.9561034,-14.9000511,-14.8149862,-14.7654144,-14.7598239,-14.6502132,-14.6759005,-14.6672811,-14.6866169,-14.6613989,-14.7747746,-14.8270855,-14.8338632,-14.7777129,-14.8306017,-14.875063,-14.6943712,-14.6329499,-14.6853246,-14.7280159,-14.7908735,-14.8880901,-14.93987,-15.067441,-15.0918961,-15.1255951,-15.0612072,-15.0591049,-14.9762755,-14.9980841,-15.0791101,-15.120225,-15.071889,-15.1205606,-15.1626205,-15.2454452,-15.2888822,-15.3639412,-15.4244566,-15.4492731,-15.4051657,-15.4548416,-15.5639686,-15.6438007,-15.7121467,-15.7848396,-15.978468,-16.0539609,-16.0945777,-16.2414665,-16.3099461,-16.460989,-16.4958667,-16.4585647,-16.4749737,-16.4668636,-16.5502281,-16.6158219,-16.7264576,-16.7406426,-16.8652267,-17.0211105,-17.021759,-17.0938511,-17.2517166,-17.2850056,-17.2119885,-17.1843109,-17.0875054,-17.0173397,-17.0211601,-16.9024467,-16.8752537,-16.8274155,-16.7039566,-16.6526927,-16.6288032,-16.5203722,-16.5174351,-16.4199257,-16.3797397,-16.3387031,-16.2813071,-16.1952476,-16.1355439,-16.0180587,-15.9545231,-15.8487167,-15.7945605,-15.7265215,-15.6528359,-15.567195,-15.4600411,-15.4429416]}]],[[{"lng":[-74.3459456,-74.321873,-74.2705157,-74.1876182,-74.1214395,-74.0983572,-73.9804516,-73.965859,-73.8867925,-73.801173,-73.725367,-73.6256672,-73.5908094,-73.5236765,-73.521662,-73.4779669,-73.3483629,-73.2873539,-73.2119292,-73.2339032,-73.3471634,-73.4809101,-73.5717597,-73.7262226,-73.7564396,-73.7970294,-73.8079555,-73.846961,-73.7919209,-73.7436197,-73.6695327,-73.7478877,-73.6564707,-73.6111016,-73.51225,-73.5689884,-73.5116504,-73.510061,-73.571099,-73.5652812,-73.4850274,-73.3508066,-73.2799501,-73.106489,-73.0094122,-72.9553066,-72.865637,-72.8468246,-72.9427261,-73.0027847,-73.0314636,-72.9866562,-73.004242,-73.0475616,-73.1107482,-73.1745452,-73.2849197,-73.2945251,-73.3921661,-73.4429016,-73.5574036,-73.6843644,-73.807991,-73.8748627,-73.8682709,-73.945961,-74.0686492,-74.0849304,-74.0372925,-74.0945206,-74.1937409,-74.3001236,-74.3284314,-74.3097185,-74.409462,-74.3878784,-74.3987197,-74.5525207,-74.718605,-74.7622986,-74.664267,-74.663451,-74.6938404,-74.7462441,-74.7560071,-74.8457421,-74.8527725,-74.8954179,-74.9589197,-75.0599004,-75.0690974,-75.1012665,-75.138049,-75.0939269,-75.0399791,-75.0907949,-75.05905,-75.02913,-74.9423614,-74.8413847,-74.7702871,-74.7859231,-74.7543852,-74.79957,-74.9021,-74.86875,-74.7638632,-74.69946,-74.5709815,-74.4584389,-74.4204257,-74.40801,-74.3458764,-74.2701654,-74.32963,-74.2892,-74.34877,-74.34082,-74.41512,-74.42245,-74.50354,-74.581177,-74.5521172,-74.38481,-74.38886,-74.3459456],"lat":[-12.1737367,-12.2297771,-12.2391447,-12.314376,-12.3336015,-12.2849136,-12.2425884,-12.3364514,-12.405397,-12.6130242,-12.6406939,-12.7649925,-12.8442886,-12.8994781,-12.9906877,-13.0322587,-13.2982406,-13.371943,-13.4191019,-13.476587,-13.4348322,-13.4313711,-13.341834,-13.2686621,-13.1707149,-13.1999434,-13.3037957,-13.3974326,-13.6409596,-13.6555625,-13.7348487,-13.7633661,-13.9299512,-14.0887187,-14.2681582,-14.45933,-14.5636641,-14.6501007,-14.6872716,-14.775834,-14.8425704,-14.7040294,-14.731632,-14.6906542,-14.6373889,-14.6826836,-14.7106841,-14.7598239,-14.7654144,-14.8149862,-14.9000511,-14.9561034,-15.064127,-15.1343479,-15.1861067,-15.3066072,-15.2949371,-15.3923301,-15.398737,-15.3561191,-15.4086115,-15.4374836,-15.324275,-15.3550654,-15.4261302,-15.4904031,-15.6298866,-15.5915356,-15.4560776,-15.3920031,-15.4916601,-15.4783946,-15.3909937,-15.3589372,-15.3084936,-15.2517796,-15.1814632,-15.1399412,-15.135663,-15.0980549,-15.0446965,-14.9079345,-14.8381552,-14.8435547,-14.7711309,-14.7079795,-14.6118091,-14.5450805,-14.6064512,-14.6226176,-14.5269344,-14.4331991,-14.4146557,-14.3124245,-14.2778794,-14.2151777,-14.12962,-14.07195,-14.0946875,-14.0734024,-14.089793,-13.9287884,-13.7339667,-13.54747,-13.46644,-13.3599,-13.3413926,-13.36351,-13.1846705,-13.1900381,-13.1595391,-13.06927,-13.0258446,-13.0255504,-12.83615,-12.75801,-12.71243,-12.63446,-12.49066,-12.44521,-12.44981,-12.3326694,-12.2873399,-12.26863,-12.19267,-12.1737367]},{"lng":[-73.7401717,-73.6849039,-73.6401045,-73.7401717],"lat":[-15.2659781,-15.334225,-15.2919931,-15.2659781]}]],[[{"lng":[-79.322586,-79.2966344,-79.3110089,-79.2627404,-79.1208477,-79.1415621,-79.2964159,-79.3669895,-79.4032754,-79.4534899,-79.4226577,-79.3535614,-79.2522615,-79.2725295,-79.223995,-79.2643417,-79.4186094,-79.3340684,-79.4006895,-79.3755507,-79.3983204,-79.2723965,-79.2976992,-79.3486524,-79.3784081,-79.2943612,-79.245086,-79.2100704,-79.0735371,-79.0119472,-78.9738906,-78.8951034,-78.912728,-78.882752,-78.802524,-78.7059551,-78.6379377,-78.6446614,-78.6006465,-78.6458202,-78.6196307,-78.7006242,-78.7091132,-78.6842441,-78.6044922,-78.5184024,-78.5151781,-78.5585152,-78.604816,-78.6837979,-78.7120154,-78.6603204,-78.5894427,-78.518803,-78.4381642,-78.3353861,-78.333735,-78.255151,-78.1360277,-78.1075991,-78.0581954,-78.0140639,-77.9995065,-77.8310502,-77.813445,-77.7413716,-77.844168,-77.8704375,-77.9986422,-78.0812211,-78.1160534,-78.2246531,-78.2724214,-78.3828192,-78.3567922,-78.3599844,-78.4156329,-78.4913926,-78.6245722,-78.6298427,-78.6624666,-78.760125,-78.8416194,-78.8959084,-78.9921487,-79.0412325,-79.0654281,-79.152724,-79.1881752,-79.347131,-79.282627,-79.267275,-79.3053012,-79.322586],"lat":[-7.0256836,-6.9998337,-6.9013417,-6.8591562,-6.77697,-6.7015417,-6.6756717,-6.5495222,-6.5407323,-6.3968416,-6.3104301,-6.3042912,-6.226688,-6.1467313,-6.055007,-6.0024596,-5.9700996,-5.8936308,-5.7495097,-5.6061895,-5.5370176,-5.5189825,-5.458127,-5.2325762,-5.1905215,-5.1104805,-5.0013593,-4.9652422,-4.9710547,-5.0139863,-4.8970215,-4.8914356,-4.791001,-4.7140625,-4.6374686,-4.6238731,-4.6579818,-4.7364523,-4.7733867,-4.9622656,-5.0005251,-5.1040827,-5.1796288,-5.2674902,-5.3098985,-5.3992793,-5.4543492,-5.4990893,-5.6072078,-5.7070541,-5.8304431,-5.9555586,-6.0765358,-6.0714756,-6.1656928,-6.3186795,-6.3509777,-6.3947833,-6.526302,-6.6423322,-6.6761502,-6.8223032,-6.9705316,-7.310031,-7.3925399,-7.4666947,-7.5143809,-7.5853301,-7.679074,-7.6961689,-7.6540074,-7.7593315,-7.7535179,-7.6301071,-7.5740061,-7.5003945,-7.4850704,-7.5548731,-7.5485586,-7.4455,-7.4129979,-7.4019844,-7.4376174,-7.5374374,-7.6609494,-7.5998875,-7.4727086,-7.4398201,-7.395413,-7.3366366,-7.2750606,-7.1923937,-7.1471462,-7.0256836]}]],[[{"lng":[-77.1870976,-77.1260485,-77.0899044,-77.1175496,-77.0829405,-77.1115332,-77.151127,-77.1327422,-77.1870976],"lat":[-11.8283614,-11.8207881,-11.9017867,-11.9569696,-12.0364179,-12.0794922,-12.0670312,-11.9764922,-11.8283614]}]],[[{"lng":[-72.4717712,-72.4616995,-72.5029102,-72.3576254,-72.2495052,-72.2395156,-72.1871069,-72.0814882,-72.0566699,-72.0557312,-72.1353321,-72.2309267,-72.2991659,-72.4017481,-72.4213979,-72.7454489,-72.7934132,-72.971462,-73.0151257,-73.1033812,-73.2119292,-73.2873539,-73.3483629,-73.4779669,-73.521662,-73.5236765,-73.5908094,-73.6256672,-73.725367,-73.801173,-73.8867925,-73.965859,-73.9804516,-73.9238369,-73.84325,-73.801894,-73.7078142,-73.6371505,-73.5904654,-73.5743264,-73.4696485,-73.4460606,-73.3618874,-73.4076891,-73.3978849,-73.4905316,-73.5775051,-73.5744812,-73.6082696,-73.559651,-73.4497276,-73.4797162,-73.4197495,-73.3313306,-73.2574457,-73.0265089,-72.9391261,-72.9519086,-72.794294,-72.7382376,-72.6099875,-72.5350856,-72.4798681,-72.307709,-72.2392584,-72.2925507,-72.3155081,-72.4287387,-72.3321541,-72.337466,-72.2593031,-72.2689329,-72.173733,-72.0944466,-72.1055119,-72.0338407,-71.9730312,-71.9760132,-72.0614894,-72.0711324,-71.9813961,-71.9785955,-71.8105919,-71.7469414,-71.6949687,-71.6002985,-71.5521327,-71.4510475,-71.4152439,-71.3549381,-71.3010097,-71.1730425,-71.1681822,-71.1220117,-71.0409452,-70.9213929,-70.842961,-70.7584131,-70.6597561,-70.5875401,-70.5498467,-70.4642477,-70.3884669,-70.4204084,-70.4000731,-70.452618,-70.5340317,-70.5417237,-70.6161909,-70.6539129,-70.7151289,-70.7347471,-70.6988582,-70.768375,-70.831273,-70.8330391,-70.8618142,-70.7958829,-70.8089296,-70.8993489,-70.8805809,-70.9858209,-70.9625027,-71.0014497,-71.1136761,-71.0532405,-70.9754834,-70.9938355,-70.9847404,-71.0040501,-70.9762309,-70.9852806,-70.9522992,-71.0122774,-71.038971,-71.0717469,-71.1743316,-71.1511536,-71.1653976,-71.2018356,-71.1803894,-71.1435776,-71.2068405,-71.3156281,-71.3726805,-71.4308166,-71.5070496,-71.4858704,-71.5706272,-71.5876007,-71.6679535,-71.8029556,-71.74596,-71.852089,-71.8900499,-71.9586335,-71.9412155,-71.987915,-72.0418625,-72.0471267,-72.1286926,-72.1446991,-72.3154449,-72.4064789,-72.4709474,-72.4717712],"lat":[-14.6613989,-14.6058696,-14.551662,-14.4359639,-14.4029262,-14.3484724,-14.3132236,-14.2023027,-14.1288106,-13.9301237,-13.7830647,-13.7052771,-13.7044454,-13.6595059,-13.6060797,-13.4828954,-13.4261245,-13.3902285,-13.4266689,-13.4485892,-13.4191019,-13.371943,-13.2982406,-13.0322587,-12.9906877,-12.8994781,-12.8442886,-12.7649925,-12.6406939,-12.6130242,-12.405397,-12.3364514,-12.2425884,-12.2247492,-12.23943,-12.2202971,-12.2679072,-12.378368,-12.3769442,-12.2768424,-12.2199665,-12.1602891,-12.1359647,-12.0659897,-12.0209435,-11.8781705,-11.8364847,-11.7341455,-11.6601601,-11.592051,-11.5319431,-11.4713639,-11.3839382,-11.3112647,-11.3127089,-11.2640846,-11.2820779,-11.3306296,-11.3842907,-11.3474294,-11.4282384,-11.4350805,-11.3874206,-11.307,-11.345061,-11.4332731,-11.5955769,-11.7089719,-11.8555275,-11.9680752,-12.0063027,-12.0543754,-12.0598104,-12.085191,-12.2380599,-12.2650449,-12.3205434,-12.3987829,-12.4404494,-12.5114842,-12.5804905,-12.6833314,-12.7449785,-12.7961075,-12.7387931,-12.7000581,-12.709302,-12.8249694,-12.8942586,-12.8839787,-12.9406954,-12.9833346,-13.0940886,-13.2335292,-13.2687499,-13.110831,-13.0670485,-13.1080442,-13.0884591,-13.10313,-13.1528644,-13.1596906,-13.1923887,-13.2585701,-13.3717386,-13.4479184,-13.5252701,-13.574489,-13.6090625,-13.6559361,-13.662254,-13.7390167,-13.8031676,-13.8143321,-13.8589317,-13.9380997,-14.0262276,-14.0721191,-14.1241994,-14.229302,-14.2708816,-14.4067256,-14.4448174,-14.5722149,-14.666732,-14.7543305,-14.7641337,-14.8291639,-14.9460685,-14.9718772,-15.1756417,-15.2490296,-15.2898431,-15.3437521,-15.4051657,-15.4492731,-15.4244566,-15.3639412,-15.2888822,-15.2454452,-15.1626205,-15.1205606,-15.071889,-15.120225,-15.0791101,-14.9980841,-14.9762755,-15.0591049,-15.0612072,-15.1255951,-15.0918961,-15.067441,-14.93987,-14.8880901,-14.7908735,-14.7280159,-14.6853246,-14.6329499,-14.6943712,-14.875063,-14.8306017,-14.7777129,-14.8338632,-14.8270855,-14.7747746,-14.6613989]}]],[[{"lng":[-75.05905,-75.1088417,-75.16568,-75.3332277,-75.4338164,-75.5455021,-75.563377,-75.5159105,-75.5140071,-75.4773105,-75.4657754,-75.502916,-75.689281,-75.8059852,-75.7902054,-75.7064815,-75.7187682,-75.6286082,-75.6143931,-75.6130916,-75.5310819,-75.5075,-75.5765507,-75.5796132,-75.4908542,-75.4178539,-75.3623912,-75.278359,-75.2155154,-75.2152536,-75.14023,-75.0483272,-75.0746066,-75.0470526,-74.9303742,-74.8373736,-74.74861,-74.7169001,-74.6241646,-74.455536,-74.3459456,-74.38886,-74.38481,-74.5521172,-74.581177,-74.50354,-74.42245,-74.41512,-74.34082,-74.34877,-74.2892,-74.32963,-74.2701654,-74.3458764,-74.40801,-74.4204257,-74.4584389,-74.5709815,-74.69946,-74.7638632,-74.86875,-74.9021,-74.79957,-74.7543852,-74.7859231,-74.7702871,-74.8413847,-74.9423614,-75.02913,-75.05905],"lat":[-14.12962,-14.0328847,-14.07253,-14.0159845,-13.9139004,-13.8894825,-13.8408692,-13.6963931,-13.6170922,-13.5254844,-13.4321601,-13.3659501,-13.4396701,-13.4014334,-13.3425099,-13.2882869,-13.1097647,-13.0570667,-12.9649334,-12.8669754,-12.8222079,-12.7771549,-12.7151425,-12.6414844,-12.6479374,-12.6289737,-12.5396004,-12.4678305,-12.4634211,-12.3948427,-12.3421,-12.1703297,-12.0601467,-12.0115636,-12.0228584,-12.0708185,-12.04142,-12.05942,-11.985182,-12.0335787,-12.1737367,-12.19267,-12.26863,-12.2873399,-12.3326694,-12.44981,-12.44521,-12.49066,-12.63446,-12.71243,-12.75801,-12.83615,-13.0255504,-13.0258446,-13.06927,-13.1595391,-13.1900381,-13.1846705,-13.36351,-13.3413926,-13.3599,-13.46644,-13.54747,-13.7339667,-13.9287884,-14.089793,-14.0734024,-14.0946875,-14.07195,-14.12962]}]],[[{"lng":[-77.3174864,-77.2640781,-77.2042129,-77.1338437,-77.0498014,-76.9162984,-76.8315836,-76.6972715,-76.5426875,-76.4661674,-76.416801,-76.3334681,-76.3241855,-76.2784647,-76.2301542,-76.1664395,-76.1159257,-76.1304412,-76.0871757,-75.9849629,-75.9459844,-75.9649062,-75.9797597,-75.9457501,-75.9216465,-75.9172969,-75.8743516,-75.8758614,-75.8064649,-75.7941132,-75.7317579,-75.6708379,-75.5624452,-75.4943906,-75.4521015,-75.2827226,-75.2097147,-75.2375801,-75.1509864,-75.1433027,-75.0455625,-74.9788594,-74.9341641,-74.9407121,-74.8505584,-74.8466835,-74.6178159,-74.5471346,-74.5253512,-74.6089202,-74.6443107,-74.6513661,-74.6780937,-74.6395645,-74.5894394,-74.6743086,-74.6771034,-74.7505229,-74.73517,-74.8070395,-74.8044257,-74.9431035,-74.9994421,-75.0598809,-75.160125,-75.2407506,-75.3030696,-75.2879377,-75.369356,-75.4757289,-75.5486415,-75.6749,-75.70311,-75.70397,-75.7856,-75.92441,-75.92515,-75.9758101,-76.0576406,-76.223039,-76.30931,-76.33579,-76.4728044,-76.4909411,-76.6471969,-76.7250544,-76.770041,-76.808334,-76.8563945,-76.9062461,-76.9154649,-76.8084219,-76.8136757,-76.895211,-76.9013829,-77.0484882,-76.9380097,-76.9352362,-76.8422949,-76.814375,-76.7574882,-76.7257441,-76.7337344,-76.7885801,-76.9801016,-77.0371875,-77.1097969,-77.164836,-77.3174864],"lat":[-8.5301524,-8.4675312,-8.4856914,-8.4400215,-8.5537152,-8.5701597,-8.5166552,-8.5324082,-8.509711,-8.569743,-8.4434366,-8.4294739,-8.5241346,-8.577461,-8.796295,-8.7564141,-8.6575742,-8.4672111,-8.3369062,-8.3221504,-8.400875,-8.4517422,-8.636002,-8.7161387,-8.7808086,-8.8792382,-8.9702539,-9.021459,-9.1214864,-9.1883652,-9.2722656,-9.3966445,-9.4001719,-9.3773554,-9.2967226,-9.309832,-9.2299434,-9.1067715,-9.0387169,-8.9721934,-8.9042169,-8.9520392,-8.9302246,-8.8578926,-8.7568911,-8.6612354,-8.5487194,-8.5845672,-8.7493162,-8.8202284,-8.9187832,-9.0487684,-9.0940391,-9.1596816,-9.3031764,-9.3944726,-9.4283242,-9.5246071,-9.572707,-9.6865757,-9.7298222,-9.7611016,-9.838454,-9.8196934,-9.8399746,-9.7858355,-9.7836221,-9.8702781,-9.8708326,-9.9739585,-9.983608,-10.04708,-10.13304,-10.20669,-10.2523701,-10.35603,-10.40676,-10.4793364,-10.4651524,-10.3748829,-10.40562,-10.28632,-10.3377676,-10.3788965,-10.4151387,-10.4857147,-10.4647989,-10.3929649,-10.3772656,-10.2741856,-10.1199141,-10.0848457,-9.9615722,-9.8156016,-9.7704961,-9.647461,-9.5265781,-9.3985489,-9.2617344,-9.3260079,-9.3621972,-9.2566347,-9.2089669,-9.1362382,-9.0629181,-8.9992891,-8.9702051,-8.8890976,-8.5301524]}]],[[{"lng":[-74.7622986,-74.870602,-74.9398651,-74.9682007,-75.0733261,-75.1858945,-75.1688184,-75.2306231,-75.216625,-75.2746799,-75.3686504,-75.4426934,-75.5,-75.5024454,-75.8555664,-75.9164649,-75.9320469,-75.9741972,-75.9722792,-76.0661952,-76.1318594,-76.1099492,-76.1435704,-76.2305254,-76.2901955,-76.2664511,-76.2825156,-76.3963281,-76.371291,-76.2962246,-76.2609629,-76.1976601,-76.1914687,-76.2447929,-76.20732,-76.1559706,-76.0119367,-75.9376829,-75.8020625,-75.7621585,-75.6703612,-75.6143931,-75.6286082,-75.7187682,-75.7064815,-75.7902054,-75.8059852,-75.689281,-75.502916,-75.4657754,-75.4773105,-75.5140071,-75.5159105,-75.563377,-75.5455021,-75.4338164,-75.3332277,-75.16568,-75.1088417,-75.05905,-75.0907949,-75.0399791,-75.0939269,-75.138049,-75.1012665,-75.0690974,-75.0599004,-74.9589197,-74.8954179,-74.8527725,-74.8457421,-74.7560071,-74.7462441,-74.6938404,-74.663451,-74.664267,-74.7622986],"lat":[-15.0980549,-15.1512291,-15.2060117,-15.2994222,-15.4429416,-15.3672382,-15.3073906,-15.2772011,-15.231416,-15.1683204,-15.1407949,-15.0005919,-14.9669746,-14.9187169,-14.7162812,-14.6591757,-14.5682812,-14.5252539,-14.4704981,-14.3869434,-14.3542637,-14.2926856,-14.227621,-14.1491191,-14.1615117,-14.0146914,-13.9180487,-13.9088985,-13.8088807,-13.7934687,-13.8656016,-13.640877,-13.4239336,-13.3235137,-13.3061,-13.193729,-13.0854994,-12.9913249,-13.0604297,-13.0188886,-13.0226117,-12.9649334,-13.0570667,-13.1097647,-13.2882869,-13.3425099,-13.4014334,-13.4396701,-13.3659501,-13.4321601,-13.5254844,-13.6170922,-13.6963931,-13.8408692,-13.8894825,-13.9139004,-14.0159845,-14.07253,-14.0328847,-14.12962,-14.2151777,-14.2778794,-14.3124245,-14.4146557,-14.4331991,-14.5269344,-14.6226176,-14.6064512,-14.5450805,-14.6118091,-14.7079795,-14.7711309,-14.8435547,-14.8381552,-14.9079345,-15.0446965,-15.0980549]}]],[[{"lng":[-74.5729951,-74.3736547,-74.256436,-74.0917784,-74.0054982,-73.9782717,-73.8613036,-73.8541104,-73.8234072,-73.8142169,-73.7572001,-73.6103962,-73.5602615,-73.571491,-73.5425787,-73.4826035,-73.4500986,-73.4601102,-73.4197495,-73.4797162,-73.4497276,-73.559651,-73.6082696,-73.5744812,-73.5775051,-73.4905316,-73.3978849,-73.4076891,-73.3618874,-73.4460606,-73.4696485,-73.5743264,-73.5904654,-73.6371505,-73.7078142,-73.801894,-73.84325,-73.9238369,-73.9804516,-74.0983572,-74.1214395,-74.1876182,-74.2705157,-74.321873,-74.3459456,-74.455536,-74.6241646,-74.7169001,-74.74861,-74.8373736,-74.9303742,-75.0470526,-75.0746066,-75.0483272,-75.14023,-75.2152536,-75.2155154,-75.278359,-75.3623912,-75.4178539,-75.4908542,-75.5796132,-75.5718406,-75.5362011,-75.5574076,-75.5640961,-75.6641244,-75.6377562,-75.6943047,-75.765663,-75.8240739,-75.9259909,-76.0142541,-76.0513111,-76.1369454,-76.2023277,-76.1877071,-76.2237051,-76.2867887,-76.371665,-76.3794561,-76.4776961,-76.5184024,-76.4912129,-76.3972167,-76.3180702,-76.26294,-76.24117,-76.2788592,-76.1143945,-76.0296562,-76.0119101,-76.0710215,-76.12293,-76.0913401,-75.9926716,-75.922752,-75.8383809,-75.78599,-75.6934199,-75.589667,-75.57382,-75.49025,-75.4595291,-75.4807615,-75.3173042,-75.26236,-75.24405,-75.1910167,-75.119805,-75.0743165,-75.0166587,-74.8933076,-74.831311,-74.7918029,-74.6492982,-74.5729951],"lat":[-10.912602,-11.0565224,-11.0182227,-10.9868146,-10.9931926,-11.120627,-11.1455302,-10.954906,-10.9210727,-10.7998965,-10.7359047,-10.8465739,-10.8606092,-10.9580937,-11.0474245,-11.0652422,-11.2247495,-11.3027114,-11.3839382,-11.4713639,-11.5319431,-11.592051,-11.6601601,-11.7341455,-11.8364847,-11.8781705,-12.0209435,-12.0659897,-12.1359647,-12.1602891,-12.2199665,-12.2768424,-12.3769442,-12.378368,-12.2679072,-12.2202971,-12.23943,-12.2247492,-12.2425884,-12.2849136,-12.3336015,-12.314376,-12.2391447,-12.2297771,-12.1737367,-12.0335787,-11.985182,-12.05942,-12.04142,-12.0708185,-12.0228584,-12.0115636,-12.0601467,-12.1703297,-12.3421,-12.3948427,-12.4634211,-12.4678305,-12.5396004,-12.6289737,-12.6479374,-12.6414844,-12.5640679,-12.5172754,-12.4565905,-12.336289,-12.1940536,-12.1141849,-12.0426914,-12.0596274,-12.0156872,-11.9842942,-11.9843297,-11.892238,-11.7809572,-11.7280492,-11.5927899,-11.5627332,-11.5912326,-11.5052134,-11.4437081,-11.2935289,-11.1160781,-11.0894414,-11.0757617,-11.0916426,-11.1496,-11.06112,-10.9234514,-11.1095,-11.0871972,-11.0460215,-10.9760294,-10.96264,-10.90656,-10.820985,-10.8831465,-10.8862989,-10.82456,-10.8341992,-10.8108985,-10.7469911,-10.75683,-10.7859495,-10.8497826,-10.8635672,-10.82529,-10.76695,-10.7157084,-10.7302201,-10.6658105,-10.6771344,-10.7691332,-10.7805041,-10.8311252,-10.8670707,-10.912602]}]],[[{"lng":[-78.6449239,-78.6516621,-78.7611582,-78.7373829,-78.7438261,-78.7780079,-78.9348847,-78.8963652,-78.9575527,-78.9860879,-79.1155664,-79.1191992,-79.307291,-79.3757461,-79.3924257,-79.465707,-79.4490934,-79.5408765,-79.5884766,-79.569539,-79.6098007,-79.6906211,-79.496387,-79.4007617,-79.322586,-79.3053012,-79.267275,-79.282627,-79.347131,-79.1881752,-79.152724,-79.0654281,-79.0412325,-78.9921487,-78.8959084,-78.8416194,-78.760125,-78.6624666,-78.6298427,-78.6245722,-78.4913926,-78.4156329,-78.3599844,-78.3567922,-78.3828192,-78.2724214,-78.2246531,-78.1160534,-78.0812211,-77.9986422,-77.8704375,-77.844168,-77.7413716,-77.813445,-77.8310502,-77.9995065,-77.927528,-77.7589336,-77.7133786,-77.6435345,-77.6055302,-77.6467459,-77.6357094,-77.6102709,-77.5269177,-77.5367046,-77.4845289,-77.5277766,-77.4428611,-77.4067834,-77.3854726,-77.2922557,-77.2382891,-77.1183241,-77.0195625,-76.9867234,-76.906998,-76.9255967,-76.9137452,-76.9764815,-77.0854805,-77.1338437,-77.2042129,-77.2640781,-77.3174864,-77.4003377,-77.4388962,-77.4588964,-77.5572167,-77.6365202,-77.6471114,-77.7194297,-77.8979042,-77.9332129,-78.0186347,-78.11595,-78.1394687,-78.2168787,-78.1935254,-78.2461349,-78.3548105,-78.4482284,-78.5653431,-78.5916625,-78.6449239],"lat":[-8.9692285,-8.9143555,-8.773957,-8.7120841,-8.6338301,-8.5694121,-8.4363242,-8.3789257,-8.2935235,-8.2123614,-8.0966621,-8.0724941,-7.9259707,-7.8420976,-7.7878086,-7.7119336,-7.6470752,-7.5212561,-7.4140976,-7.3899882,-7.2665879,-7.177127,-6.9717109,-6.9569277,-7.0256836,-7.1471462,-7.1923937,-7.2750606,-7.3366366,-7.395413,-7.4398201,-7.4727086,-7.5998875,-7.6609494,-7.5374374,-7.4376174,-7.4019844,-7.4129979,-7.4455,-7.5485586,-7.5548731,-7.4850704,-7.5003945,-7.5740061,-7.6301071,-7.7535179,-7.7593315,-7.6540074,-7.6961689,-7.679074,-7.5853301,-7.5143809,-7.4666947,-7.3925399,-7.310031,-6.9705316,-6.9867092,-6.9645079,-7.1078871,-7.1490006,-7.2191619,-7.2407401,-7.3574461,-7.4348584,-7.5048394,-7.582281,-7.6997145,-7.757583,-7.8136417,-7.9024931,-8.0553867,-8.0600894,-8.0133242,-8.0252441,-8.0526875,-8.1112252,-8.1707356,-8.2184974,-8.3260899,-8.3959437,-8.4062226,-8.4400215,-8.4856914,-8.4675312,-8.5301524,-8.4819669,-8.4198624,-8.335656,-8.1937325,-8.106192,-8.0502812,-8.0734454,-8.0760156,-8.1970097,-8.2243165,-8.3101,-8.427832,-8.556918,-8.6001114,-8.6583632,-8.6732794,-8.7369267,-8.792599,-8.9459992,-8.9692285]}]],[[{"lng":[-80.6271329,-80.3762187,-80.3274141,-80.1989141,-80.1308632,-79.9948301,-79.9690372,-79.945873,-79.9030549,-79.8329355,-79.7869336,-79.7172812,-79.7373281,-79.6314277,-79.6004492,-79.4989395,-79.4186094,-79.2643417,-79.223995,-79.2725295,-79.2522615,-79.3535614,-79.4226577,-79.4534899,-79.4032754,-79.3669895,-79.2964159,-79.1415621,-79.1208477,-79.2627404,-79.3110089,-79.2966344,-79.322586,-79.4007617,-79.496387,-79.6906211,-79.6834667,-79.7398379,-79.9318457,-79.9860292,-80.1773204,-80.2886426,-80.6271329],"lat":[-6.3720801,-6.0069687,-5.9474413,-5.893,-5.888666,-5.7519453,-5.582211,-5.5149961,-5.4914492,-5.6454902,-5.6465878,-5.7393476,-5.8376503,-5.8290293,-5.9395703,-5.9151895,-5.9700996,-6.0024596,-6.055007,-6.1467313,-6.226688,-6.3042912,-6.3104301,-6.3968416,-6.5407323,-6.5495222,-6.6756717,-6.7015417,-6.77697,-6.8591562,-6.9013417,-6.9998337,-7.0256836,-6.9569277,-6.9717109,-7.177127,-7.1248965,-7.057541,-6.8733065,-6.7470527,-6.6060372,-6.543082,-6.3720801]}]],[[{"lng":[-76.9062461,-76.8563945,-76.808334,-76.770041,-76.7250544,-76.7017882,-76.6556554,-76.6334865,-76.580583,-76.5650766,-76.5801621,-76.4912129,-76.5184024,-76.4776961,-76.3794561,-76.371665,-76.2867887,-76.2237051,-76.1877071,-76.2023277,-76.1369454,-76.0513111,-76.0142541,-75.9259909,-75.8240739,-75.765663,-75.6943047,-75.6377562,-75.6641244,-75.5640961,-75.5574076,-75.5362011,-75.5718406,-75.5796132,-75.5765507,-75.5075,-75.5310819,-75.6130916,-75.6143931,-75.6703612,-75.7621585,-75.8020625,-75.9376829,-76.0119367,-76.1559706,-76.20732,-76.2447929,-76.4897832,-76.5298614,-76.6356836,-76.6724336,-76.7467579,-76.7993086,-76.7773614,-76.8360274,-76.9354687,-77.037709,-77.0310274,-77.1115332,-77.0829405,-77.1175496,-77.0899044,-77.1260485,-77.1870976,-77.168166,-77.2160371,-77.2800314,-77.304752,-77.372168,-77.6429239,-77.6416542,-77.5923496,-77.66175,-77.6578281,-77.7501836,-77.7440351,-77.8862715,-77.8329892,-77.7713765,-77.7961777,-77.7602116,-77.7529219,-77.6923906,-77.5975931,-77.68392,-77.7367812,-77.6442597,-77.6407304,-77.5766504,-77.5771745,-77.4949599,-77.41543,-77.39531,-77.3106289,-77.1909882,-77.1746249,-77.0716116,-76.9062461],"lat":[-10.2741856,-10.3772656,-10.3929649,-10.4647989,-10.4857147,-10.5935449,-10.6467819,-10.7845285,-10.866906,-10.966179,-11.0108419,-11.0894414,-11.1160781,-11.2935289,-11.4437081,-11.5052134,-11.5912326,-11.5627332,-11.5927899,-11.7280492,-11.7809572,-11.892238,-11.9843297,-11.9842942,-12.0156872,-12.0596274,-12.0426914,-12.1141849,-12.1940536,-12.336289,-12.4565905,-12.5172754,-12.5640679,-12.6414844,-12.7151425,-12.7771549,-12.8222079,-12.8669754,-12.9649334,-13.0226117,-13.0188886,-13.0604297,-12.9913249,-13.0854994,-13.193729,-13.3061,-13.3235137,-13.0318457,-12.839668,-12.7433377,-12.6277754,-12.5391211,-12.5090801,-12.3940625,-12.3174121,-12.2502207,-12.204084,-12.1340272,-12.0794922,-12.0364179,-11.9569696,-11.9017867,-11.8207881,-11.8283614,-11.7391094,-11.6389687,-11.5874472,-11.5122344,-11.452586,-11.3044766,-11.2145097,-11.1820801,-11.0126544,-10.9465059,-10.8177402,-10.7945371,-10.61192,-10.5674831,-10.5716146,-10.4832929,-10.4302212,-10.3221544,-10.3209025,-10.3803641,-10.431386,-10.5632121,-10.5274091,-10.5962717,-10.5837481,-10.7285702,-10.7461026,-10.72998,-10.66154,-10.5676914,-10.5521329,-10.4646017,-10.338104,-10.2741856]}]],[[{"lng":[-73.9830332,-74.039966,-74.1808569,-74.3162321,-74.4626519,-74.5357271,-74.5795214,-74.6429021,-74.6431444,-74.5708205,-74.5697451,-74.6279842,-74.7279445,-74.7712561,-74.8964385,-74.9822597,-75.0333496,-75.1424909,-75.1843377,-75.2145722,-75.376147,-75.4300962,-75.5028772,-75.5040589,-75.435324,-75.44079,-75.5466202,-75.599063,-75.7070096,-75.7164704,-75.7786811,-75.7796392,-75.8333871,-75.8918522,-75.9457501,-75.9797597,-75.9649062,-75.9459844,-75.9849629,-75.9348892,-75.9133617,-75.9495927,-75.8449327,-75.8294929,-75.8593862,-75.9669795,-76.043803,-76.1015926,-76.0913736,-76.1661451,-76.2145506,-76.1435252,-76.059945,-76.0107171,-76.0107915,-76.0514635,-76.0105294,-76.0510435,-75.9636516,-75.8438754,-75.7684295,-75.6976987,-75.5118024,-75.5002285,-75.5095966,-75.550095,-75.4903109,-75.4871876,-75.525555,-75.5327937,-75.5711051,-75.62896,-75.71502,-75.8148299,-75.8344506,-75.9307977,-75.9654352,-76.0321026,-76.127211,-76.2236309,-76.3182966,-76.3727871,-76.4122695,-76.548453,-76.6400114,-76.7476975,-76.7467281,-76.8180512,-76.8354511,-76.888218,-76.9956056,-77.0417301,-77.2319414,-77.3383181,-77.3700742,-77.4619435,-77.5173992,-77.5816694,-77.6959585,-77.6930801,-77.7395596,-77.6959779,-77.8246196,-77.7592897,-77.7935749,-77.7946219,-77.7718789,-77.6719454,-77.655457,-77.5859431,-77.5653869,-77.5855507,-77.5496557,-77.5417729,-77.5694049,-77.6518222,-77.615623,-77.6169356,-77.7605394,-77.7764789,-77.7785246,-77.808616,-77.1569845,-76.6318651,-76.0449895,-75.5809339,-75.538963,-75.3866997,-75.3220331,-75.2162384,-75.2211719,-75.2724691,-75.23587,-75.2276,-75.38752,-75.46273,-75.48222,-75.53077,-75.6105506,-75.610496,-75.5056255,-75.4051294,-75.3062414,-75.2597717,-75.1835965,-75.0773634,-75.0168906,-74.9728007,-74.9320826,-74.8480872,-74.8139121,-74.7627121,-74.7311406,-74.5747161,-74.5295489,-74.4213369,-74.3664392,-74.3728261,-74.2681504,-74.2672177,-74.1683576,-74.094261,-74.0462015,-73.9478,-73.913738,-73.8571329,-73.6809316,-73.6199492,-73.6129717,-73.4785684,-73.5369554,-73.4592816,-73.4256514,-73.2037929,-73.152068,-73.1127654,-73.1186677,-73.0944002,-73.1320274,-73.1687641,-73.0682989,-73.066414,-72.9633569,-72.9560044,-72.8517989,-72.7691035,-72.6921172,-72.5955195,-72.5191555,-72.4664509,-72.2908967,-72.2056715,-72.0487412,-71.961961,-71.8847559,-71.8327695,-71.7991329,-71.7405937,-71.7085039,-71.6640304,-71.4633539,-71.3710864,-71.3023877,-71.2310825,-71.188174,-71.1335774,-71.0533295,-71.0002051,-70.928666,-70.8793867,-70.8359531,-70.6659239,-70.6270685,-70.6382941,-70.5993044,-70.4750606,-70.4372341,-70.3579064,-70.33458,-70.2738375,-70.2300647,-70.2193301,-70.1032702,-70.0660394,-70.0600596,-70.1399815,-70.5026372,-70.7111472,-70.61902,-70.573677,-70.4964111,-70.3462989,-70.2763066,-70.1980039,-70.174545,-70.105035,-69.9556895,-69.9495919,-70.0185987,-70.0793672,-70.1581442,-70.1808356,-70.2785341,-70.2939492,-70.4328206,-70.4663115,-70.5260359,-70.6162435,-70.6446224,-70.6943234,-70.7470284,-70.8166059,-70.8646332,-70.8763819,-70.9482886,-71.074234,-71.1057915,-71.2618842,-71.3877285,-71.4188097,-71.4791769,-71.6159114,-71.7397017,-71.8649979,-71.9822126,-72.037401,-72.1030467,-72.2691642,-72.378566,-72.4149347,-72.5204786,-72.6053567,-72.6545535,-72.7286511,-72.7610747,-72.88789,-72.8640312,-72.9579032,-72.9589829,-73.0573474,-73.152068,-73.1932701,-73.2285399,-73.2499415,-73.156599,-73.1116989,-73.199391,-73.3293481,-73.3920161,-73.5208286,-73.6032934,-73.71046,-73.76131,-73.76192,-73.7984196,-73.7166191,-73.6948791,-73.7225634,-73.8186636,-73.8615769,-73.9408261,-73.9113164,-73.9830332],"lat":[-7.5343614,-7.4481547,-7.3587472,-7.3512704,-7.2989412,-7.2944274,-7.4099295,-7.5000865,-7.5622851,-7.6684882,-7.8159805,-7.9398281,-7.981009,-8.0360632,-8.0812682,-7.9689864,-7.9500547,-7.9786406,-8.0166024,-8.1271441,-8.1387771,-8.1665982,-8.2894119,-8.3488411,-8.393113,-8.4368331,-8.466502,-8.4119777,-8.4393249,-8.4873285,-8.493853,-8.5474154,-8.6522886,-8.6615682,-8.7161387,-8.636002,-8.4517422,-8.400875,-8.3221504,-8.3115517,-8.2543869,-8.099233,-8.0596381,-7.9734959,-7.921169,-7.9603594,-7.7923436,-7.722664,-7.5603557,-7.4943071,-7.4045207,-7.2039625,-7.1613012,-7.0783799,-6.9965365,-6.944296,-6.8936114,-6.8109231,-6.7884232,-6.7972617,-6.8538179,-6.8686027,-6.7855696,-6.6403222,-6.4921413,-6.347708,-6.2670362,-6.2034153,-6.1651256,-6.0955995,-6.0039877,-6.08212,-6.13827,-6.1009,-6.1390955,-6.1366493,-6.0951981,-6.0996641,-6.1767051,-6.1660312,-6.086095,-5.9737597,-5.9506641,-6.0224547,-6.0026047,-6.0036433,-5.9540276,-5.8621447,-5.7455553,-5.7484106,-5.6671191,-5.6747083,-5.595461,-5.6034726,-5.5695558,-5.5841401,-5.4667482,-5.4611756,-5.4110531,-5.2676855,-5.2125973,-5.1636602,-5.0317787,-4.9517813,-4.8499635,-4.7630068,-4.7175586,-4.6294685,-4.518545,-4.4750131,-4.3724625,-4.251334,-4.1098928,-3.9433342,-3.8727496,-3.7790097,-3.7077187,-3.634302,-3.459803,-3.409131,-3.1871762,-2.9861251,-2.7678455,-2.5896892,-2.1280432,-1.5463666,-1.4834743,-0.9297386,-0.9747768,-0.9708337,-0.8657633,-0.7353963,-0.64727,-0.55143,-0.43433,-0.31843,-0.23696,-0.1809,-0.1911231,-0.1133555,-0.1179421,-0.1702676,-0.1554183,-0.1279477,-0.038606,-0.0842048,-0.1456856,-0.1535253,-0.2177895,-0.2335841,-0.1922481,-0.2247896,-0.3391815,-0.3950333,-0.4651328,-0.5045235,-0.6104481,-0.6528867,-0.8470097,-0.9823557,-1.0063293,-1.048012,-1.0448202,-1.1321092,-1.1200305,-1.2317793,-1.2380215,-1.2613145,-1.3154908,-1.5220937,-1.6883648,-1.7363966,-1.790303,-1.7639175,-1.8575802,-1.8728147,-2.015701,-2.0422333,-2.1835527,-2.2246297,-2.3151406,-2.3552402,-2.343153,-2.3915512,-2.4357832,-2.3868047,-2.4062851,-2.3665527,-2.4252165,-2.421232,-2.4691372,-2.4459522,-2.3349361,-2.3571415,-2.3115937,-2.190416,-2.2043691,-2.1421972,-2.2273301,-2.2023023,-2.2710905,-2.3893518,-2.3435722,-2.3376106,-2.3795778,-2.2851318,-2.2706198,-2.2078535,-2.2541523,-2.2208926,-2.2908146,-2.3537735,-2.3975346,-2.4657675,-2.4844365,-2.4550683,-2.521247,-2.4893227,-2.5778887,-2.5473283,-2.5745885,-2.6435878,-2.6573618,-2.6840956,-2.7589175,-2.8908197,-3.4632291,-3.7902957,-3.84006,-3.8302946,-3.875809,-3.7997597,-3.8376308,-3.9096055,-3.9695625,-4.057467,-4.2076426,-4.2793827,-4.3532548,-4.2854105,-4.277209,-4.3554047,-4.228928,-4.1593073,-4.1312892,-4.1757553,-4.1360778,-4.1934813,-4.1269467,-4.1866712,-4.161211,-4.1971115,-4.2561515,-4.3216461,-4.3760218,-4.3941007,-4.3763143,-4.4278266,-4.4256016,-4.4647082,-4.4349172,-4.5281365,-4.4816373,-4.5264511,-4.6274341,-4.636662,-4.7065696,-4.7971502,-4.8348335,-4.9003185,-4.9328058,-4.9991846,-5.0628361,-5.0548365,-5.0931123,-5.1658206,-5.2345942,-5.4643966,-5.6563596,-5.7964853,-5.8679596,-6.0057182,-6.0428976,-6.133078,-6.3268016,-6.4469157,-6.5693533,-6.5977807,-6.6416148,-6.676103,-6.7319808,-6.84019,-6.94012,-7.06254,-7.113061,-7.2275582,-7.2990672,-7.3412164,-7.3382191,-7.3881384,-7.3939454,-7.4758379,-7.5343614]}]],[[{"lng":[-70.3884669,-70.4642477,-70.5498467,-70.5875401,-70.6597561,-70.7584131,-70.842961,-70.9213929,-71.0409452,-71.1220117,-71.1681822,-71.1730425,-71.3010097,-71.3549381,-71.4152439,-71.4510475,-71.5521327,-71.6002985,-71.6949687,-71.7469414,-71.8105919,-71.9785955,-71.9813961,-72.0711324,-72.0614894,-71.9760132,-71.9730312,-72.0338407,-72.1055119,-72.0944466,-72.173733,-72.2689329,-72.2593031,-72.337466,-72.3321541,-72.4287387,-72.3155081,-72.2925507,-72.2392584,-72.1981834,-72.2002402,-72.1214062,-72.184865,-72.1820899,-72.1302871,-72.0517391,-72.0161289,-71.7201611,-71.5316145,-71.3573166,-71.2211864,-71.2295527,-71.1962129,-71.1273892,-71.0245335,-70.9672246,-70.9658809,-70.8174434,-70.7051115,-70.650526,-70.6676275,-70.6138847,-70.6136484,-70.6137539,-70.527832,-70.4243007,-70.307793,-70.1990527,-70.094587,-70.0280192,-69.953976,-69.7882269,-69.7393004,-69.5629277,-69.228332,-69.1034472,-68.9682716,-68.6544707,-68.7417187,-68.834693,-68.871567,-68.8718732,-69.6472266,-70.4028681,-70.3884669],"lat":[-13.1923887,-13.1596906,-13.1528644,-13.10313,-13.0884591,-13.1080442,-13.0670485,-13.110831,-13.2687499,-13.2335292,-13.0940886,-12.9833346,-12.9406954,-12.8839787,-12.8942586,-12.8249694,-12.709302,-12.7000581,-12.7387931,-12.7961075,-12.7449785,-12.6833314,-12.5804905,-12.5114842,-12.4404494,-12.3987829,-12.3205434,-12.2650449,-12.2380599,-12.085191,-12.0598104,-12.0543754,-12.0063027,-11.9680752,-11.8555275,-11.7089719,-11.5955769,-11.4332731,-11.345061,-11.2616969,-11.2052969,-11.1071406,-11.0658105,-11.0102422,-10.990334,-11.0109116,-10.9896875,-10.9965535,-10.9522291,-10.9515455,-10.761384,-10.6889649,-10.5798614,-10.5043609,-10.4782001,-10.3813419,-10.3398145,-10.2568575,-10.1586806,-10.0803431,-9.9724529,-9.9168555,-10.5002597,-11.000168,-10.9342774,-11.0383457,-11.0704981,-11.0540147,-10.9899347,-10.9776255,-10.9285656,-10.9296474,-10.9650412,-10.966836,-11.4998242,-11.6813477,-11.9163145,-12.4994297,-12.7249415,-12.8131584,-12.8854674,-13.0039259,-13.3412422,-13.1144129,-13.1923887]}]],[[{"lng":[-71.1394434,-71.2056485,-71.3722187,-71.341082,-71.3945899,-71.490799,-71.4409561,-71.3022461,-71.3394241,-71.384613,-71.4406357,-71.425499,-71.289093,-71.2791519,-71.2447967,-71.2456436,-71.1395187,-71.07827,-70.9924545,-70.9529265,-70.98629,-70.8538819,-70.875061,-70.8125686,-70.8201981,-70.7054024,-70.6433184,-70.5602251,-70.5260755,-70.4097904,-70.4019421,-70.3591964,-70.338758,-70.382114,-70.3334024,-70.30117,-70.2286662,-70.1757012,-70.1687021,-70.0878451,-70.0014717,-69.9955631,-70.091086,-70.0942789,-70.146625,-70.2471819,-70.2590664,-70.2055742,-70.3076114,-70.4416055,-70.4647226,-70.4495794,-70.4918556,-70.5277986,-70.6099784,-70.6842207,-70.7524041,-70.7355784,-70.87965,-70.9125,-70.9929962,-71.1031426,-71.1394434],"lat":[-17.8214824,-17.7686485,-17.6817127,-17.6369882,-17.3891309,-17.2850056,-17.2517166,-17.0938511,-17.021759,-17.0211105,-16.8652267,-16.7406426,-16.7264576,-16.6158219,-16.5502281,-16.4668636,-16.4749737,-16.4585647,-16.4958667,-16.460989,-16.3099461,-16.2414665,-16.0945777,-16.0539609,-15.978468,-16.0317579,-15.9897364,-15.9882982,-16.0267235,-16.0763461,-16.1490297,-16.2086302,-16.3227984,-16.3849552,-16.4114472,-16.4786719,-16.5060757,-16.5607202,-16.6096159,-16.6552322,-16.656574,-16.729776,-16.8121179,-16.8909249,-16.9387305,-16.952444,-16.9020332,-16.808125,-16.7730469,-16.8412266,-16.9456836,-17.0812924,-17.0913737,-17.1683084,-17.2145039,-17.2249801,-17.3805734,-17.40123,-17.55524,-17.68737,-17.6791191,-17.7552754,-17.8214824]}]],[[{"lng":[-76.2788592,-76.24117,-76.26294,-76.3180702,-76.3972167,-76.4912129,-76.5801621,-76.5650766,-76.580583,-76.6334865,-76.6556554,-76.7017882,-76.7250544,-76.6471969,-76.4909411,-76.4728044,-76.33579,-76.30931,-76.223039,-76.0576406,-75.9758101,-75.92515,-75.92441,-75.7856,-75.70397,-75.70311,-75.6749,-75.5486415,-75.4757289,-75.369356,-75.2879377,-75.3030696,-75.2407506,-75.160125,-75.0598809,-74.9994421,-74.9431035,-74.8044257,-74.8070395,-74.73517,-74.7505229,-74.6771034,-74.5845606,-74.5755607,-74.4967635,-74.4855527,-74.4475815,-74.4502034,-74.4145519,-74.4240346,-74.4006081,-74.3277552,-74.3039375,-74.2316606,-74.224342,-74.276711,-74.2551796,-74.2187342,-74.1326735,-74.2298515,-74.3173056,-74.3742691,-74.3856807,-74.4849222,-74.5729951,-74.6492982,-74.7918029,-74.831311,-74.8933076,-75.0166587,-75.0743165,-75.119805,-75.1910167,-75.24405,-75.26236,-75.3173042,-75.4807615,-75.4595291,-75.49025,-75.57382,-75.589667,-75.6934199,-75.78599,-75.8383809,-75.922752,-75.9926716,-76.0913401,-76.12293,-76.1909042,-76.2097969,-76.2788592],"lat":[-10.9234514,-11.06112,-11.1496,-11.0916426,-11.0757617,-11.0894414,-11.0108419,-10.966179,-10.866906,-10.7845285,-10.6467819,-10.5935449,-10.4857147,-10.4151387,-10.3788965,-10.3377676,-10.28632,-10.40562,-10.3748829,-10.4651524,-10.4793364,-10.40676,-10.35603,-10.2523701,-10.20669,-10.13304,-10.04708,-9.983608,-9.9739585,-9.8708326,-9.8702781,-9.7836221,-9.7858355,-9.8399746,-9.8196934,-9.838454,-9.7611016,-9.7298222,-9.6865757,-9.572707,-9.5246071,-9.4283242,-9.4956242,-9.5704864,-9.5933499,-9.7022207,-9.7799587,-9.870226,-9.9021119,-9.9894426,-10.070519,-10.1096527,-10.163595,-10.1850516,-10.2792305,-10.3740742,-10.4524791,-10.4521129,-10.6049109,-10.6354954,-10.7267072,-10.7581095,-10.8117674,-10.8364564,-10.912602,-10.8670707,-10.8311252,-10.7805041,-10.7691332,-10.6771344,-10.6658105,-10.7302201,-10.7157084,-10.76695,-10.82529,-10.8635672,-10.8497826,-10.7859495,-10.75683,-10.7469911,-10.8108985,-10.8341992,-10.82456,-10.8862989,-10.8831465,-10.820985,-10.90656,-10.96264,-10.9603105,-10.9189667,-10.9234514]}]],[[{"lng":[-79.2100704,-79.245086,-79.2943612,-79.3784081,-79.3486524,-79.2976992,-79.2723965,-79.3983204,-79.3755507,-79.4006895,-79.3340684,-79.4186094,-79.4989395,-79.6004492,-79.6314277,-79.7373281,-79.7172812,-79.7869336,-79.8329355,-79.9030549,-79.945873,-79.9690372,-79.9948301,-80.1308632,-80.1989141,-80.3274141,-80.3762187,-80.6271329,-80.7979199,-80.9131347,-81.0915664,-81.1492597,-81.1492891,-81.0684472,-81.0216972,-80.9431445,-80.8612441,-80.8525469,-80.897584,-80.9584766,-81.0529805,-81.1081504,-81.1945526,-81.1331621,-81.0602187,-81.086416,-81.3281035,-81.2824472,-81.3036134,-81.2671426,-81.2370527,-81.168584,-81.1006152,-81.041418,-80.9713222,-80.9547285,-80.8828222,-80.8033066,-80.7003204,-80.6232207,-80.487332,-80.4493204,-80.4342735,-80.3288301,-80.4537774,-80.438793,-80.389543,-80.2900195,-80.1948614,-80.1787051,-80.1042402,-79.9917695,-79.8713496,-79.7938847,-79.6281406,-79.5633906,-79.4979395,-79.48825,-79.3925,-79.3207011,-79.2630392,-79.2100704],"lat":[-4.9652422,-5.0013593,-5.1104805,-5.1905215,-5.2325762,-5.458127,-5.5189825,-5.5370176,-5.6061895,-5.7495097,-5.8936308,-5.9700996,-5.9151895,-5.9395703,-5.8290293,-5.8376503,-5.7393476,-5.6465878,-5.6454902,-5.4914492,-5.5149961,-5.582211,-5.7519453,-5.888666,-5.893,-5.9474413,-6.0069687,-6.3720801,-6.2889843,-6.1905841,-6.0820273,-5.9812402,-5.8892305,-5.7857461,-5.8305566,-5.8456797,-5.749666,-5.6354882,-5.5114531,-5.423086,-5.3309902,-5.3147461,-5.2121191,-5.0702773,-5.0392831,-4.967334,-4.6818847,-4.5251895,-4.48325,-4.4340683,-4.2506757,-4.2104627,-4.1289356,-4.0875468,-4.1271172,-4.1734472,-4.1928007,-4.1759668,-4.1878006,-4.2317793,-4.0831288,-4.12525,-4.1959375,-4.2231328,-4.3856152,-4.4564395,-4.4861113,-4.4346387,-4.3463613,-4.3037773,-4.290957,-4.379961,-4.4129825,-4.4929825,-4.4391093,-4.5142695,-4.5212285,-4.6259902,-4.8316406,-4.8868535,-4.9686601,-4.9652422]}]],[[{"lng":[-68.9183887,-68.9183991,-68.8142169,-68.8142169,-68.9183887],"lat":[-16.4037207,-16.2332954,-16.3197735,-16.3479864,-16.4037207]}],[{"lng":[-69.64132,-69.73167,-69.7882461,-69.8514004,-70.0397187,-70.0467735,-70.146625,-70.0942789,-70.091086,-69.9955631,-70.0014717,-70.0878451,-70.1687021,-70.1757012,-70.2286662,-70.30117,-70.3334024,-70.382114,-70.338758,-70.3591964,-70.4019421,-70.4097904,-70.5260755,-70.5602251,-70.6433184,-70.7054024,-70.8201981,-70.936142,-70.9001312,-70.917984,-71.0081787,-70.9939575,-71.038971,-71.0122774,-70.9522992,-70.9852806,-70.9762309,-71.0040501,-70.9847404,-70.9938355,-70.9754834,-71.0532405,-71.1136761,-71.0014497,-70.9625027,-70.9858209,-70.8805809,-70.8993489,-70.8089296,-70.7958829,-70.8618142,-70.8330391,-70.831273,-70.768375,-70.6988582,-70.7347471,-70.7151289,-70.6539129,-70.6161909,-70.5417237,-70.5340317,-70.452618,-70.4000731,-70.4204084,-70.3884669,-70.4028681,-69.6472266,-68.8718732,-68.874519,-68.8454515,-68.9172497,-68.9930079,-69.0661191,-68.9177439,-68.9821345,-68.9780975,-68.8956445,-68.8277989,-68.9624062,-69.0152434,-68.9854066,-69.1406041,-69.1500304,-69.2200426,-69.2579796,-69.2252647,-69.3537969,-69.3438714,-69.361582,-69.2852226,-69.2357735,-69.1315294,-69.2156416,-69.2900717,-69.3311184,-69.4349649,-69.4766959,-69.5689636,-69.6419762,-69.6450789,-69.7282524,-69.7727394,-69.8942897,-69.9428911,-69.8607051,-69.770692,-69.845516,-69.8929179,-69.9634692,-70.0174229,-70.0241046,-69.9633096,-69.8830369,-69.822121,-69.7674659,-69.7693084,-69.6717394,-69.5626609,-69.4517355,-69.4231612,-69.5035104,-69.4943242,-69.4264665,-69.3580469,-69.24116,-69.1453541,-69.0552589,-68.9768504,-69.0506404,-69.0219587,-69.0231384,-69.084014,-68.9961016,-69.1700137,-69.2192447,-69.304675,-69.3436387,-69.3946309,-69.3737389,-69.5569017,-69.64132],"lat":[-17.28745,-17.2949667,-17.2364434,-17.2437364,-17.1279677,-17.0563829,-16.9387305,-16.8909249,-16.8121179,-16.729776,-16.656574,-16.6552322,-16.6096159,-16.5607202,-16.5060757,-16.4786719,-16.4114472,-16.3849552,-16.3227984,-16.2086302,-16.1490297,-16.0763461,-16.0267235,-15.9882982,-15.9897364,-16.0317579,-15.978468,-15.7848396,-15.7121467,-15.6438007,-15.5639686,-15.4548416,-15.4051657,-15.3437521,-15.2898431,-15.2490296,-15.1756417,-14.9718772,-14.9460685,-14.8291639,-14.7641337,-14.7543305,-14.666732,-14.5722149,-14.4448174,-14.4067256,-14.2708816,-14.229302,-14.1241994,-14.0721191,-14.0262276,-13.9380997,-13.8589317,-13.8143321,-13.8031676,-13.7390167,-13.662254,-13.6559361,-13.6090625,-13.574489,-13.5252701,-13.4479184,-13.3717386,-13.2585701,-13.1923887,-13.1144129,-13.3412422,-13.0039259,-13.1156751,-13.2459141,-13.4865264,-13.6498575,-13.6883145,-13.8136642,-13.8940612,-13.9780369,-14.0412597,-14.21942,-14.2200547,-14.3147092,-14.3746634,-14.5134347,-14.5803142,-14.5815582,-14.682884,-14.740702,-14.8016657,-14.8827269,-14.9491914,-15.0949726,-15.120252,-15.2339941,-15.3171581,-15.4368796,-15.5379471,-15.4823579,-15.427249,-15.3545045,-15.3201535,-15.2832872,-15.239062,-15.3089346,-15.2951135,-15.3966775,-15.557055,-15.6583891,-15.6850094,-15.5934267,-15.6997536,-15.6907932,-15.7868797,-15.8508836,-15.8901956,-15.7854465,-15.8318031,-15.8949579,-15.9566046,-15.9594566,-15.9936105,-16.0470374,-16.1498031,-16.2080614,-16.1788191,-16.2501367,-16.2704377,-16.2531455,-16.1973616,-16.2570827,-16.2827037,-16.331906,-16.4039416,-16.4626505,-16.6565762,-16.7275351,-16.836131,-16.915841,-16.9868679,-17.023875,-17.0731234,-17.1592751,-17.28745]},{"lng":[-69.8877431,-70.0203555,-70.0449519,-70.1161644,-69.9518192,-69.8877431],"lat":[-15.2069326,-15.1536339,-15.1106584,-15.16793,-15.2197214,-15.2069326]}]],[[{"lng":[-75.9849629,-76.0871757,-76.1304412,-76.1159257,-76.1664395,-76.2301542,-76.2784647,-76.3241855,-76.3334681,-76.416801,-76.4661674,-76.5426875,-76.6972715,-76.8315836,-76.9162984,-77.0498014,-77.1338437,-77.0854805,-76.9764815,-76.9137452,-76.9255967,-76.906998,-76.9867234,-77.0195625,-77.1183241,-77.2382891,-77.2922557,-77.3854726,-77.4067834,-77.4428611,-77.5277766,-77.4845289,-77.5367046,-77.5269177,-77.6102709,-77.6357094,-77.6467459,-77.6055302,-77.6435345,-77.7133786,-77.7589336,-77.7233249,-77.7617176,-77.7456065,-77.6933632,-77.6123367,-77.5440742,-77.381733,-77.3938699,-77.3351524,-77.3263566,-77.2731586,-77.1717325,-77.1327252,-77.199996,-77.2229851,-77.346428,-77.3954976,-77.434463,-77.4786152,-77.5338089,-77.5934564,-77.6692249,-77.6518906,-77.6778829,-77.7639291,-77.7737071,-77.7368906,-77.7657617,-77.7684512,-77.6959585,-77.5816694,-77.5173992,-77.4619435,-77.3700742,-77.3383181,-77.2319414,-77.0417301,-76.9956056,-76.888218,-76.8354511,-76.8180512,-76.7467281,-76.7476975,-76.6400114,-76.548453,-76.4122695,-76.3727871,-76.3182966,-76.2236309,-76.127211,-76.0321026,-75.9654352,-75.9307977,-75.8344506,-75.8148299,-75.71502,-75.62896,-75.5711051,-75.5327937,-75.525555,-75.4871876,-75.4903109,-75.550095,-75.5095966,-75.5002285,-75.5118024,-75.6976987,-75.7684295,-75.8438754,-75.9636516,-76.0510435,-76.0105294,-76.0514635,-76.0107915,-76.0107171,-76.059945,-76.1435252,-76.2145506,-76.1661451,-76.0913736,-76.1015926,-76.043803,-75.9669795,-75.8593862,-75.8294929,-75.8449327,-75.9495927,-75.9133617,-75.9348892,-75.9849629],"lat":[-8.3221504,-8.3369062,-8.4672111,-8.6575742,-8.7564141,-8.796295,-8.577461,-8.5241346,-8.4294739,-8.4434366,-8.569743,-8.509711,-8.5324082,-8.5166552,-8.5701597,-8.5537152,-8.4400215,-8.4062226,-8.3959437,-8.3260899,-8.2184974,-8.1707356,-8.1112252,-8.0526875,-8.0252441,-8.0133242,-8.0600894,-8.0553867,-7.9024931,-7.8136417,-7.757583,-7.6997145,-7.582281,-7.5048394,-7.4348584,-7.3574461,-7.2407401,-7.2191619,-7.1490006,-7.1078871,-6.9645079,-6.893456,-6.8077483,-6.6651582,-6.6785253,-6.6122612,-6.6769961,-6.6975891,-6.6026882,-6.5223285,-6.4680273,-6.4065308,-6.38117,-6.3024211,-6.2311792,-6.146896,-6.1143411,-6.0393767,-6.0604117,-6.0008945,-6.0633713,-6.0093473,-5.9803651,-5.935332,-5.8596466,-5.8197087,-5.6852071,-5.6051388,-5.5389825,-5.4380487,-5.4110531,-5.4611756,-5.4667482,-5.5841401,-5.5695558,-5.6034726,-5.595461,-5.6747083,-5.6671191,-5.7484106,-5.7455553,-5.8621447,-5.9540276,-6.0036433,-6.0026047,-6.0224547,-5.9506641,-5.9737597,-6.086095,-6.1660312,-6.1767051,-6.0996641,-6.0951981,-6.1366493,-6.1390955,-6.1009,-6.13827,-6.08212,-6.0039877,-6.0955995,-6.1651256,-6.2034153,-6.2670362,-6.347708,-6.4921413,-6.6403222,-6.7855696,-6.8686027,-6.8538179,-6.7972617,-6.7884232,-6.8109231,-6.8936114,-6.944296,-6.9965365,-7.0783799,-7.1613012,-7.2039625,-7.4045207,-7.4943071,-7.5603557,-7.722664,-7.7923436,-7.9603594,-7.921169,-7.9734959,-8.0596381,-8.099233,-8.2543869,-8.3115517,-8.3221504]}]],[[{"lng":[-69.64132,-69.5752187,-69.4673164,-69.468293,-69.6654121,-69.7959882,-69.8211972,-69.7957149,-69.7471777,-69.8130801,-69.9605489,-70.050707,-70.1496524,-70.2868047,-70.3767111,-70.4812891,-70.6785742,-70.8131562,-70.8791895,-70.8956289,-71.0110059,-71.0968437,-71.1394434,-71.1031426,-70.9929962,-70.9125,-70.87965,-70.7355784,-70.7524041,-70.6842207,-70.6099784,-70.5277986,-70.4918556,-70.4495794,-70.4647226,-70.4416055,-70.3076114,-70.2055742,-70.2590664,-70.2471819,-70.146625,-70.0467735,-70.0397187,-69.8514004,-69.7882461,-69.73167,-69.64132],"lat":[-17.28745,-17.2925899,-17.3735371,-17.5041699,-17.6599004,-17.6462422,-17.6863555,-17.8622579,-17.9439375,-18.1144785,-18.2628847,-18.2688027,-18.3183672,-18.3081055,-18.3509277,-18.2734121,-18.1618476,-18.0404882,-18.0147539,-17.963459,-17.876748,-17.8677246,-17.8214824,-17.7552754,-17.6791191,-17.68737,-17.55524,-17.40123,-17.3805734,-17.2249801,-17.2145039,-17.1683084,-17.0913737,-17.0812924,-16.9456836,-16.8412266,-16.7730469,-16.808125,-16.9020332,-16.952444,-16.9387305,-17.0563829,-17.1279677,-17.2437364,-17.2364434,-17.2949667,-17.28745]}]],[[{"lng":[-80.487332,-80.6232207,-80.7003204,-80.8033066,-80.8828222,-80.9547285,-80.9713222,-81.041418,-80.9873885,-80.8336465,-80.7946191,-80.7535996,-80.5829726,-80.504875,-80.380707,-80.2923594,-80.2397285,-80.1887695,-80.1808086,-80.1402419,-80.240209,-80.2980762,-80.3626257,-80.4302441,-80.487332],"lat":[-4.0831288,-4.2317793,-4.1878006,-4.1759668,-4.1928007,-4.1734472,-4.1271172,-4.0875468,-3.9857111,-3.8757578,-3.7602031,-3.71817,-3.6362148,-3.5089512,-3.492793,-3.4088047,-3.4777891,-3.5979336,-3.738582,-3.9129621,-3.9562305,-4.0172581,-3.9831613,-3.9895038,-4.0831288]}]],[[{"lng":[-70.6138847,-70.6676275,-70.650526,-70.7051115,-70.8174434,-70.9658809,-70.9672246,-71.0245335,-71.1273892,-71.1962129,-71.2295527,-71.2211864,-71.3573166,-71.5316145,-71.7201611,-72.0161289,-72.0517391,-72.1302871,-72.1820899,-72.184865,-72.1214062,-72.2002402,-72.1981834,-72.2392584,-72.307709,-72.4798681,-72.5350856,-72.6099875,-72.7382376,-72.794294,-72.9519086,-72.9391261,-73.0265089,-73.2574457,-73.3313306,-73.4197495,-73.4601102,-73.4500986,-73.4826035,-73.5425787,-73.571491,-73.5602615,-73.6103962,-73.7572001,-73.8142169,-73.8234072,-73.8541104,-73.8613036,-73.9782717,-74.0054982,-74.0917784,-74.256436,-74.3736547,-74.5729951,-74.4849222,-74.3856807,-74.3742691,-74.3173056,-74.2298515,-74.1326735,-74.2187342,-74.2551796,-74.276711,-74.224342,-74.2316606,-74.3039375,-74.3277552,-74.4006081,-74.4240346,-74.4145519,-74.4502034,-74.4475815,-74.4855527,-74.4967635,-74.5755607,-74.5845606,-74.6771034,-74.6743086,-74.5894394,-74.6395645,-74.6780937,-74.6513661,-74.6443107,-74.6089202,-74.5253512,-74.5471346,-74.6178159,-74.8466835,-74.8505584,-74.9407121,-74.9341641,-74.9788594,-75.0455625,-75.1433027,-75.1509864,-75.2375801,-75.2097147,-75.2827226,-75.4521015,-75.4943906,-75.5624452,-75.6708379,-75.7317579,-75.7941132,-75.8064649,-75.8758614,-75.8743516,-75.9172969,-75.9216465,-75.9457501,-75.8918522,-75.8333871,-75.7796392,-75.7786811,-75.7164704,-75.7070096,-75.599063,-75.5466202,-75.44079,-75.435324,-75.5040589,-75.5028772,-75.4300962,-75.376147,-75.2145722,-75.1843377,-75.1424909,-75.0333496,-74.9822597,-74.8964385,-74.7712561,-74.7279445,-74.6279842,-74.5697451,-74.5708205,-74.6431444,-74.6429021,-74.5795214,-74.5357271,-74.4626519,-74.3162321,-74.1808569,-74.039966,-73.9830332,-73.889457,-73.9001777,-73.8032932,-73.7140287,-73.6763137,-73.6781597,-73.7670137,-73.6688971,-73.640298,-73.5847722,-73.5954696,-73.5260021,-73.542906,-73.3731231,-73.3309775,-73.3441397,-73.2511922,-73.1672415,-73.1120137,-73.0371014,-73.0012704,-72.9479499,-72.963542,-73.0640856,-73.2004395,-72.7169121,-72.530397,-72.4070625,-72.2813262,-72.2883222,-72.2460176,-72.2589941,-72.2148691,-72.1513611,-72.1507117,-72.1804044,-71.3750449,-71.2974356,-71.1919864,-71.1576465,-71.0509649,-70.9983829,-70.9740215,-70.9245106,-70.8681344,-70.7991777,-70.7497596,-70.6577717,-70.5625904,-70.5137169,-70.5918505,-70.5982441,-70.5280684,-70.5366289,-70.6122812,-70.6138847],"lat":[-9.9168555,-9.9724529,-10.0803431,-10.1586806,-10.2568575,-10.3398145,-10.3813419,-10.4782001,-10.5043609,-10.5798614,-10.6889649,-10.761384,-10.9515455,-10.9522291,-10.9965535,-10.9896875,-11.0109116,-10.990334,-11.0102422,-11.0658105,-11.1071406,-11.2052969,-11.2616969,-11.345061,-11.307,-11.3874206,-11.4350805,-11.4282384,-11.3474294,-11.3842907,-11.3306296,-11.2820779,-11.2640846,-11.3127089,-11.3112647,-11.3839382,-11.3027114,-11.2247495,-11.0652422,-11.0474245,-10.9580937,-10.8606092,-10.8465739,-10.7359047,-10.7998965,-10.9210727,-10.954906,-11.1455302,-11.120627,-10.9931926,-10.9868146,-11.0182227,-11.0565224,-10.912602,-10.8364564,-10.8117674,-10.7581095,-10.7267072,-10.6354954,-10.6049109,-10.4521129,-10.4524791,-10.3740742,-10.2792305,-10.1850516,-10.163595,-10.1096527,-10.070519,-9.9894426,-9.9021119,-9.870226,-9.7799587,-9.7022207,-9.5933499,-9.5704864,-9.4956242,-9.4283242,-9.3944726,-9.3031764,-9.1596816,-9.0940391,-9.0487684,-8.9187832,-8.8202284,-8.7493162,-8.5845672,-8.5487194,-8.6612354,-8.7568911,-8.8578926,-8.9302246,-8.9520392,-8.9042169,-8.9721934,-9.0387169,-9.1067715,-9.2299434,-9.309832,-9.2967226,-9.3773554,-9.4001719,-9.3966445,-9.2722656,-9.1883652,-9.1214864,-9.021459,-8.9702539,-8.8792382,-8.7808086,-8.7161387,-8.6615682,-8.6522886,-8.5474154,-8.493853,-8.4873285,-8.4393249,-8.4119777,-8.466502,-8.4368331,-8.393113,-8.3488411,-8.2894119,-8.1665982,-8.1387771,-8.1271441,-8.0166024,-7.9786406,-7.9500547,-7.9689864,-8.0812682,-8.0360632,-7.981009,-7.9398281,-7.8159805,-7.6684882,-7.5622851,-7.5000865,-7.4099295,-7.2944274,-7.2989412,-7.3512704,-7.3587472,-7.4481547,-7.5343614,-7.6031797,-7.6389649,-7.7139852,-7.7429639,-7.8000269,-7.8579641,-7.9104121,-8.0122939,-8.0065139,-8.1268389,-8.1657995,-8.2743594,-8.3475876,-8.4717891,-8.4758636,-8.6027445,-8.6906437,-8.6982977,-8.8192976,-8.9161797,-8.9169065,-9.0288722,-9.143765,-9.2276946,-9.4113965,-9.4121856,-9.4823097,-9.4772911,-9.5422989,-9.6028164,-9.6572794,-9.7121914,-9.7788164,-9.7974164,-9.9057419,-9.9996719,-10.0001445,-9.9921777,-9.9403926,-9.8721485,-9.8158379,-9.8182129,-9.7607382,-9.7416397,-9.6647627,-9.6419222,-9.5692897,-9.5142584,-9.4304274,-9.4928029,-9.5485451,-9.6072871,-9.7260156,-9.7658399,-9.8053985,-9.9168555]}]]],null,null,{"interactive":true,"className":"","stroke":true,"color":"white","weight":2,"opacity":1,"fill":true,"fillColor":["#FDD9D5","#F97EA8","#FFF7F3","#F98CAE","#FDD4D1","#FCCAC6","#D02990","#FCC0BF","#FDE0DD","#FDCDC9","#FA92B0","#FAA3B6","#F97DA8","#E34299","#49006A","#F76EA3","#FEE6E3","#FEE5E2","#FEE6E2","#F05B9E","#FDE4E1","#FCBEBE","#FDE4E1","#FCBDBE","#F985AB"],"fillOpacity":0.7,"dashArray":"","smoothFactor":1,"noClip":false},null,null,["<strong>AMAZONAS<\/strong><br/<strong>Casos: <\/strong>269","<strong>ANCASH<\/strong><br/<strong>Casos: <\/strong>1698","<strong>APURIMAC<\/strong><br/<strong>Casos: <\/strong>99","<strong>AREQUIPA<\/strong><br/<strong>Casos: <\/strong>1393","<strong>AYACUCHO<\/strong><br/<strong>Casos: <\/strong>303","<strong>CAJAMARCA<\/strong><br/<strong>Casos: <\/strong>406","<strong>CALLAO<\/strong><br/<strong>Casos: <\/strong>6199","<strong>CUSCO<\/strong><br/<strong>Casos: <\/strong>523","<strong>HUANCAVELICA<\/strong><br/<strong>Casos: <\/strong>214","<strong>HUANUCO<\/strong><br/<strong>Casos: <\/strong>375","<strong>ICA<\/strong><br/<strong>Casos: <\/strong>1269","<strong>JUNIN<\/strong><br/<strong>Casos: <\/strong>954","<strong>LA LIBERTAD<\/strong><br/<strong>Casos: <\/strong>1711","<strong>LAMBAYEQUE<\/strong><br/<strong>Casos: <\/strong>4147","<strong>LIMA<\/strong><br/<strong>Casos: <\/strong>52545","<strong>LORETO<\/strong><br/<strong>Casos: <\/strong>2107","<strong>MADRE DE DIOS<\/strong><br/<strong>Casos: <\/strong>177","<strong>MOQUEGUA<\/strong><br/<strong>Casos: <\/strong>182","<strong>PASCO<\/strong><br/<strong>Casos: <\/strong>179","<strong>PIURA<\/strong><br/<strong>Casos: <\/strong>2830","<strong>PUNO<\/strong><br/<strong>Casos: <\/strong>189","<strong>SAN MARTIN<\/strong><br/<strong>Casos: <\/strong>549","<strong>TACNA<\/strong><br/<strong>Casos: <\/strong>187","<strong>TUMBES<\/strong><br/<strong>Casos: <\/strong>557","<strong>UCAYALI<\/strong><br/<strong>Casos: <\/strong>1542"],{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"15px","textOnly":false,"style":{"font-weight":"normal","padding":"3px 8px"},"className":"","sticky":true},{"color":"#666","weight":5,"fillOpacity":0.7,"dashArray":"","bringToFront":true}]},{"method":"addLegend","args":[{"colors":["#FFF7F3 , #FEEBE8 6.45298763322124%, #FCCBC6 22.3910069097067%, #FA9CB4 38.3290261861922%, #EE589E 54.2670454626777%, #C01A88 70.2050647391632%, #800178 86.1430840156487%, #49006A "],"labels":["148","403","1,097","2,981","8,103","22,026"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"bottomleft","type":"numeric","title":"Casos","extra":{"p_1":0.0645298763322124,"p_n":0.861430840156487},"layerId":null,"className":"info legend","group":null}]},{"method":"setMaxBounds","args":[4.991423,-90.648918,-23.920121,-59.605965]},{"method":"addEasyButton","args":[{"icon":"fa-info-circle","title":"Información","onClick":"function(gd) { \n      alert('Muestra los casos acumulados por departamento. El gradiente de colores indica mayor casos acumulados en colores más oscuros.');\n    }","position":"topleft"}]}],"limits":{"lat":[-18.3509277,-0.038606],"lng":[-81.3281035,-68.6544707]}},"evals":["calls.4.args.0.onClick"],"jsHooks":[]}</script>
+</div>
+</div>
+</div>
+
+</div>
+
+<script>
+
+$(document).ready(function () {
+
+  // add bootstrap table styles to pandoc tables
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+
+  // initialize mathjax
+  var script = document.createElement("script");
+  script.type = "text/javascript";
+  script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+  document.getElementsByTagName("head")[0].appendChild(script);
+
+});
+</script>
+
+<div id="flexdashboard-source-code">
+<pre class="line-numbers"><code class="language-r">---
+title: "CE4 - Dashboard COVID-19"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+    source_code: embed
+    social: menu
+    theme: cosmo
+    self_contained: FALSE 
+    fig_mobile: TRUE
+---
+
+<style>                     
+.navbar {
+background-color:black;
+border-color:grey;
+}
+.navbar-brand {
+color:white!important;
+}
+.bg {
+background-color: black;
+color: white;
+}
+body {
+background: black;
+}
+
+body hr {
+border-color: black;
+margin: 10px 0;
+}
+
+.chart-title {
+border-bottom: 1px solid #d7d7d7;
+color: white!important;
+font-size: 14px;
+font-weight: 300;
+padding: 7px 10px 4px;
+}
+
+.nav-tabs-custom {
+background: black;
+border: 1px solid #c4c4c4;
+border-radius: 3px;
+margin-bottom: 8px;
+margin-right: 8px;
+}
+
+.nav-tabs-custom > .nav-tabs {
+margin: 0;
+border-bottom: 1px solid #d7d7d7;
+color: white;
+font-size: 14px;
+font-weight: 300;
+border-top-right-radius: 3px;
+border-top-left-radius: 3px;
+}
+
+.nav-tabs-custom > .nav-tabs > li.active > a,
+.nav-tabs-custom > .nav-tabs > li.active:hover > a {
+background-color: black;
+color: white;
+}
+
+.nav-tabs-custom > .tab-content {
+background: black;
+padding: 0;
+border-bottom-right-radius: 3px;
+border-bottom-left-radius: 3px;
+display: -webkit-box;
+display: -webkit-flex;
+display: -ms-flexbox;
+display: flex;
+}
+
+.nav-tabs-custom > .tab-content > .chart-wrapper {
+background: black;
+border: none;
+margin: 0;
+}
+
+.value-box {
+border-radius: 1px;
+position: relative;
+display: block;
+margin-right: 4px;
+margin-bottom: 4px;
+box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.value-box > .inner {
+padding: 5px;
+padding-left: 20px;
+padding-right: 20px;
+}
+
+.value-box .value {
+font-size: 20px;
+font-weight: bold;
+margin: 0 0 3px 0;
+white-space: nowrap;
+padding: 0;
+}
+
+.value-box .caption {
+font-size: 20px;
+}
+
+.value-box .icon i {
+position: absolute;
+top: 15px;
+right: 15px;
+font-size: 40px;
+color: rgba(0, 0, 0, 0.5);
+}
+
+.content {
+overflow: auto;
+}
+
+.chart-wrapper { 
+overflow: auto; 
+}
+
+.tab-content { 
+   color: white;
+}
+
+
+</style>
+
+```{r imports, include=FALSE}
+source('_scripts/import.R', echo = TRUE) # Importa librerias, bases de datos, variables globales y funciones.
+```
+
+```{r plotly, message=F, warning=F, include =F}
+source('_scripts/infobutton.R', echo = TRUE) # Importa las variables para los botones información
+
+source('_scripts/plotly.R', echo = TRUE) # Importa configuraciones para los gráficos en plotly
+
+source('_scripts/leaflet.R', echo = TRUE) # Importa configuraciones para los gráficos en plotly
+```
+
+```{r deps, message=F, warning=F, include=FALSE}
+source('_scripts/cleaning.R', echo = TRUE) # Importa las bases a utilizar procesadas.
+```
+
+```{r, message=F, warning=F}
+vars.pmav.new <- dep %>%
+  dplyr::select(dat,dep,mav.pos.new.hab) %>% 
+  dplyr::filter(dat == c.date) %>% 
+  dplyr::arrange(dplyr::desc(mav.pos.new.hab)) %>%
+  dplyr::select(dep) %>%
+  dplyr::mutate(dep = ifelse(dep=="LA LIBERTAD","LA_LIBERTAD",
+                             ifelse(dep=="MADRE DE DIOS","MADRE_DE_DIOS",
+                                    ifelse(dep=="SAN MARTIN","SAN_MARTIN",dep))))%>% 
+  .$dep
+
+vars.mav.new <- dep %>%
+  dplyr::select(dat,dep,mav.pos.new) %>% 
+  dplyr::filter(dat == c.date) %>% 
+  dplyr::arrange(dplyr::desc(mav.pos.new)) %>%
+  dplyr::select(dep) %>%
+  dplyr::mutate(dep = ifelse(dep=="LA LIBERTAD","LA_LIBERTAD",
+                             ifelse(dep=="MADRE DE DIOS","MADRE_DE_DIOS",
+                                    ifelse(dep=="SAN MARTIN","SAN_MARTIN",dep))))%>% 
+  .$dep
+last.mav.new <- vars.mav.new[length(vars.mav.new)]
+
+
+vars.pos <- dep %>%
+  dplyr::select(dat,dep,pos) %>% 
+  dplyr::filter(dat == c.date) %>% 
+  dplyr::arrange(dplyr::desc(pos)) %>%
+  dplyr::select(dep) %>%
+  dplyr::mutate(dep = ifelse(dep=="LA LIBERTAD","LA_LIBERTAD",
+                             ifelse(dep=="MADRE DE DIOS","MADRE_DE_DIOS",
+                                    ifelse(dep=="SAN MARTIN","SAN_MARTIN",dep))))%>% 
+  .$dep
+last.pos <- vars.pos[length(vars.pos)]
+
+  vars_latam_mav <- LATAM %>%
+  dplyr::select(date,location,mav_new) %>% 
+  dplyr::filter(date == c.date) %>%
+  dplyr::summarise(max = as.numeric(max(mav_new)))%>% 
+  dplyr::arrange(dplyr::desc(max)) %>%
+  dplyr::select(location)%>% 
+  .$location
+
+
+```
+
+Nacional {.bg}
+=====================================  
+
+Column 1 {.tabset data-width=350} 
+-------------------------------------
+
+### Casos
+
+```{r}
+labels <- sprintf(
+  "<strong>%s</strong><br/<strong>Casos: </strong>%s",
+  c.dep$dep, c.dep$pos) %>% lapply(htmltools::HTML)
+
+pal.cases <- colorNumeric(palette="RdPu", domain = log(c.dep$pos), na.color="transparent")
+
+leaflet(c.dep) %>% 
+  map_tiles() %>%
+  map_poly(c.dep$pos) %>%
+  addLegend("bottomleft", pal = pal.cases, values = log(c.dep$pos), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
+  map_bounds() %>%
+  addEasyButton(easyButton(
+    icon="fa-info-circle", title="Información",
+    onClick=JS("function(gd) { 
+      alert('Muestra los casos acumulados por departamento. El gradiente de colores indica mayor casos acumulados en colores más oscuros.');
+    }"))) 
+  
+```
+</code></pre>
+</div>
+<script type="text/javascript">
+$(document).ready(function () {
+  FlexDashboard.init({
+    theme: "cosmo",
+    fillPage: true,
+    orientation: "columns",
+    storyboard: false,
+    defaultFigWidth: 576,
+    defaultFigHeight: 460,
+    defaultFigWidthMobile: 360,
+    defaultFigHeightMobile: 460
+  });
+});
+</script>
+
+</body>
+</html>
