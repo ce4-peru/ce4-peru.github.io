@@ -828,12 +828,16 @@ plot_ly(nac_2, x = ~Dia, y = ~per_fallecidos, name = 'Fallecidos',
 
 ```{r, message=F, warning=F}
 plot_ly(nac, x = ~dat) %>% 
-  add_trace(y = ~smp.new, type = 'bar', 
+  add_trace(y = ~smp.neg.new, type = 'bar', 
             name = 'Pruebas negativas',
-            marker = list(color = '#007e7b')) %>%
+            marker = list(color = '#007e7b'),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Pruebas negativas: %{y:.0f}</b></br><extra></extra>")) %>%
   add_trace(y = ~pos.new, type = 'bar',
             name = 'Pruebas positivas',
-            marker = list(color = '#7aa82a')) %>%
+            marker = list(color = '#7aa82a'),
+            hovertemplate = ~paste('<b>Fecha</b>: %{x}',
+                                   "<br><b>Pruebas positivas: %{y:.0f}</b></br><extra></extra>")) %>%
    add_trace(y = ~mav.pos.new, 
             type = 'scatter',
             mode = 'lines+markers', 

@@ -21,6 +21,7 @@ dep <-
                                      pos - lag(pos, n = 1)),
                 pas.new = pas -lag(pas, n = 1),
                 smp.new = smp - lag(smp, n = 1),
+                smp.neg.new = smp.new - pos.new,
                 smp.imp.new = ifelse(!is.na(smp.imp), 
                                      smp.imp - lag(smp.imp, n = 1),
                                      smp - lag(smp, n = 1)),
