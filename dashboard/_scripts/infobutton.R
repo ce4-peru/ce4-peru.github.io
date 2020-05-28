@@ -51,7 +51,18 @@ infobutton_2 <- list(
 )
 
 
-
+infobutton_1_2 <- list(
+  name = "Información",
+  icon = list(
+    path = icon_svg_path,
+    transform = "scale(0.84) translate(-1, 0)"
+  ),
+  click = htmlwidgets::JS(
+    "function(gd) { 
+      alert('Muestra los casos nuevos por día (barras) y casos acumulados (línea naranja) en escala lineal o logarítmica a nivel nacional.<br> La escala lineal sirve para visualizar la suma contínua de casos </br>. <br>La escala logarítmica sirve para visualizar la multiplicación de los casos y observar si la curva se aplana.</br>');
+    }"
+  )
+)
 infobutton_3 <- list(
   name = "Información",
   icon = list(
