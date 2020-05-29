@@ -652,7 +652,7 @@ plot_ly(dup.nac)%>%
                       showgrid = T, gridcolor = "#818181", zeroline = FALSE,
                       tickmode = "linear",
                       tick0 = 0,
-                      color ="ffd29f"),
+                      color ="white"),
          legend = list(title=list(text="<b>Casos acumulados se duplican en...</b>",
                                   font = list(color="white"),
                                   side="top"),
