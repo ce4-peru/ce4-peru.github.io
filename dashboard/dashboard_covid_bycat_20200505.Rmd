@@ -304,7 +304,7 @@ CA_2_1<- nac %>%
                        y = -0.125,
                        font = list(color = "white"))
   ) %>% 
-  plotly_config() %>% 
+  plotly_config(infobutton_1) %>% 
   plotly_layout() %>%
   partial_bundle() 
 
@@ -406,7 +406,7 @@ CA_2_2<-plot_ly(dup.nac)%>%
                             font = list(size = 20,
                                         color = "white"))
   ) %>%
-  plotly_config( ) %>% 
+  plotly_config(infobutton) %>% 
   plotly_layout () %>%
   partial_bundle() %>% 
   htmlwidgets::onRender('function(el, x) {
@@ -1080,7 +1080,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
          dragmode="pan",
          margin = list(l=75, r=0, b=65, t=60)
   ) %>%
-  plotly_config
+  plotly_config(infobutton)
 
 
 
@@ -1348,7 +1348,7 @@ plot_ly(dup.nac)%>%
          dragmode="pan",
          margin = list(l=0, r=0, b=20, t=65)
   ) %>%
-  plotly_config( )
+  plotly_config(infobutton)
 
 ```
 
@@ -1564,7 +1564,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
          dragmode="pan",
          margin = list(l=75, r=0, b=65, t=60)
   ) %>%
-  plotly_config()
+  plotly_config(infobutton)
 
 ```
 

@@ -59,7 +59,7 @@ infobutton_1_2 <- list(
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
-      alert('Muestra los casos nuevos por día (barras) y casos acumulados (línea naranja) en escala lineal o logarítmica a nivel nacional.<br> La escala lineal sirve para visualizar la suma contínua de casos </br>. <br>La escala logarítmica sirve para visualizar la multiplicación de los casos y observar si la curva se aplana.</br>');
+      alert('Muestra los casos nuevos por día (barras) y casos acumulados (línea naranja) en escala lineal o logarítmica a nivel nacional.<br>La escala lineal sirve para visualizar la suma contínua de casos.</br> <br>La escala logarítmica sirve para visualizar la multiplicación de los casos y observar si la curva se aplana.</br>');
     }"
   )
 )

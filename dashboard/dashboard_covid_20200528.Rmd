@@ -474,6 +474,8 @@ chart_types <- list(
          label = "Logaritmica")
   ))
 
+
+
 annot <- list(list(text = "<i>Tipo de Gráfico</i>",font=list(color="white"),
                    x=0.5, y=1.02, 
                    xref='paper', yref='paper', showarrow=FALSE,
