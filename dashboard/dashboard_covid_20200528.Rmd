@@ -1403,7 +1403,7 @@ LATAM %>%ungroup() %>%
                          x = 0.5,
                          y = -0.125,
                          font = list(color = "white"))) %>% 
-  plotly_layout_group_2 () %>%
+  plotly_layout_group () %>%
   plotly_config(infobutton_10)  %>% 
   plotly_end()
 ```
