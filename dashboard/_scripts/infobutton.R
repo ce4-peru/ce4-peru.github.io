@@ -4,12 +4,18 @@
 
 icon_svg_path <-"M12.871,9.337H7.377c-0.304,0-0.549,0.246-0.549,0.549c0,0.303,0.246,0.55,0.549,0.55h5.494c0.305,0,0.551-0.247,0.551-0.55C13.422,9.583,13.176,9.337,12.871,9.337z M15.07,6.04H5.179c-0.304,0-0.549,0.246-0.549,0.55c0,0.303,0.246,0.549,0.549,0.549h9.891c0.303,0,0.549-0.247,0.549-0.549C15.619,6.286,15.373,6.04,15.07,6.04z M17.268,1.645H2.981c-0.911,0-1.648,0.738-1.648,1.648v10.988c0,0.912,0.738,1.648,1.648,1.648h4.938l2.205,2.205l2.206-2.205h4.938c0.91,0,1.648-0.736,1.648-1.648V3.293C18.916,2.382,18.178,1.645,17.268,1.645z M17.816,13.732c0,0.607-0.492,1.1-1.098,1.1h-4.939l-1.655,1.654l-1.656-1.654H3.531c-0.607,0-1.099-0.492-1.099-1.1v-9.89c0-0.607,0.492-1.099,1.099-1.099h13.188c0.605,0,1.098,0.492,1.098,1.099V13.732z"
 
+icon_svg_path <-"M50.433,0.892c-27.119,0-49.102,21.983-49.102,49.102s21.983,49.103,49.102,49.103s49.101-21.984,49.101-49.103S77.552,0.892,50.433,0.892z M59,79.031C59,83.433,55.194,87,50.5,87S42,83.433,42,79.031V42.469c0-4.401,3.806-7.969,8.5-7.969s8.5,3.568,8.5,7.969V79.031z M50.433,31.214c-5.048,0-9.141-4.092-9.141-9.142c0-5.049,4.092-9.141,9.141-9.141c5.05,0,9.142,4.092,9.142,9.141C59.574,27.122,55.482,31.214,50.433,31.214z"
+
+
+transform <- "scale(0.15) translate(-1, 0)"
+
+
 # Prueba
 infobutton <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -20,14 +26,12 @@ infobutton <- list(
 
 
 
-
-
 ## Lineal 
 infobutton_1 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -41,7 +45,7 @@ infobutton_2 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -55,7 +59,7 @@ infobutton_1_2 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -67,7 +71,7 @@ infobutton_3 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -81,7 +85,7 @@ infobutton_4 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -96,7 +100,7 @@ infobutton_5 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -110,7 +114,7 @@ infobutton_6 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -126,7 +130,7 @@ infobutton_7 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -140,7 +144,7 @@ infobutton_8 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -153,7 +157,7 @@ infobutton_9 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -166,7 +170,7 @@ infobutton_10 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
@@ -182,7 +186,7 @@ infobutton11 <- list(
   name = "Información",
   icon = list(
     path = icon_svg_path,
-    transform = "scale(0.84) translate(-1, 0)"
+    transform = transform
   ),
   click = htmlwidgets::JS(
     "function(gd) { 
