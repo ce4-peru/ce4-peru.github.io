@@ -68,6 +68,13 @@
   twitter:
   type: Investigador Principal
   grade: Médico, MSc Epidemiología, PhD en Epidemiología y Control de Enfermedades Globales
+- id: alvaro_s
+  name: Alvaro Schwalb
+  email:
+  url:
+  twitter:
+  type:
+  grade: Médico Cirujano
 
 - id: group
   name: Grupo de trabajo
@@ -82,3 +89,4 @@
    - diaz_e
    - manrique_valverde_e
    - ruiz_cabrejos_j
+   - alvaro_s
