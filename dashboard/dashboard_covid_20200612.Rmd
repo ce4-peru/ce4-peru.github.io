@@ -563,7 +563,7 @@ fig %>% layout(title = '<b>Casos acumulados y nuevos - Perú</b>',
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.5,
-                       y = -0.133,
+                       y = -0.138,
                        font = list(color = "white")),
   updatemenus = list(chart_types,line_types),
   annotations = annot) %>%
@@ -635,7 +635,7 @@ plot_ly(nac) %>%
                        xanchor = "center",
                        yanchor = "bottom",  
                        x = 0.5,
-                       y = -0.133,
+                       y = -0.138,
                        font = list(color = "white"))
   )  %>%
   plotly_layout() %>%
@@ -773,7 +773,7 @@ plot_ly(nac, x = ~dat) %>%
    add_trace(y = ~mav.pos.new, 
             type = 'scatter',
             mode = 'lines+markers', 
-            name = 'Media móvil - Casos Nuevos', 
+            name = '<br>Media móvil</br>Casos Nuevos', 
             yaxis = 'y2',
             line = list(color = '#ffa600'), 
             marker = list(color = '#ffa600'),
