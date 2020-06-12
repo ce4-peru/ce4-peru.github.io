@@ -5,7 +5,8 @@ plotly_config <- function(x,y) {
                modeBarButtonsToRemove = c("select2d","zoom2d","lasso2d",
                                           "drawclosedpath","drawopenpath",
                                           "hoverClosestCartesian","hoverCompareCartesian",
-                                          "toggleHover","toggleSpikelines"),
+                                          "toggleHover","toggleSpikelines",
+                                          "autoScale2d"),
                modeBarButtonsToAdd = list(y),
                responsive = T,
                displayModeBar = T
