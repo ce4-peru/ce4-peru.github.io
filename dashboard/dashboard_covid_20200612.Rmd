@@ -563,7 +563,7 @@ fig %>% layout(title = '<b>Casos acumulados y nuevos - Perú</b>',
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.5,
-                       y = -0.13,
+                       y = -0.133,
                        font = list(color = "white")),
   updatemenus = list(chart_types,line_types),
   annotations = annot) %>%
@@ -635,7 +635,7 @@ plot_ly(nac) %>%
                        xanchor = "center",
                        yanchor = "bottom",  
                        x = 0.5,
-                       y = -0.13,
+                       y = -0.133,
                        font = list(color = "white"))
   )  %>%
   plotly_layout() %>%
@@ -761,12 +761,12 @@ plot_ly(nac_2, x = ~Dia, y = ~per_fallecidos, name = 'Fallecidos',
 ```{r, message=F, warning=F}
 plot_ly(nac, x = ~dat) %>% 
   add_trace(y = ~smp.neg.new, type = 'bar', 
-            name = 'Pruebas negativas',
+            name = 'Pruebas neg.',
             marker = list(color = '#006b7d'),
             hovertemplate = ~paste('<b>Fecha</b>: %{x}',
                                    "<br><b>Pruebas negativas: %{y:.0f}</b></br><extra></extra>")) %>%
   add_trace(y = ~pos.new, type = 'bar',
-            name = 'Pruebas positivas',
+            name = 'Pruebas pos.',
             marker = list(color = '#389e4e'),
             hovertemplate = ~paste('<b>Fecha</b>: %{x}',
                                    "<br><b>Pruebas positivas: %{y:.0f}</b></br><extra></extra>")) %>%
