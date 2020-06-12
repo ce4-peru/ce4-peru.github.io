@@ -563,7 +563,7 @@ fig %>% layout(title = '<b>Casos acumulados y nuevos - Perú</b>',
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.5,
-                       y = -0.128,
+                       y = -0.13,
                        font = list(color = "white")),
   updatemenus = list(chart_types,line_types),
   annotations = annot) %>%
@@ -635,7 +635,7 @@ plot_ly(nac) %>%
                        xanchor = "center",
                        yanchor = "bottom",  
                        x = 0.5,
-                       y = -0.128,
+                       y = -0.13,
                        font = list(color = "white"))
   )  %>%
   plotly_layout() %>%
@@ -824,8 +824,8 @@ plot_ly(nac, x = ~dat) %>%
          legend = list(orientation = "h",  
                        xanchor = "center",
                        yanchor = "bottom",
-                       x = 0.5,
-                       y = -0.125,
+                       x = 0.4,
+                       y = -0.135,
                        font = list(color = "white")))%>%
   plotly_layout() %>%
   plotly_config(infobutton11) %>% 
