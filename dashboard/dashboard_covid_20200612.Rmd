@@ -825,7 +825,7 @@ plot_ly(nac, x = ~dat) %>%
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.2,
-                       y = -0.15,
+                       y = -0.2,
                        font = list(color = "white")))%>%
   plotly_layout() %>%
   plotly_config(infobutton11) %>% 
