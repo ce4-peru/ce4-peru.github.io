@@ -6,7 +6,7 @@ plotly_config <- function(x,y) {
                                           "drawclosedpath","drawopenpath",
                                           "hoverClosestCartesian","hoverCompareCartesian",
                                           "toggleHover","toggleSpikelines",
-                                          "autoScale2d"),
+                                          "autoScale2d","pan2d"),
                modeBarButtonsToAdd = list(y),
                responsive = T,
                displayModeBar = T
@@ -50,7 +50,7 @@ plotly_layout_group <- function(x) {
                hoverdistance = 10,
                hovermode = "closest",
                dragmode="pan",
-               margin = list(l=75, r=0, b=65, t=60),
+               margin = list(l=75, r=0, b=65, t=100),
                autosize=T
   )
 }

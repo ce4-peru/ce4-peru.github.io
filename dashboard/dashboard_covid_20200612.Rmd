@@ -762,11 +762,13 @@ plot_ly(nac_2, x = ~Dia, y = ~per_fallecidos, name = 'Fallecidos',
 plot_ly(nac, x = ~dat) %>% 
   add_trace(y = ~smp.neg.new, type = 'bar', 
             name = 'Negativos',
+               legendgroup = 'group2',
             marker = list(color = '#006b7d'),
             hovertemplate = ~paste('<b>Fecha</b>: %{x}',
                                    "<br><b>Pruebas negativas: %{y:.0f}</b></br><extra></extra>")) %>%
   add_trace(y = ~pos.new, type = 'bar',
             name = 'Positivos',
+               legendgroup = 'group2',
             marker = list(color = '#389e4e'),
             hovertemplate = ~paste('<b>Fecha</b>: %{x}',
                                    "<br><b>Pruebas positivas: %{y:.0f}</b></br><extra></extra>")) %>%
@@ -785,7 +787,7 @@ plot_ly(nac, x = ~dat) %>%
                y = 0, yend=max(nac$smp),
                text="2020-04-08",name="Inicio de Pruebas Rápidas",
                hovertemplate = paste('<b>%{text}</b>'),
-               legendgroup = 'group2', 
+               legendgroup = 'group3', 
                line = list(color = "#7aa82a", 
                            width = 4, 
                            dash = "dot")
@@ -794,7 +796,7 @@ plot_ly(nac, x = ~dat) %>%
                y = 0, yend=max(nac$smp)+100,
                text="2020-06-01",name="Cambio en conteo",
                hovertemplate = paste('<b>%{text}</b>'),
-               legendgroup = 'group2', 
+               legendgroup = 'group3', 
                line = list(color = "#bbac00", 
                            width = 4, 
                            dash = "solid")
@@ -824,8 +826,8 @@ plot_ly(nac, x = ~dat) %>%
          legend = list(orientation = "h",  
                        xanchor = "center",
                        yanchor = "bottom",
-                       x = 0.2,
-                       y = -0.14,
+                       x = 0.4,
+                       y = -0.145,
                        font = list(color = "white")))%>%
   plotly_layout() %>%
   plotly_config(infobutton11) %>% 
@@ -898,7 +900,15 @@ Column 1 {.tabset}
 ```{r}
 plots <- lapply(vars.mav.new, function(var) {
   
-  plot_ly(dep.mav.pos.new_pos.imp.new) %>%
+  plot_ly(dep.mav.pos.new_pos.imp.new)%>%
+    add_trace(x = ~dat, y = as.formula(paste0("~", var,"_2")),
+              type = 'bar', name = 'Casos nuevos',
+              marker = list(color = '#006b7d'), 
+              text = paste(dep.mav.pos.new_pos.imp.new$days.end, "días desde hoy"),
+              hovertemplate = paste('<b>Fecha</b>: %{x}',
+                                    '<br><b>Nuevos Casos:</b> %{y}</br>',
+                                    '<b>%{text}</b><extra></extra>'),
+              showlegend = ifelse(var == last.mav.new,T,F)) %>%
     add_lines(x = ~dat, 
               y = as.formula(paste0("~", var)),
               text = paste(dep.mav.pos.new_pos.imp.new$days.end, "días desde hoy"),
@@ -912,7 +922,7 @@ plots <- lapply(vars.mav.new, function(var) {
                           width = 4)
     ) %>%
     add_segments(x = "2020-04-08", xend = "2020-04-08", 
-                 y = 0, yend = max(dep.mav.pos.new_pos.imp.new[paste0(var,"_2")],na.rm = T),
+                 y = 0, yend = max(dep.mav.pos.new_pos.imp.new[paste0(var,"_2")],na.rm = T)*1.2,
                  text="2020-04-08", name="Inicio de Pruebas Rápidas",
                  hovertemplate = paste('<b>%{text}</b>'),
                  legendgroup = 'group2',
@@ -921,14 +931,16 @@ plots <- lapply(vars.mav.new, function(var) {
                              width = 3, 
                              dash = "dot")
     )%>%
-    add_trace(x = ~dat, y = as.formula(paste0("~", var,"_2")),
-              type = 'bar', name = 'Casos nuevos',
-              marker = list(color = '#006b7d'), 
-              text = paste(dep.mav.pos.new_pos.imp.new$days.end, "días desde hoy"),
-              hovertemplate = paste('<b>Fecha</b>: %{x}',
-                                    '<br><b>Nuevos Casos:</b> %{y}</br>',
-                                    '<b>%{text}</b><extra></extra>'),
-              showlegend = ifelse(var == last.mav.new,T,F)) %>%
+  add_segments(x = "2020-06-01", xend = "2020-06-01", 
+               y = 0, yend= max(dep.mav.pos.new_pos.imp.new[paste0(var,"_2")],na.rm = T)*1.2 ,
+               text="2020-06-01",name="Cambio en conteo",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+                 showlegend = ifelse(var == last.mav.new,T,F), 
+               line = list(color = "#bbac00", 
+                           width = 3.5, 
+                           dash = "solid")
+   ) %>%
     layout(xaxis = list(color = "white"),
            yaxis = list(color = "white", 
                       showgrid = T, gridcolor = "#818181", zeroline = F,
@@ -956,10 +968,15 @@ plots <- lapply(vars.mav.new, function(var) {
 })
 
 subplot(plots,nrows=5, shareX = T, titleX = F) %>%
-  layout(title = list(text = "<br><b>Casos nuevos por región</b></br>Media móvil de 7 días",
-                      font = list(size = 24,
-                                  color="white")),
-         annotations = list(
+  layout(annotations = list(
+           list(text = "<br><b>Casos nuevos por región</b></br>Media móvil de 7 días",
+                x = 0.5,
+                y = 1.12,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 24,
+                            color = "white")),
            list(text = "<b>Fecha de reporte</b>",
                 x = 0.5,
                 y = -0.1,
@@ -980,6 +997,7 @@ subplot(plots,nrows=5, shareX = T, titleX = F) %>%
   plotly_layout_group () %>%
   plotly_config(infobutton_7)  %>% 
   plotly_end()
+
 ```
 
 
@@ -1004,8 +1022,8 @@ plots <- lapply(vars.pmav.new, function(var) {
     plot_ly() %>%
     add_lines(x = ~dat, y = ~mav.pos.new.hab,
               name = "Otras regiones", hoverinfo = "none", 
-              line = list(color = "#007e7b"),
-              width = 0.5,
+              line = list(color = "#007e7b",
+              width = 1.5),
               showlegend = ifelse(var == last.mav.new,T,F)) %>%
     filter(dep == ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
                             ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
@@ -1021,10 +1039,10 @@ plots <- lapply(vars.pmav.new, function(var) {
               name = ifelse(var == last.mav.new,"Media Móvil",var),
               legendgroup = 'group1',
               showlegend = ifelse(var == last.mav.new,T,F), 
-              line = list(color = "#ffa600", width = 4)
+              line = list(color = "#ffa600", width = 3)
     ) %>%
     add_segments(x = "2020-04-08", xend = "2020-04-08", 
-                 y = 0, yend = max(dep$mav.pos.new.hab,na.rm = T),
+                 y = 0, yend = max(dep$mav.pos.new.hab,na.rm = T)*1.2 ,
                  text="2020-04-08",name="Inicio de Pruebas Rápidas",
                  hovertemplate = paste('<b>%{text}</b>'),
                  legendgroup = 'group2',
@@ -1033,7 +1051,17 @@ plots <- lapply(vars.pmav.new, function(var) {
                  line = list(color = "rgb(60,141,47)", 
                              width = 2, 
                              dash = "dot")
-    ) %>%
+    )%>%
+  add_segments(x = "2020-06-01", xend = "2020-06-01", 
+               y = 0, yend= max(dep$mav.pos.new.hab,na.rm = T)*1.2 ,
+               text="2020-06-01",name="Cambio en conteo",
+               hovertemplate = paste('<b>%{text}</b>'),
+               legendgroup = 'group2',
+                 showlegend = ifelse(var == last.mav.new,T,F), 
+               line = list(color = "#bbac00", 
+                           width = 3.5, 
+                           dash = "solid")
+   ) %>%
     layout(xaxis = list(range = c(min(dep$dat),
                                   max(dep$dat)),
                         color = "white",
@@ -1060,11 +1088,16 @@ plots <- lapply(vars.pmav.new, function(var) {
                          font = list(color = "white")))
 })
 
-subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
-  layout(title = list(text = "<br><b>Casos nuevos por millón de hab. por región</b></br>Media móvil de 7 días",
-                      font = list(size = 24,
-                                  color = "white")),
-         annotations = list(
+subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T)  %>%
+  layout(annotations = list(
+           list(text = "<br><b>Casos nuevos por millón de hab.</b></br>Media móvil de 7 días",
+                x = 0.5,
+                y = 1.12,
+                yref = "paper",
+                xref = "paper",
+                showarrow = FALSE,
+                font = list(size = 24,
+                            color = "white")),
            list(text = "<b>Fecha de reporte</b>",
                 x = 0.5,
                 y = -0.1,
@@ -1083,7 +1116,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
                             color = "white"),
                 textangle = -90))
   ) %>% 
-  plotly_layout_group_2 () %>%
+  plotly_layout_group () %>%
   plotly_config(infobutton_8)  %>% 
   plotly_end()
 
@@ -1164,7 +1197,7 @@ plots <- lapply(vars.pos, function(var) {
                           width = 1),
               showlegend = ifelse(var == vars.pos[length(vars.pos)],TRUE,FALSE)) %>%
     filter(dep == var) %>%
-    add_lines(hovertemplate = paste('<b>Casos Totales</b>: %{x}',
+    add_trace(hovertemplate = paste('<b>Casos Totales</b>: %{x}',
                                     '<br><b>Casos Nuevos</b>: %{y:.2f}<br>'),
               name = ifelse(var == vars.pos[length(vars.pos)],"Trayectoria",var),
               legendgroup = 'group1',
@@ -1227,7 +1260,8 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T, titleY=F) %>%
                          x = 0.5,
                          y = -0.133,
                          font = list(color = "white"))
-  ) %>%
+  )%>% 
+  plotly_layout_group() %>%
   plotly_config(infobutton_trayectoria)  %>% 
   plotly_end()
 
