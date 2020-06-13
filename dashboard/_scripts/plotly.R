@@ -54,7 +54,16 @@ plotly_layout_group <- function(x) {
                autosize=T
   )
 }
-
+plotly_layout_group_3 <- function(x) {
+  x %>% layout(paper_bgcolor="black",
+               plot_bgcolor="black",
+               hoverdistance = 10000,
+               hovermode = "all",
+               dragmode="pan",
+               margin = list(l=75, r=0, b=65, t=85),
+               autosize=T
+  )
+}
 plotly_layout_group_2 <- function(x) {
   x %>% layout(paper_bgcolor="black",
                plot_bgcolor="black",

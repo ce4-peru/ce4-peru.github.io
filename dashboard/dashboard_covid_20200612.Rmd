@@ -1116,7 +1116,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T)  %>%
                             color = "white"),
                 textangle = -90))
   ) %>% 
-  plotly_layout_group () %>%
+  plotly_layout_group_3 () %>%
   plotly_config(infobutton_8)  %>% 
   plotly_end()
 
