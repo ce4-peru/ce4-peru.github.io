@@ -50,7 +50,7 @@ plotly_layout_group <- function(x) {
                hoverdistance = 10,
                hovermode = "closest",
                dragmode="pan",
-               margin = list(l=75, r=0, b=65, t=100),
+               margin = list(l=75, r=0, b=65, t=85),
                autosize=T
   )
 }

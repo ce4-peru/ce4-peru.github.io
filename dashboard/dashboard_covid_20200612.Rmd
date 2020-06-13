@@ -826,7 +826,7 @@ plot_ly(nac, x = ~dat) %>%
          legend = list(orientation = "h",  
                        xanchor = "center",
                        yanchor = "bottom",
-                       x = 0.4,
+                       x = 0.43,
                        y = -0.145,
                        font = list(color = "white")))%>%
   plotly_layout() %>%
@@ -961,7 +961,7 @@ plots <- lapply(vars.mav.new, function(var) {
                          xanchor = "center",
                          yanchor = "bottom",
                          x = 0.5,
-                         y = -0.133,
+                         y = -0.145,
                          font = list(color = "white")),
            showlegend =T)%>% 
   partial_bundle()
@@ -1084,7 +1084,7 @@ plots <- lapply(vars.pmav.new, function(var) {
                          xanchor = "center",
                          yanchor = "bottom",
                          x = 0.5,
-                         y = -0.133,
+                         y = -0.145,
                          font = list(color = "white")))
 })
 
