@@ -664,7 +664,7 @@ plot_ly(nac_2, x = ~Dia) %>%
             marker = list(color = '#0e5871'),
             line = list(color = '#0e5871'), 
             stackgroup = 'one') %>% 
-  layout(title ="<b>Proporción de casos Activos, Recuperados, y Fallecidos</b>",
+  layout(title ="<b>Casos según su estado</b>",
          titlefont=list(color="white"),
          xaxis = list(title = "<b>Fecha de reporte</b>",
                       showgrid = FALSE,
@@ -707,7 +707,7 @@ plot_ly(nac_2, x = ~Dia, y = ~per_fallecidos, name = 'Fallecidos',
                          line = list(color = 'rgba(0,0,0,0)'),
             hovertemplate = ~paste('<b>Fecha</b>: %{x}',
                                    "<br><b>Casos Activos: %{y:.2f}%</b></br><extra></extra>")) %>% 
-  layout(title ="<b>Proporción de casos Activos, Recuperados, y Fallecidos</b>",
+  layout(title ="<b>Proporción de casos según estado</b>",
          titlefont=list(color="white"),
          shapes = list(
            list(
@@ -825,7 +825,7 @@ plot_ly(nac, x = ~dat) %>%
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.2,
-                       y = -0.13,
+                       y = -0.14,
                        font = list(color = "white")))%>%
   plotly_layout() %>%
   plotly_config(infobutton11) %>% 
@@ -929,10 +929,13 @@ plots <- lapply(vars.mav.new, function(var) {
                                     '<br><b>Nuevos Casos:</b> %{y}</br>',
                                     '<b>%{text}</b><extra></extra>'),
               showlegend = ifelse(var == last.mav.new,T,F)) %>%
-    layout(xaxis = list(range = c(min(dep.mav.pos.new_pos.imp.new$dat),
-                                  max(dep.mav.pos.new_pos.imp.new$dat)),
-                        color = "white"),
-           yaxis = list(color = "white"),
+    layout(xaxis = list(color = "white"),
+           yaxis = list(color = "white", 
+                      showgrid = T, gridcolor = "#818181", zeroline = F,
+                      range=list(0, roundUpNice(max(dep.mav.pos.new_pos.imp.new[paste0(var,"_2")],na.rm=T))),
+                      autotick=F,
+                      tick0=0,
+                      dtick=roundUpNice(max(dep.mav.pos.new_pos.imp.new[paste0(var,"_2")],na.rm=T))/5),
            annotations = list(text = ifelse(var=="LA_LIBERTAD","<b>LA LIBERTAD<b>",
                                             ifelse(var=="MADRE_DE_DIOS","<b>MADRE DE DIOS<b>",
                                                    ifelse(var=="SAN_MARTIN","<b>SAN MARTIN<b>",paste0("<b>",var,"<b>")))),
@@ -946,20 +949,20 @@ plots <- lapply(vars.mav.new, function(var) {
                          xanchor = "center",
                          yanchor = "bottom",
                          x = 0.5,
-                         y = -0.13,
+                         y = -0.133,
                          font = list(color = "white")),
            showlegend =T)%>% 
   partial_bundle()
 })
 
 subplot(plots,nrows=5, shareX = T, titleX = F) %>%
-  layout(title = list(text = "<b>Media móvil (7 días) de casos nuevos</b>",
+  layout(title = list(text = "<br><b>Casos nuevos por región</b></br>Media móvil de 7 días",
                       font = list(size = 24,
                                   color="white")),
          annotations = list(
            list(text = "<b>Fecha de reporte</b>",
                 x = 0.5,
-                y = -0.09,
+                y = -0.1,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
@@ -1033,11 +1036,13 @@ plots <- lapply(vars.pmav.new, function(var) {
     ) %>%
     layout(xaxis = list(range = c(min(dep$dat),
                                   max(dep$dat)),
-                        color = "white"),
+                        color = "white",
+                        showgrid=F),
            yaxis = list(range = c(min(dep$mav.pos.new.hab),
                                   max(dep$mav.pos.new.hab)),
                         color = "white",
-                        title = ""),
+                        title = "",
+                        showgrid=F),
            annotations = list(text = ifelse(var=="LA_LIBERTAD","<b>LA LIBERTAD<b>",
                                             ifelse(var=="MADRE_DE_DIOS","<b>MADRE DE DIOS<b>",
                                                    ifelse(var=="SAN_MARTIN","<b>SAN MARTIN<b>",paste0("<b>",var,"<b>")))),
@@ -1051,18 +1056,18 @@ plots <- lapply(vars.pmav.new, function(var) {
                          xanchor = "center",
                          yanchor = "bottom",
                          x = 0.5,
-                         y = -0.13,
+                         y = -0.133,
                          font = list(color = "white")))
 })
 
 subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
-  layout(title = list(text = "<b>Media móvil (7 días) - Casos nuevos por millón de hab.</b>",
+  layout(title = list(text = "<br><b>Casos nuevos por millón de hab. por región</b></br>Media móvil de 7 días",
                       font = list(size = 24,
                                   color = "white")),
          annotations = list(
            list(text = "<b>Fecha de reporte</b>",
                 x = 0.5,
-                y = -0.09,
+                y = -0.1,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
@@ -1084,87 +1089,6 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
 
 
 ```
-
-
-### Casos nuevos desde fecha de reporte
-```{r}
-plots <- lapply(vars.mav.new, function(var) {
-  dep %>%
-  arrange(dat) %>%
-    group_by(dep) %>%
-    plot_ly(x = ~dat, y = ~mav.pos.new) %>%
-    add_lines(name = "Otras regiones", hoverinfo = "none", 
-              line = list(color = "#007e7b"),
-              width = 0.5,
-              showlegend = ifelse(var == last.mav.new,T,F)) %>%
-    filter(dep == ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
-                            ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
-                                   ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>%
-    add_lines(text = paste(dep %>% filter(dep==ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
-                                                           ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
-                                                                  ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>% dplyr::select(days.start) %>% .$days.start, "días desde el primer reporte"),
-              hovertemplate = paste('<b>Fecha</b>: %{x}',
-                                    '<br><b>Media Móvil</b>: %{y:.2f}<br>',
-                                    '<b>%{text}</b>'),
-              name = ifelse(var  == last.mav.new,"Media Móvil",var),
-              legendgroup = 'group1',
-              showlegend = ifelse(var == last.mav.new,T,F), 
-              line = list(color = "#ffa600", width = 4)
-    ) %>%
-    layout(xaxis = list(range = c(min(dep$dat),
-                                  max(dep$dat)),
-                        color = "white"),
-           yaxis = list(range = c(min(dep$mav.pos.new,
-                                      max(dep$mav.pos.new))),
-                        color = "white",
-                        title = ""),
-           annotations = list(text = ifelse(var=="LA_LIBERTAD","<b>LA LIBERTAD<b>",
-                                            ifelse(var=="MADRE_DE_DIOS","<b>MADRE DE DIOS<b>",
-                                                   ifelse(var=="SAN_MARTIN","<b>SAN MARTIN<b>",paste0("<b>",var,"<b>")))),
-                              x = 0, y = 1.15,
-                              yref = "paper",xref = "paper",
-                              xanchor = "left",yanchor = "top",
-                              showarrow = FALSE,
-                              font = list(size = 16,
-                                          color = "white")),
-           legend = list(orientation = "h",  
-                         xanchor = "center",
-                         yanchor = "bottom",
-                         x = 0.5,
-                         y = -0.13,
-                         font = list(color = "white")))%>% 
-  partial_bundle()
-})
-
-subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
-  layout(title = list(text = "<b>Media móvil (7 días) - Casos nuevos desde primer reporte</b>",
-                      font = list(size = 24,
-                                  color = "white")),
-         annotations = list(
-           list(text = "<b>Días desde primer reporte de casos en cada Región</b>",
-                x = 0.5,
-                y = -0.075,
-                yref = "paper",
-                xref = "paper",
-                showarrow = FALSE,
-                font = list(size = 16,
-                            color = "white")),
-           list(text = "<b>Media móvil - Casos nuevos</b>",
-                x = -0.05,
-                y = 0.5,
-                yref = "paper",
-                xref = "paper",
-                showarrow = FALSE,
-                font = list(size = 16,
-                            color = "white"),
-                textangle = -90))
-  ) %>% 
-  plotly_layout_group_2 () %>%
-  plotly_config(infobutton_9)  %>% 
-  plotly_end()
-
-```
-
 
 ### Trayectoria
 
@@ -1242,16 +1166,18 @@ plots <- lapply(vars.pos, function(var) {
     filter(dep == var) %>%
     add_lines(hovertemplate = paste('<b>Casos Totales</b>: %{x}',
                                     '<br><b>Casos Nuevos</b>: %{y:.2f}<br>'),
-              name = ifelse(var == vars.pos[length(vars.pos)],"Media Móvil",var),
+              name = ifelse(var == vars.pos[length(vars.pos)],"Trayectoria",var),
               legendgroup = 'group1',
               showlegend = ifelse(var == vars.pos[length(vars.pos)],TRUE,FALSE), 
               line = list(color = "#ffa600", width = 4),
               marker  = list(color = "#ffa600")
     ) %>%
     layout(xaxis = list(type = "log",
-                        color = "white"),
-           yaxis = list(showgrid = FALSE, zeroline = FALSE,
-                        type = "log", color ="white", text=""),
+                        color = "white",
+                        gridcolor = "#818181"),
+           yaxis = list(showgrid=F, zeroline = FALSE,
+                        type = "log", color ="white", text="",
+                       range=list(0, 5)),
            annotations = list(text = ifelse(var=="LA_LIBERTAD","<b>LA LIBERTAD<b>",
                                             ifelse(var=="MADRE_DE_DIOS","<b>MADRE DE DIOS<b>",
                                                    ifelse(var=="SAN_MARTIN","<b>SAN MARTIN<b>",paste0("<b>",var,"<b>")))),
@@ -1271,11 +1197,11 @@ plots <- lapply(vars.pos, function(var) {
 
 subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T, titleY=F) %>%
   layout(margin =0.12,
-         title = list(text = "Trayectoria de casos de COVID19",
+         title = list(text = "<b>Trayectoria de casos</b>",
                       font = list(size = 24,
                                   color = "white")),
          annotations = list(
-           list(text = "Total de casos (Logarítmico)",
+           list(text = "<b>Total de casos (Logarítmico)</b>",
                 x = 0.5,
                 y = -0.1,
                 yref = "paper",
@@ -1283,8 +1209,8 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T, titleY=F) %>%
                 showarrow = FALSE,
                 font = list(size = 16,
                             color = "white")),
-           list(text = "Casos Nuevos (cada 7 días)",
-                x = -0.04,
+           list(text = "<b>Casos Nuevos (cada 7 días)</b>",
+                x = -0.06,
                 y = 0.5,
                 yref = "paper",
                 xref = "paper",
@@ -1299,16 +1225,13 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T, titleY=F) %>%
                          xanchor = "center",
                          yanchor = "bottom",
                          x = 0.5,
-                         y = -0.13,
+                         y = -0.133,
                          font = list(color = "white"))
   ) %>%
-  config(locale = "es",
-         displaylogo=F,
-         modeBarButtonsToRemove = c("select2d","zoom2d","lasso2d",
-                                    "drawclosedpath","drawopenpath",
-                                    "hoverClosestCartesian","hoverCompareCartesian",
-                                    "toggleHover","toggleSpikelines")
-  )
+  plotly_config(infobutton_trayectoria)  %>% 
+  plotly_end()
+
+
 
 
 

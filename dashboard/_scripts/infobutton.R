@@ -179,7 +179,18 @@ infobutton_10 <- list(
   )
 )
 
-
+infobutton_trayectoria<- list(
+  name = "Información",
+  icon = list(
+    path = icon_svg_path,
+    transform = transform
+  ),
+  click = htmlwidgets::JS(
+    "function(gd) { 
+      alert('Muestra la trayectoria de casos por región.');
+    }"
+  )
+)
 
 # Prueba
 infobutton11 <- list(
