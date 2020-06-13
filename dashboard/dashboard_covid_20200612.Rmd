@@ -1030,7 +1030,7 @@ plots <- lapply(vars.pmav.new, function(var) {
                                    ifelse(var=="SAN_MARTIN","SAN MARTIN",var))))%>%
     group_by(dep) %>%
     add_lines(x = ~dat, y = ~mav.pos.new.hab,
-              text = paste(dep %>% filter(dep==ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
+              text = paste(dep%>% arrange(dat) %>% filter(dep==ifelse(var=="LA_LIBERTAD","LA LIBERTAD",
                                                            ifelse(var=="MADRE_DE_DIOS","MADRE DE DIOS",
                                                                   ifelse(var=="SAN_MARTIN","SAN MARTIN",var)))) %>% dplyr::select(days.end) %>% .$days.end, "días desde hoy"),
               hovertemplate = paste('<b>Fecha</b>: %{x}',
