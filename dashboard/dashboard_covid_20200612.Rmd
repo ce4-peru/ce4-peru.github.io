@@ -827,7 +827,7 @@ plot_ly(nac, x = ~dat) %>%
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.43,
-                       y = -0.145,
+                       y = -0.16,
                        font = list(color = "white")))%>%
   plotly_layout() %>%
   plotly_config(infobutton11) %>% 
@@ -937,7 +937,7 @@ plots <- lapply(vars.mav.new, function(var) {
                hovertemplate = paste('<b>%{text}</b>'),
                legendgroup = 'group2',
                  showlegend = ifelse(var == last.mav.new,T,F), 
-               line = list(color = "#bbac00", 
+               line = list(color = "#389e4e", 
                            width = 3.5, 
                            dash = "solid")
    ) %>%
@@ -1058,7 +1058,7 @@ plots <- lapply(vars.pmav.new, function(var) {
                hovertemplate = paste('<b>%{text}</b>'),
                legendgroup = 'group2',
                  showlegend = ifelse(var == last.mav.new,T,F), 
-               line = list(color = "#bbac00", 
+               line = list(color = "#389e4e", 
                            width = 3.5, 
                            dash = "solid")
    ) %>%
