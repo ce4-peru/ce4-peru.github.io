@@ -825,7 +825,7 @@ plot_ly(nac, x = ~dat) %>%
                        xanchor = "center",
                        yanchor = "bottom",
                        x = 0.2,
-                       y = -0.4,
+                       y = -0.13,
                        font = list(color = "white")))%>%
   plotly_layout() %>%
   plotly_config(infobutton11) %>% 
@@ -946,7 +946,7 @@ plots <- lapply(vars.mav.new, function(var) {
                          xanchor = "center",
                          yanchor = "bottom",
                          x = 0.5,
-                         y = -0.125,
+                         y = -0.13,
                          font = list(color = "white")),
            showlegend =T)%>% 
   partial_bundle()
@@ -1051,7 +1051,7 @@ plots <- lapply(vars.pmav.new, function(var) {
                          xanchor = "center",
                          yanchor = "bottom",
                          x = 0.5,
-                         y = -0.125,
+                         y = -0.13,
                          font = list(color = "white")))
 })
 
@@ -1131,6 +1131,7 @@ plots <- lapply(vars.mav.new, function(var) {
                          xanchor = "center",
                          yanchor = "bottom",
                          x = 0.5,
+                         y = -0.13,
                          font = list(color = "white")))%>% 
   partial_bundle()
 })
@@ -1142,7 +1143,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T) %>%
          annotations = list(
            list(text = "<b>Días desde primer reporte de casos en cada Región</b>",
                 x = 0.5,
-                y = -0.065,
+                y = -0.075,
                 yref = "paper",
                 xref = "paper",
                 showarrow = FALSE,
@@ -1263,7 +1264,7 @@ plots <- lapply(vars.pos, function(var) {
            paper_bgcolor="black",
            plot_bgcolor="black",
            legend = list(y=0.9,
-                         title=list(text='<b> Leyenda </b>',
+                         title=list(text='',
                                     font = list(color = "white")),
                          font = list(color = "white")))
 })
@@ -1298,7 +1299,7 @@ subplot(plots, nrows = 5, shareX = T, titleX = F,shareY=T, titleY=F) %>%
                          xanchor = "center",
                          yanchor = "bottom",
                          x = 0.5,
-                         y = -0.125,
+                         y = -0.13,
                          font = list(color = "white"))
   ) %>%
   config(locale = "es",
