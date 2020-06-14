@@ -21,6 +21,7 @@ library(waffle)
 library(RColorBrewer)
 library(fontawesome)
 library(rmapshaper)
+library(geojsonsf)
 
 options(scipen=999)
 

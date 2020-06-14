@@ -133,6 +133,7 @@ overflow: auto;
 
 ```{r imports, include=FALSE}
 source('_scripts/import.R', echo = TRUE) # Importa librerias, bases de datos, variables globales y funciones.
+source('C:/Users/Jorge Ruiz/mapbox_api.R', echo = TRUE) # Importa librerias, bases de datos, variables globales y funciones.
 ```
 
 ```{r plotly, message=F, warning=F, include =F}
@@ -198,6 +199,120 @@ Nacional {.bg}
 Column 1 {.tabset data-width=350} 
 -------------------------------------
 
+### Caso 3
+
+```{r}
+# line_types <- list(
+#   type = "dropdown",
+#   direction = "down",
+#   xanchor = 'center',
+#   yanchor = "top",
+#   bgcolor = "white",
+#   pad = list('r'= 0, 't'= 10, 'b' = 10),
+#   x = 0.6,
+#   y = 1,
+#   buttons = list(
+# 
+#     list(label ="Hitos",
+#          method = "update",
+#          args = list(list(visible=c(T,F)))),
+#     list(label ="Duplicación",
+#          method = "update",
+#          args = list(list(visible=c(F,T))))
+#   )
+# )
+# 
+# a <- plot_mapbox()%>%
+#   add_sf(data=c.dep,
+#          color = ~pos.hab,
+#          split = ~dep,
+#          colors  = palette_1,
+#          alpha = 1,
+#          showlegend = F,
+#          stroke = I("black")
+#   ) %>%
+#   layout(mapbox = list(style = "carto-darkmatter",
+#                        accesstoken = token,
+#                        zoom=6),
+#          updatemenus = list(line_types)) %>%
+#   plotly_layout_map() %>%
+#   plotly_config(infobutton_1_2)%>%
+#   plotly_end()
+# 
+# a
+
+c.dep.geo <-rjson::fromJSON(sf_geojson(c.dep))
+
+
+line_types <- list(
+  type = "dropdown",
+  direction = "down",
+  xanchor = 'center',
+  yanchor = "top",
+  bgcolor = "white",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0.2,
+  y = 1,
+  buttons = list(
+
+    list(label ="Totales",
+         method = "update",
+         args = list(list(visible=c(T,F)))),
+    list(label ="Por 100 mil hab.",
+         method = "update",
+         args = list(list(visible=c(F,T))))
+  )
+)
+
+
+ plot_ly() %>% add_trace(
+    type="choroplethmapbox",
+    geojson=c.dep.geo,
+    locations=c.dep$dep,
+    z=c.dep$pos,
+    colors=palette_1, #colorscale differs
+    zmin=0,zmax=max(c.dep$pos),
+    marker=list(
+      line=list(width=1, color="black")
+    ),
+    colorbar=list(thicknes=20,
+                  len = 0.35,
+                  x=0.05,
+                  y=0.35,
+                  autotick=F,
+                  tick0=0,tickcolor="white",
+                  tickfont= list(color="white") ) ,
+    featureidkey="properties.dep"
+ )%>% add_trace(
+    type="choroplethmapbox",
+    geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
+    z=c.dep$pos.hab,colors=palette_1, #colorscale muestra colores ligeramente
+    zmin=0,zmax=max(c.dep$pos.hab),
+    marker=list(
+      line=list(width=1, color="black")),
+    colorbar=list(thicknes=20,
+                  len = 0.35,
+                  x=0.05,y=0.35,
+                  autotick=F,
+                  tick0=0,tickcolor="white",
+                  tickfont= list(color="white")),
+    visible=F
+ ) %>% layout(
+    mapbox=list(
+      style="carto-darkmatter",
+      zoom =4,
+      center=list(lon=-75.51,lat= -10.00)),
+          updatemenus = list(line_types)
+  )%>%
+   plotly_layout_map() %>%
+   plotly_config(infobutton_1_2)%>%
+   plotly_end()
+
+
+```
+
+ 
+ 
 ### Casos
 
 ```{r}

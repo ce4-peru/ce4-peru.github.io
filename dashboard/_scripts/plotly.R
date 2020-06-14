@@ -13,7 +13,16 @@ plotly_config <- function(x,y) {
   )
 }
 
-
+plotly_layout_map <- function(x) {
+  x %>% layout(paper_bgcolor="black",
+               plot_bgcolor="black",
+               hoverdistance = 50,
+               hovermode = "closest",
+               dragmode="pan",
+               margin = list(l=0, r=0, b=0, t=0),
+               autosize=T
+  )
+}
 
 plotly_layout <- function(x) {
   x %>% layout(paper_bgcolor="black",
@@ -38,7 +47,8 @@ plotly_layout_2 <- function(x) {
 }
 
 plotly_end<- function(x) {
-  x %>% partial_bundle() %>% 
+  x %>% 
+    #partial_bundle() %>% 
   htmlwidgets::onRender('function(el, x) {
                          $("[data-title=\'Información\'] svg path").css("fill", "#f6e486");
                          $("[data-title=\'Información\'] svg").css("width","2em");

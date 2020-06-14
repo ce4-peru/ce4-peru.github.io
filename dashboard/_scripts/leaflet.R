@@ -1,3 +1,22 @@
+palette_1 <- c("#ffffff",
+               #"#fff3e3",
+               "#ffe8c8",
+               #"#ffddac",
+               "#ffd291",
+               "#ffc775",
+               "#ffbc59",
+               "#ffb139",
+               "#ffa600",
+               "#ea8a0a",
+               "#d37011",
+               "#ba5713",
+               "#a04013",
+               "#852a11",
+               "#6a150c",
+               "#4f0000")
+
+
+
 map_tiles <- function(x) {
   x %>% 
     addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
