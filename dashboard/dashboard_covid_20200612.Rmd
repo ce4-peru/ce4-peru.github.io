@@ -1817,9 +1817,16 @@ Los datos de América Latina provienen de [Our World in Data](https://ourworldin
 
 La documentación y código fuente se encuentran en [github](https://github.com/ce4-peru/ce4-peru.github.io).
 
-+ __Contacto__
++ __Editores y colaboradores__
 
-
+-Jorge Ruiz-Cabrejos - jorge.ruiz.c@upch.pe
+-Gabriel Carrasco-Escobar - gabriel.carrasco@upch.pe
+-Edgar Manrique Valverde
+-Alvaro Schwalb Calderón
+-Ricardo Castillo neyra
+-Cesar Augusto Ugarte Gil
+-Claudia Arevalo
+-Gian Franco Joel Condori Luna
 
 + __Registro de cambios__
 
