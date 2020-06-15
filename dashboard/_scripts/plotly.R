@@ -27,7 +27,7 @@ plotly_layout_map <- function(x) {
                plot_bgcolor="black",
                hoverdistance = 50,
                hovermode = "closest",
-               dragmode="pan",
+               dragmode=F,
                margin = list(l=0, r=0, b=0, t=0),
                autosize=T
   )

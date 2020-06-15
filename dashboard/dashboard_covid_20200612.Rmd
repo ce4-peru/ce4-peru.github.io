@@ -199,7 +199,7 @@ Nacional {.bg}
 Column 1 {.tabset data-width=350} 
 -------------------------------------
 
-### Caso 3
+### Casos
 
 ```{r}
 # line_types <- list(
@@ -265,6 +265,11 @@ map_types <- list(
   )
 )
 
+annot <- list(list(text = "<i>Casos acumulados</i>",font=list(color="white"),
+                   x=0.2, y=0.965, 
+                   xref='paper', yref='paper', showarrow=FALSE,
+                   xanchor="center",yanchor="top"))
+
 
 plot_ly(marker=list(line=list(width=1, color="black")),
             colors=palette_1#colorscale differs colores ligeramente
@@ -272,246 +277,404 @@ plot_ly(marker=list(line=list(width=1, color="black")),
   add_trace(z=log(c.dep$pos),
             type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep", 
             zmin=min(log(c.dep$pos)),zmax=max(log(c.dep$pos)),
-        colorbar= list(thicknes=20,
-                            len = 0.35,
-                            x=0.05,
-                            y=0.35,
-                            autotick=F,
-                            tick0=0,tickcolor="white",
-                            tickfont= list(color="white"),
-                            tickmode="array",
-                            tickvals=c(min(log(c.dep$pos)),max(log(c.dep$pos))*0.2,
-                                       max(log(c.dep$pos))*0.4,max(log(c.dep$pos))*0.6,
-                                       max(log(c.dep$pos))*0.8,max(log(c.dep$pos))),
-                            ticktext= c("0","10","100","1000","10000","100000+"))
+            colorbar= list(thicknes=20,
+                           len = 0.35,
+                           x=0.05,
+                           y=0.35,
+                           autotick=F,
+                           tick0=0,tickcolor="white",
+                           tickfont= list(color="white"),
+                           tickmode="array",
+                           tickvals=c(min(log(c.dep$pos)),max(log(c.dep$pos))*0.2,
+                                      max(log(c.dep$pos))*0.4,max(log(c.dep$pos))*0.6,
+                                      max(log(c.dep$pos))*0.8,max(log(c.dep$pos))),
+                           ticktext= c("0","10","100","1000","10000","100000+")
+            ),
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Casos acumulados:</b>',c.dep$pos,"</br>")
   )%>% 
   add_trace(z=c.dep$pos.hab,
             type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
             zmin=0,zmax=max(c.dep$pos.hab),
             visible=F,
-            colorbar=plotly_colorbar_map
+            colorbar=plotly_colorbar_map,
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Casos acumulados:</b>',c.dep$pos,"</br>")
   ) %>% layout(
     mapbox=list(
       style="carto-darkmatter",
       zoom =4.9,
       center=list(lon=-75.51,lat= -9.90)),
-    updatemenus = list(map_types)
+    updatemenus = list(map_types),
+    annotations=annot
   )%>%
   plotly_layout_map() %>%
   plotly_config(infobutton_1_2)%>%
   plotly_end()
-
-
-
-
 ```
 
- 
- 
-### Casos
+### Casos nuevos
 
 ```{r}
-labels <- sprintf(
-  "<strong>%s</strong><br/<strong>Casos: </strong>%s",
-  c.dep$dep, c.dep$pos) %>% lapply(htmltools::HTML)
+map_types <- list(
+  type = "dropdown",
+  direction = "down",
+  xanchor = 'center',
+  yanchor = "top",
+  bgcolor = "white",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0.2,
+  y = 0.95,
+  buttons = list(
+    
+    list(label ="Totales",
+         method = "update",
+         args = list(list(visible=c(T,F)))),
+    list(label ="Por 100 mil hab.",
+         method = "update",
+         args = list(list(visible=c(F,T))))
+  )
+)
 
-pal.cases <- colorNumeric(palette="RdPu", domain = log(c.dep$pos), na.color="transparent")
+annot <- list(list(text = "<i>Casos nuevos</i>",font=list(color="white"),
+                   x=0.2, y=0.965, 
+                   xref='paper', yref='paper', showarrow=FALSE,
+                   xanchor="center",yanchor="top"))
 
-leaflet(c.dep) %>% 
-  map_tiles() %>%
-  map_poly(c.dep$pos) %>%
-  addLegend("bottomleft", pal = pal.cases, values = log(c.dep$pos), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
-  map_bounds() %>%
-  addEasyButton(easyButton(
-    icon="fa-info-circle", title="Información",
-    onClick=JS("function(gd) { 
-      alert('Muestra los casos acumulados por departamento. El gradiente de colores indica mayor casos acumulados en colores más oscuros.');
-    }")))  #%>%
-  # Layers control
-  # addLayersControl(
-  #   baseGroups = c("OSM (default)", "Toner", "Toner Lite"),
-  #   overlayGroups = c("Quakes", "Outline"),
-  #   options = layersControlOptions(collapsed = FALSE)
-  # )
-  # 
+
+plot_ly(marker=list(line=list(width=1, color="black")),
+            colors=palette_1#colorscale differs colores ligeramente
+)%>% 
+  add_trace(z=c.dep$pos.new.log,
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep", 
+            zmin=0,zmax=max(c.dep$pos.new.log),
+            colorbar= list(thicknes=20,
+                           len = 0.35,
+                           x=0.05,
+                           y=0.35,
+                           autotick=F,
+                           tick0=0,tickcolor="white",
+                           tickfont= list(color="white"),
+                           tickmode="array",
+                           tickvals=c(min(c.dep$pos.new.log),max(c.dep$pos.new.log)*0.25,
+                                      max(c.dep$pos.new.log)*0.5,max(c.dep$pos.new.log)*0.75,
+                                      max(c.dep$pos.new.log)),
+                           ticktext= c("0","1","10","100","1000+")),
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Casos nuevos:</b>',c.dep$pos.new,"</br>")
+  )%>% 
+  add_trace(z=c.dep$pos.new.hab,
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
+            zmin=0,zmax=max(c.dep$pos.new.hab),
+            visible=F,
+            colorbar=plotly_colorbar_map,
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Casos nuevos:</b>',round(c.dep$pos.new.hab,0),"</br>")
+  ) %>% layout(
+    mapbox=list(
+      style="carto-darkmatter",
+      zoom =4.9,
+      center=list(lon=-75.51,lat= -9.90)),
+    updatemenus = list(map_types),
+    annotations=annot
+  )%>%
+  plotly_layout_map() %>%
+  plotly_config(infobutton_1_2)%>%
+  plotly_end()
 ```
 
-### Casos / 100k hab
+### Fallecidos
 
 ```{r}
-labels <- sprintf(
-  "<strong>%s</strong><br/<strong>Casos/100k hab: </strong>%s",
-  c.dep$dep, round(c.dep$pos.hab)) %>% lapply(htmltools::HTML)
+map_types <- list(
+  type = "dropdown",
+  direction = "down",
+  xanchor = 'center',
+  yanchor = "top",
+  bgcolor = "white",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0.2,
+  y = 0.95,
+  buttons = list(
+    
+    list(label ="Totales",
+         method = "update",
+         args = list(list(visible=c(T,F)))),
+    list(label ="Por 100 mil hab.",
+         method = "update",
+         args = list(list(visible=c(F,T))))
+  )
+)
 
-pal.cases <- colorNumeric( palette="RdPu", domain = log(c.dep$pos.hab), na.color="transparent")
-
-leaflet(c.dep)%>% 
-  map_tiles() %>%
-  map_poly(c.dep$pos.hab) %>%
-  addLegend("bottomleft", pal = pal.cases, values = log(c.dep$pos.hab), title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
-  map_bounds() %>%
-  addEasyButton(easyButton(
-    icon="fa-info-circle", title="Información",
-    onClick=JS("function(gd) { 
-      alert('Muestra la tasa de casos por 100 mil habitantes por departamento. El gradiente de colores indica mayor tasa de casos en colores más oscuros.');
-    }")))
-
-  
-```
-
-### Casos nuevos 
-
-```{r}
-labels<- sprintf(
-  "<strong>%s</strong><br/<strong>Casos: </strong>%s",
-  c.dep$dep, c.dep$pos.new) %>% lapply(htmltools::HTML)
-
-pal.cases <- colorNumeric( palette="RdPu", domain = c.dep$pos.new.log, na.color="transparent")
-
-leaflet(c.dep) %>% 
-  map_tiles() %>%
-  map_poly_log(c.dep$pos.new.log) %>%
-  addLegend("bottomleft", pal=pal.cases, values = c.dep$pos.new.log, title= 'Casos', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
-  map_bounds() %>%
-  addEasyButton(easyButton(
-    icon="fa-info-circle", title="Información",
-    onClick=JS("function(gd) { 
-      alert('Muestra los casos nuevos por departamento. El gradiente de colores indica mayor cantidad de casos nuevos en colores más oscuros. Departamentos sin color no han reportado casos nuevos.');
-    }")))
- 
+annot <- list(list(text = "<i>Fallecidos</i>",font=list(color="white"),
+                   x=0.2, y=0.965, 
+                   xref='paper', yref='paper', showarrow=FALSE,
+                   xanchor="center",yanchor="top"))
 
 
-
-```
-
-### Fallecidos 
-
-```{r}
-labels <- sprintf(
-  "<strong>%s</strong><br/<strong>Fallecidos: </strong>%s",
-  c.dep$dep, c.dep$pas) %>% lapply(htmltools::HTML)
-
-pal.cases <- colorNumeric( palette="RdPu", domain = c.dep$pas, na.color="transparent")
-
-leaflet(c.dep) %>% 
-  map_tiles()  %>%
-  map_poly_log(c.dep$pas) %>%
-  addLegend("bottomleft", pal=pal.cases, values = c.dep$pas, title= 'Fallecidos')%>%
-  map_bounds()  %>%
-  addEasyButton(easyButton(
-    icon="fa-info-circle", title="Información",
-    onClick=JS("function(gd) { 
-      alert('Muestra el total de fallecidos por departamento. El gradiente de colores indica mayor total de fallecidos en colores más oscuros.');
-    }"))) 
-
- 
+plot_ly(marker=list(line=list(width=1, color="black")),
+            colors=palette_1#colorscale differs colores ligeramente
+)%>% 
+  add_trace(z=log(c.dep$pas),
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep", 
+            zmin=min(log(c.dep$pas)),zmax=max(log(c.dep$pas)),
+            colorbar= list(thicknes=20,
+                           len = 0.35,
+                           x=0.05,
+                           y=0.35,
+                           autotick=F,
+                           tick0=0,tickcolor="white",
+                           tickfont= list(color="white"),
+                           tickmode="array",
+                           tickvals=c(min(log(c.dep$pas)),max(log(c.dep$pas))*0.25,
+                                      max(log(c.dep$pas))*0.5,max(log(c.dep$pas))*0.75,
+                                      max(log(c.dep$pas))),
+                           ticktext= c("0","1","10","100","1000+")),
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Fallecidos acumulados:</b>',c.dep$pas,"</br>")
+  )%>% 
+  add_trace(z=c.dep$pas.hab,
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
+            zmin=0,zmax=max(c.dep$pas.hab),
+            visible=F,
+            colorbar=plotly_colorbar_map,
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Fallecidos acumulados:</b>',round(c.dep$pas.hab,0),"</br>")
+  ) %>% layout(
+    mapbox=list(
+      style="carto-darkmatter",
+      zoom =4.9,
+      center=list(lon=-75.51,lat= -9.90)),
+    updatemenus = list(map_types),
+    annotations=annot
+  )%>%
+  plotly_layout_map() %>%
+  plotly_config(infobutton_1_2)%>%
+  plotly_end()
 ```
 
 ### Fallecidos nuevos
 
 ```{r}
-labels <- sprintf(
-  "<strong>%s</strong><br/<strong>Fallecidos: </strong>%s",
-  c.dep$dep, c.dep$pas.new) %>% lapply(htmltools::HTML)
+map_types <- list(
+  type = "dropdown",
+  direction = "down",
+  xanchor = 'center',
+  yanchor = "top",
+  bgcolor = "white",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0.2,
+  y = 0.95,
+  buttons = list(
+    
+    list(label ="Totales",
+         method = "update",
+         args = list(list(visible=c(T,F)))),
+    list(label ="Por 100 mil hab.",
+         method = "update",
+         args = list(list(visible=c(F,T))))
+  )
+)
 
-pal.cases <- colorNumeric( palette="RdPu", domain = c.dep$pas.new, na.color="transparent")
+annot <- list(list(text = "<i>Fallecidos nuevos</i>",font=list(color="white"),
+                   x=0.2, y=0.965, 
+                   xref='paper', yref='paper', showarrow=FALSE,
+                   xanchor="center",yanchor="top"))
 
-leaflet(c.dep) %>% 
-  map_tiles()  %>%
-  map_poly_log(c.dep$pas.new) %>%
-  addLegend("bottomleft", pal=pal.cases, values = c.dep$pas.new, title= 'Fallecidos')%>%
-  map_bounds()  %>%
-  addEasyButton(easyButton(
-    icon="fa-info-circle", title="Información",
-    onClick=JS("function(gd) { 
-      alert('Muestra número de fallecidos nuevos por departamento. El gradiente de colores indica mayor número fallecidos nuevos en colores más oscuros.');
-    }")))
 
+plot_ly(marker=list(line=list(width=1, color="black")),
+            colors=palette_1#colorscale differs colores ligeramente
+)%>% 
+  add_trace(z=c.dep$pas.new.log,
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep", 
+            zmin=min(c.dep$pas.new.log),zmax=max(c.dep$pas.new.log),
+            colorbar= list(thicknes=20,
+                           len = 0.35,
+                           x=0.05,
+                           y=0.35,
+                           autotick=F,
+                           tick0=0,tickcolor="white",
+                           tickfont= list(color="white"),
+                           tickmode="array",
+                           tickvals=c(min(c.dep$pas.new.log),max(c.dep$pas.new.log)*0.25,
+                                      max(c.dep$pas.new.log)*0.75,max(c.dep$pas.new.log)),
+                           ticktext= c("0","1","10","100+")),
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Fallecidos nuevos:</b></br>',c.dep$pas.new)
+  )%>% 
+  add_trace(z=c.dep$pas.new.hab,
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
+            zmin=0,zmax=max(c.dep$pas.new.hab),
+            visible=F,
+            colorbar=plotly_colorbar_map,
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Fallecidos nuevos:</b>',round(c.dep$pas.new.hab,0),"</br>")
+  ) %>% layout(
+    mapbox=list(
+      style="carto-darkmatter",
+      zoom =4.9,
+      center=list(lon=-75.51,lat= -9.90)),
+    updatemenus = list(map_types),
+    annotations=annot
+  )%>%
+  plotly_layout_map() %>%
+  plotly_config(infobutton_1_2)%>%
+  plotly_end()
 ```
+
+
 
 ### Pruebas
 
 ```{r}
-labels <- sprintf(
-  "<strong>%s</strong><br/<strong>Pruebas: </strong>%s",
-  c.dep$dep, c.dep$smp) %>% lapply(htmltools::HTML)
+map_types <- list(
+  type = "dropdown",
+  direction = "down",
+  xanchor = 'center',
+  yanchor = "top",
+  bgcolor = "white",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0.2,
+  y = 0.95,
+  buttons = list(
+    
+    list(label ="Totales",
+         method = "update",
+         args = list(list(visible=c(T,F)))),
+    list(label ="Por 100 mil hab.",
+         method = "update",
+         args = list(list(visible=c(F,T))))
+  )
+)
 
-pal.cases <- colorNumeric( palette="Blues", domain = log(c.dep$smp), na.color="transparent")
+annot <- list(list(text = "<i>Pruebas acumuladas</i>",font=list(color="white"),
+                   x=0.2, y=0.965, 
+                   xref='paper', yref='paper', showarrow=FALSE,
+                   xanchor="center",yanchor="top"))
 
-leaflet(c.dep) %>% 
-  map_tiles() %>%
-  map_poly(c.dep$smp) %>%
-  addLegend("bottomleft", pal=pal.cases, values = log(c.dep$smp), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
-  map_bounds() %>%
-  addEasyButton(easyButton(
-    icon="fa-info-circle", title="Información",
-    onClick=JS("function(gd) { 
-      alert('Muestra el total pruebas realizadas por departamento. El gradiente de colores indica mayor total de pruebas realizadas en colores más oscuros.');
-    }")))
+
+plot_ly(marker=list(line=list(width=1, color="black")),
+            colors=palette_1#colorscale differs colores ligeramente
+)%>% 
+  add_trace(z=log(c.dep$smp),
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep", 
+            zmin=min(log(c.dep$smp)),zmax=max(log(c.dep$smp)),
+            colorbar= list(thicknes=20,
+                           len = 0.35,
+                           x=0.05,
+                           y=0.35,
+                           autotick=F,
+                           tick0=0,tickcolor="white",
+                           tickfont= list(color="white"),
+                           tickmode="array",
+                           tickvals=c(min(log(c.dep$smp)),max(log(c.dep$smp))*0.2,
+                                      max(log(c.dep$smp))*0.4,max(log(c.dep$smp))*0.6,
+                                      max(log(c.dep$smp))*0.8,max(log(c.dep$smp))),
+                           ticktext= c("0","10","100","1000","10000","100000+")),
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Pruebas acumuladas:</b>',c.dep$smp,"</br>")
+  )%>% 
+  add_trace(z=c.dep$smp.hab,
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
+            zmin=0,zmax=max(c.dep$smp.hab),
+            visible=F,
+            colorbar=plotly_colorbar_map,
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Pruebas acumuladas:</b>',round(c.dep$smp.hab,0),"</br>")
+  ) %>% layout(
+    mapbox=list(
+      style="carto-darkmatter",
+      zoom =4.9,
+      center=list(lon=-75.51,lat= -9.90)),
+    updatemenus = list(map_types),
+    annotations=annot
+  )%>%
+  plotly_layout_map() %>%
+  plotly_config(infobutton_1_2)%>%
+  plotly_end()
 ```
 
-### Pruebas / 100k hab
-
-```{r}
-labels <- sprintf(
-  "<strong>%s</strong><br/<strong>Pruebas/100k hab: </strong>%s",
-  c.dep$dep, round(c.dep$smp.hab)) %>% lapply(htmltools::HTML)
-
-pal.cases <- colorNumeric( palette="Blues", domain = log(c.dep$smp.hab), na.color="transparent")
-
-leaflet(c.dep) %>% 
-  map_tiles()  %>%
-  map_poly(c.dep$smp.hab)  %>%
-  addLegend("bottomleft", pal=pal.cases, values = log(c.dep$smp.hab), title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
-  map_bounds()   %>%
-  addEasyButton(easyButton(
-    icon="fa-info-circle", title="Información",
-    onClick=JS("function(gd) { 
-      alert('Muestra la tasa de pruebas realizadas por 100 mil habitantes por departamento. El gradiente de colores indica mayor tasa de pruebas por 100 mil habitantes realizadas en colores más oscuros.');
-    }")))
-```
 
 ### Nuevas pruebas
 
 ```{r}
-labels<- sprintf(
-  "<strong>%s</strong><br/<strong>Pruebas: </strong>%s",
-  c.dep$dep, c.dep$smp.imp.new) %>% lapply(htmltools::HTML)
+map_types <- list(
+  type = "dropdown",
+  direction = "down",
+  xanchor = 'center',
+  yanchor = "top",
+  bgcolor = "white",
+  pad = list('r'= 0, 't'= 10, 'b' = 10),
+  x = 0.2,
+  y = 0.95,
+  buttons = list(
+    
+    list(label ="Totales",
+         method = "update",
+         args = list(list(visible=c(T,F,F)))),
+    list(label ="Por 100 mil hab.",
+         method = "update",
+         args = list(list(visible=c(F,T,F)))),
+    list(label ="Tasa positivos",
+         method = "update",
+         args = list(list(visible=c(F,F,T))))
+  )
+)
 
-pal.cases <-  colorNumeric( palette="Blues", domain = c.dep$smp.imp.new.log, na.color="transparent")
+annot <- list(list(text = "<i>Pruebas nuevas</i>",font=list(color="white"),
+                   x=0.2, y=0.965, 
+                   xref='paper', yref='paper', showarrow=FALSE,
+                   xanchor="center",yanchor="top"))
 
-# Removidos los negativos
-leaflet(c.dep) %>% 
-  map_tiles()  %>%
-  map_poly_log(c.dep$smp.imp.new.log)%>%
-  addLegend("bottomleft", pal=pal.cases, values = c.dep$smp.imp.new.log, title= 'Pruebas', labFormat = labelFormat(transform = function(x) round(exp(x))))%>%
-  map_bounds()  %>%
-  addEasyButton(easyButton(
-    icon="fa-info-circle", title="Información",
-    onClick=JS("function(gd) { 
-      alert('Muestra número de nuevas pruebas realizadas por departamento. El gradiente de colores indica mayor número de pruebas realizadas en colores más oscuros.');
-    }")))
-```
 
-### Tasa de positivos nuevos
+plot_ly(marker=list(line=list(width=1, color="black")),
+            colors=palette_1#colorscale differs colores ligeramente
+)%>% 
+  add_trace(z=log(c.dep$smp.new),
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep", 
+            zmin=min(log(c.dep$smp.new)),zmax=max(log(c.dep$smp.new)),
+            colorbar= list(thicknes=20,
+                           len = 0.35,
+                           x=0.05,
+                           y=0.35,
+                           autotick=F,
+                           tick0=0,tickcolor="white",
+                           tickfont= list(color="white"),
+                           tickmode="array",
+                           tickvals=c(min(log(c.dep$smp.new)),max(log(c.dep$smp.new))*0.25,
+                                      max(log(c.dep$smp.new))*0.5,max(log(c.dep$smp.new))*0.75,
+                                      max(log(c.dep$smp.new))),
+                           ticktext= c("0","10","100","1000","10000+")),
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Pruebas nuevas:</b>',c.dep$smp.new,"</br>")
+  )%>% 
+  add_trace(z=c.dep$smp.new.hab,
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
+            zmin=0,zmax=max(c.dep$smp.new.hab),
+            visible=F,
+            colorbar=plotly_colorbar_map,
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Pruebas nuevas:</b>',round(c.dep$smp.new.hab,2),"</br>")
+  )%>% 
+  add_trace(z=c.dep$ratio.new*100,
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
+            zmin=0,zmax=max(c.dep$ratio.new*100),
+            visible=F,
+            colorbar=plotly_colorbar_map,
+            hoverinfo="text",
+            text = paste(c.dep$dep,'<br><b>Tasa de positivos:</b>',round(c.dep$ratio.new,2)*100,"%","</br>")
+  ) %>% layout(
+    mapbox=list(
+      style="carto-darkmatter",
+      zoom =4.9,
+      center=list(lon=-75.51,lat= -9.90)),
+    updatemenus = list(map_types),
+    annotations=annot
+  )%>%
+  plotly_layout_map() %>%
+  plotly_config(infobutton_1_2)%>%
+  plotly_end()
 
-```{r}
-labels <- sprintf(
-  "<strong>%s</strong><br/<strong>Porcentaje: </strong>%s",
-  c.dep$dep, c.dep$ratio.new*100) %>% lapply(htmltools::HTML)
-
-pal.cases <-  colorNumeric( palette="RdPu", domain = c.dep$ratio.new*100, na.color="transparent")
-
-leaflet(c.dep) %>% 
-  map_tiles()%>%
-  map_poly_log(c.dep$ratio.new*100) %>%
-  addLegend("bottomleft", pal=pal.cases, values = c.dep$ratio.new*100, title= '% Positivos')%>%
-  map_bounds()  %>%
-  addEasyButton(easyButton(
-    icon="fa-info-circle", title="Información",
-    onClick=JS("function(gd) { 
-      alert('Muestra proporción de pruebas positivas entre todas las pruebas nuevas realizadas por departamento. El gradiente de colores indica mayor proporción de pruebas positivas en colores más oscuros.');
-    }")))
 ```
 
 Column 2 {.tabset data-width=400 vertical_layout=scroll}
@@ -675,8 +838,8 @@ fig %>% layout(title = '<b>Casos acumulados y nuevos - Perú</b>',
                        x = 0.5,
                        y = -0.16,
                        font = list(color = "white")),
-  updatemenus = list(chart_types,line_types),
-  annotations = annot) %>%
+         updatemenus = list(chart_types,line_types),
+         annotations = annot) %>%
   plotly_layout() %>%
   plotly_config(infobutton_1_2) %>% 
   plotly_end()
@@ -1504,7 +1667,13 @@ LATAM %>%
                                   max(LATAM$date)),
                         color = "white"),
            yaxis = list(color = "white",
-                        title = "", type ="log", tickmode="linear"
+                        title = "", type ="log", tickmode="linear", 
+                       showgrid = F, zeroline = F,
+                       color = "#ffd29f",
+                       range=list(1, 6),
+                       autotick=F,
+                       tick0=0,
+                      fixedrange=T
                         ),
            annotations = list(text = ifelse(var=="Mexico","México",
                                             ifelse(var=="Brazil","Brasil",
@@ -1576,7 +1745,13 @@ LATAM %>%ungroup() %>%
                         color = "white",
                         title ="<b>Fecha de Reporte</b>"),
            yaxis = list(color = "white",
-                        title = "", type ="log", tickmode="linear"
+                        title = "", type ="log", tickmode="linear", 
+                       showgrid = F, zeroline = F,
+                       color = "#ffd29f",
+                       range=list(1, 6),
+                       autotick=F,
+                       tick0=0,
+                      fixedrange=T
                         ),
            annotations = list(text = "<b>Media móvil de nuevos casos por país</b>",
                               x = -0.08, y = 0.5,

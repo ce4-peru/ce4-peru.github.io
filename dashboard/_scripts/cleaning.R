@@ -44,7 +44,10 @@ dep <-
   ) %>% 
   dplyr::mutate(pos.hab = pos/pop*100000,
                 smp.hab = smp/pop*100000,
-                pos.new.hab = smp/pop*100000,
+                pos.new.hab = pos.new/pop*100000,
+                pas.hab = pas/pop*100000,
+                pas.new.hab = pas.new/pop*100000,
+                smp.new.hab = smp.new/pop*100000,
                 mav.pos.new.hab = mav.pos.new/pop*1000000)
 
 dup.dep <- data.frame(dat = as.Date(seq(1,30, 1)+as.Date(c.date))) %>%
