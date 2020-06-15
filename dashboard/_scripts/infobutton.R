@@ -205,3 +205,89 @@ infobutton11 <- list(
     }"
   )
 )
+
+
+
+
+
+
+# Mapas
+infobutton_casos <- list(
+  name = "Información",
+  icon = list(
+    path = icon_svg_path,
+    transform = transform
+  ),
+  click = htmlwidgets::JS(
+    "function(gd) { 
+      alert('Muestra los casos acumulados por departamento.</br><br>El gradiente de colores indica mayor cantidad de casos acumulados en colores más oscuros.</br>');
+    }"
+  )
+)
+
+
+infobutton_casos_nuevos <- list(
+  name = "Información",
+  icon = list(
+    path = icon_svg_path,
+    transform = transform
+  ),
+  click = htmlwidgets::JS(
+    "function(gd) { 
+      alert('Muestra los casos nuevos por departamento.</br><br>El gradiente de colores indica mayor cantidad de casos nuevos en colores más oscuros.</br>');
+    }"
+  )
+)
+
+infobutton_fallecidos <- list(
+  name = "Información",
+  icon = list(
+    path = icon_svg_path,
+    transform = transform
+  ),
+  click = htmlwidgets::JS(
+    "function(gd) { 
+      alert('Muestra los fallecidos acumulados por departamento.</br><br>El gradiente de colores indica mayor cantidad de fallecidos en colores más oscuros.</br>');
+    }"
+  )
+)
+
+infobutton_fallecidos_nuevos <- list(
+  name = "Información",
+  icon = list(
+    path = icon_svg_path,
+    transform = transform
+  ),
+  click = htmlwidgets::JS(
+    "function(gd) { 
+      alert('Muestra los fallecidos nuevos por departamento.</br><br>El gradiente de colores indica mayor cantidad de fallecidos nuevos en colores más oscuros.</br>');
+    }"
+  )
+)
+
+infobutton_pruebas <- list(
+  name = "Información",
+  icon = list(
+    path = icon_svg_path,
+    transform = transform
+  ),
+  click = htmlwidgets::JS(
+    "function(gd) { 
+      alert('Muestra el total pruebas realizadas por departamento.</br><br>El gradiente de colores indica mayor total de pruebas realizadas en colores más oscuros.</br>');
+    }"
+  )
+)
+
+
+infobutton_pruebas_nuevas <- list(
+  name = "Información",
+  icon = list(
+    path = icon_svg_path,
+    transform = transform
+  ),
+  click = htmlwidgets::JS(
+    "function(gd) { 
+      alert('Muestra el número de nuevas pruebas realizadas por departamento.</br><br>El gradiente de colores indica mayor cantidad de pruebas nuevas realizadas en colores más oscuros.</br> La tasa de positivos es el resultado de pruebas positivas entre todas las pruebas nuevas realizadas por departamento. El gradiente de colores indica mayor proporción de pruebas positivas en colores más oscuros.');
+    }"
+  )
+)

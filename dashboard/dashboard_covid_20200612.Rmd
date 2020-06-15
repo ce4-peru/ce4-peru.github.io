@@ -303,13 +303,13 @@ plot_ly(marker=list(line=list(width=1, color="black")),
   ) %>% layout(
     mapbox=list(
       style="carto-darkmatter",
-      zoom =4.9,
-      center=list(lon=-75.51,lat= -9.90)),
+      zoom =4.85,
+      center=list(lon=-75.51,lat= -9.70)),
     updatemenus = list(map_types),
     annotations=annot
   )%>%
   plotly_layout_map() %>%
-  plotly_config(infobutton_1_2)%>%
+  plotly_config(infobutton_casos)%>%
   plotly_end()
 ```
 
@@ -373,13 +373,13 @@ plot_ly(marker=list(line=list(width=1, color="black")),
   ) %>% layout(
     mapbox=list(
       style="carto-darkmatter",
-      zoom =4.9,
-      center=list(lon=-75.51,lat= -9.90)),
+      zoom =4.85,
+      center=list(lon=-75.51,lat= -9.70)),
     updatemenus = list(map_types),
     annotations=annot
   )%>%
   plotly_layout_map() %>%
-  plotly_config(infobutton_1_2)%>%
+  plotly_config(infobutton_casos_nuevos)%>%
   plotly_end()
 ```
 
@@ -443,13 +443,13 @@ plot_ly(marker=list(line=list(width=1, color="black")),
   ) %>% layout(
     mapbox=list(
       style="carto-darkmatter",
-      zoom =4.9,
-      center=list(lon=-75.51,lat= -9.90)),
+      zoom =4.85,
+      center=list(lon=-75.51,lat= -9.70)),
     updatemenus = list(map_types),
     annotations=annot
   )%>%
   plotly_layout_map() %>%
-  plotly_config(infobutton_1_2)%>%
+  plotly_config(infobutton_fallecidos)%>%
   plotly_end()
 ```
 
@@ -512,13 +512,13 @@ plot_ly(marker=list(line=list(width=1, color="black")),
   ) %>% layout(
     mapbox=list(
       style="carto-darkmatter",
-      zoom =4.9,
-      center=list(lon=-75.51,lat= -9.90)),
+      zoom =4.85,
+      center=list(lon=-75.51,lat= -9.70)),
     updatemenus = list(map_types),
     annotations=annot
   )%>%
   plotly_layout_map() %>%
-  plotly_config(infobutton_1_2)%>%
+  plotly_config(infobutton_fallecidos_nuevos)%>%
   plotly_end()
 ```
 
@@ -584,18 +584,18 @@ plot_ly(marker=list(line=list(width=1, color="black")),
   ) %>% layout(
     mapbox=list(
       style="carto-darkmatter",
-      zoom =4.9,
-      center=list(lon=-75.51,lat= -9.90)),
+      zoom =4.85,
+      center=list(lon=-75.51,lat= -9.70)),
     updatemenus = list(map_types),
     annotations=annot
   )%>%
   plotly_layout_map() %>%
-  plotly_config(infobutton_1_2)%>%
+  plotly_config(infobutton_pruebas)%>%
   plotly_end()
 ```
 
 
-### Nuevas pruebas
+### Pruebas Nuevas
 
 ```{r}
 map_types <- list(
@@ -666,13 +666,13 @@ plot_ly(marker=list(line=list(width=1, color="black")),
   ) %>% layout(
     mapbox=list(
       style="carto-darkmatter",
-      zoom =4.9,
-      center=list(lon=-75.51,lat= -9.90)),
+      zoom =4.85,
+      center=list(lon=-75.51,lat= -9.70)),
     updatemenus = list(map_types),
     annotations=annot
   )%>%
   plotly_layout_map() %>%
-  plotly_config(infobutton_1_2)%>%
+  plotly_config(infobutton_pruebas_nuevas)%>%
   plotly_end()
 
 ```
@@ -1599,12 +1599,12 @@ dep %>%
   scale_color_manual(
     name = NULL,
     values = c("#0e5871", "#ffa600"),
-    labels = c("Lima Metropolitana 92%", "Regiones 8%")
+    labels = c("Lima Metropolitana 91%", "Regiones 9%")
   ) +
   scale_label_pictogram(
     name = NULL,
     values = c("male", "male"),
-    labels = c("Lima Metropolitana 92%", "Regiones 8%")
+    labels = c("Lima Metropolitana 91%", "Regiones 9%")
   ) +
   theme_ipsum_rc(grid="") +
   theme_enhance_waffle() +
@@ -1816,6 +1816,10 @@ Los datos de América Latina provienen de [Our World in Data](https://ourworldin
 + __Código fuente__
 
 La documentación y código fuente se encuentran en [github](https://github.com/ce4-peru/ce4-peru.github.io).
+
++ __Contacto__
+
+
 
 + __Registro de cambios__
 
