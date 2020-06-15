@@ -241,10 +241,11 @@ Column 1 {.tabset data-width=350}
 # 
 # a
 
+
 c.dep.geo <-rjson::fromJSON(sf_geojson(c.dep))
 
 
-line_types <- list(
+map_types <- list(
   type = "dropdown",
   direction = "down",
   xanchor = 'center',
@@ -252,9 +253,9 @@ line_types <- list(
   bgcolor = "white",
   pad = list('r'= 0, 't'= 10, 'b' = 10),
   x = 0.2,
-  y = 1,
+  y = 0.95,
   buttons = list(
-
+    
     list(label ="Totales",
          method = "update",
          args = list(list(visible=c(T,F)))),
@@ -265,48 +266,42 @@ line_types <- list(
 )
 
 
- plot_ly() %>% add_trace(
-    type="choroplethmapbox",
-    geojson=c.dep.geo,
-    locations=c.dep$dep,
-    z=c.dep$pos,
-    colors=palette_1, #colorscale differs
-    zmin=0,zmax=max(c.dep$pos),
-    marker=list(
-      line=list(width=1, color="black")
-    ),
-    colorbar=list(thicknes=20,
-                  len = 0.35,
-                  x=0.05,
-                  y=0.35,
-                  autotick=F,
-                  tick0=0,tickcolor="white",
-                  tickfont= list(color="white") ) ,
-    featureidkey="properties.dep"
- )%>% add_trace(
-    type="choroplethmapbox",
-    geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
-    z=c.dep$pos.hab,colors=palette_1, #colorscale muestra colores ligeramente
-    zmin=0,zmax=max(c.dep$pos.hab),
-    marker=list(
-      line=list(width=1, color="black")),
-    colorbar=list(thicknes=20,
-                  len = 0.35,
-                  x=0.05,y=0.35,
-                  autotick=F,
-                  tick0=0,tickcolor="white",
-                  tickfont= list(color="white")),
-    visible=F
- ) %>% layout(
+plot_ly(marker=list(line=list(width=1, color="black")),
+            colors=palette_1#colorscale differs colores ligeramente
+)%>% 
+  add_trace(z=log(c.dep$pos),
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep", 
+            zmin=min(log(c.dep$pos)),zmax=max(log(c.dep$pos)),
+        colorbar= list(thicknes=20,
+                            len = 0.35,
+                            x=0.05,
+                            y=0.35,
+                            autotick=F,
+                            tick0=0,tickcolor="white",
+                            tickfont= list(color="white"),
+                            tickmode="array",
+                            tickvals=c(min(log(c.dep$pos)),max(log(c.dep$pos))*0.2,
+                                       max(log(c.dep$pos))*0.4,max(log(c.dep$pos))*0.6,
+                                       max(log(c.dep$pos))*0.8,max(log(c.dep$pos))),
+                            ticktext= c("0","10","100","1000","10000","100000+"))
+  )%>% 
+  add_trace(z=c.dep$pos.hab,
+            type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
+            zmin=0,zmax=max(c.dep$pos.hab),
+            visible=F,
+            colorbar=plotly_colorbar_map
+  ) %>% layout(
     mapbox=list(
       style="carto-darkmatter",
-      zoom =4,
-      center=list(lon=-75.51,lat= -10.00)),
-          updatemenus = list(line_types)
+      zoom =4.9,
+      center=list(lon=-75.51,lat= -9.90)),
+    updatemenus = list(map_types)
   )%>%
-   plotly_layout_map() %>%
-   plotly_config(infobutton_1_2)%>%
-   plotly_end()
+  plotly_layout_map() %>%
+  plotly_config(infobutton_1_2)%>%
+  plotly_end()
+
+
 
 
 ```
@@ -1613,7 +1608,10 @@ LATAM %>%ungroup() %>%
 
 Este dashboard y sus visualizaciones han sido diseñadas para asistir en el análisis de las tendencias que la pandemia de COVID-19 tiene en el Perú.
 
+
 Última actualización: `r c.date`
+
+
 
 + Detalles técnicos 
 
@@ -1632,20 +1630,21 @@ Principales paquetes utilizados
 -Manipulación de datos - [tidyverse](https://www.tidyverse.org/)
 
 
-+ Fuente de datos
+
++ __Fuente de datos__
 
 Los datos de Perú provienen del [Handbook Covid-19 Perú](https://jincio.github.io/COVID_19_PERU/index.html).
 Esta base de datos a sido construida utilizando los [reportes del Ministerio de Salud de Perú (MINSA)](https://covid19.minsa.gob.pe/sala_situacional.asp) a nivel nacional y regional.
 
 Los datos de América Latina provienen de [Our World in Data](https://ourworldindata.org/coronavirus) de la [Universidad de Oxford](https://www.oxfordmartin.ox.ac.uk/global-development).
 
-+ Código fuente
++ __Código fuente__
 
 La documentación y código fuente se encuentran en [github](https://github.com/ce4-peru/ce4-peru.github.io).
 
-+ Registro de cambios
++ __Registro de cambios__
 
-14 de Mayo de 2020 - Lanzamiento 
+14 de Junio de 2020 - Lanzamiento 
 
 
 

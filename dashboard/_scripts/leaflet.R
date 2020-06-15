@@ -16,7 +16,6 @@ palette_1 <- c("#ffffff",
                "#4f0000")
 
 
-
 map_tiles <- function(x) {
   x %>% 
     addTiles(urlTemplate = 'http://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',

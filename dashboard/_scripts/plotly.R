@@ -13,6 +13,15 @@ plotly_config <- function(x,y) {
   )
 }
 
+plotly_colorbar_map <- list(thicknes=20,
+                            len = 0.35,
+                            x=0.05,
+                            y=0.35,
+                            autotick=F,
+                            tick0=0,tickcolor="white",
+                            tickfont= list(color="white") )
+
+
 plotly_layout_map <- function(x) {
   x %>% layout(paper_bgcolor="black",
                plot_bgcolor="black",
