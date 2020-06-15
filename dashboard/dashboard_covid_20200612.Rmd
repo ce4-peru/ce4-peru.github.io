@@ -508,7 +508,7 @@ plot_ly(marker=list(line=list(width=1, color="black")),
             visible=F,
             colorbar=plotly_colorbar_map,
             hoverinfo="text",
-            text = paste(c.dep$dep,'<br><b>Fallecidos nuevos:</b>',round(c.dep$pas.new.hab,0),"</br>")
+            text = paste(c.dep$dep,'<br><b>Fallecidos nuevos:</b>',round(c.dep$pas.new.hab,2),"</br>")
   ) %>% layout(
     mapbox=list(
       style="carto-darkmatter",
