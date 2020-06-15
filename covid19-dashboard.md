@@ -1,7 +1,12 @@
 ---
 title: Dashboard COVID-19
+description: Visualizaciones para  el análisis de las tendencias del virus COVID-19 en el Perú.
 permalink: /covid19-dashboard/
 layout: dashboard
+image:
+  path: /dashboard/embed.png
+  height: 100
+  width: 100
 ---
 
 <div class="iframe-container">
