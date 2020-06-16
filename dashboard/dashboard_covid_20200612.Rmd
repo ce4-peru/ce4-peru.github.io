@@ -406,7 +406,7 @@ map_types <- list(
   )
 )
 
-annot <- list(list(text = "<i>Fallecidos</i>",font=list(color="white"),
+annot <- list(list(text = "<i>Fallecidos acumulados</i>",font=list(color="white"),
                    x=0.2, y=0.965, 
                    xref='paper', yref='paper', showarrow=FALSE,
                    xanchor="center",yanchor="top"))
@@ -498,10 +498,11 @@ plot_ly(marker=list(line=list(width=1, color="black")),
                            tickfont= list(color="white"),
                            tickmode="array",
                            tickvals=c(min(c.dep$pas.new.log),
-                                      max(c.dep$pas.new.log)*0.5,max(c.dep$pas.new.log)),
+                                      max(c.dep$pas.new.log)*0.5,
+                                      max(c.dep$pas.new.log)),
                            ticktext= c("0","10","100+")),
             hoverinfo="text",
-            text = paste(c.dep$dep,'<br><b>Fallecidos nuevos:</b></br>',c.dep$pas.new)
+            text = paste(c.dep$dep,'<br><b>Fallecidos nuevos:</b>',c.dep$pas.new,"</br>")
   )%>% 
   add_trace(z=c.dep$pas.new.hab,
             type="choroplethmapbox",geojson=c.dep.geo,locations=c.dep$dep,featureidkey="properties.dep",
