@@ -288,7 +288,7 @@ plot_ly(marker=list(line=list(width=1, color="black")),
                            tickvals=c(min(log(c.dep$pos)),max(log(c.dep$pos))*0.2,
                                       max(log(c.dep$pos))*0.4,max(log(c.dep$pos))*0.6,
                                       max(log(c.dep$pos))*0.8,max(log(c.dep$pos))),
-                           ticktext= c("0","10","100","1000","10000","100000+")
+                           ticktext= c("0","10","100","1,000","10,000","100,000+")
             ),
             hoverinfo="text",
             text = paste(c.dep$dep,'<br><b>Casos acumulados:</b>',c.dep$pos,"</br>")
@@ -359,7 +359,7 @@ plot_ly(marker=list(line=list(width=1, color="black")),
                            tickvals=c(min(c.dep$pos.new.log),max(c.dep$pos.new.log)*0.25,
                                       max(c.dep$pos.new.log)*0.5,max(c.dep$pos.new.log)*0.75,
                                       max(c.dep$pos.new.log)),
-                           ticktext= c("0","1","10","100","1000+")),
+                           ticktext= c("0","1","10","100","1,000+")),
             hoverinfo="text",
             text = paste(c.dep$dep,'<br><b>Casos nuevos:</b>',c.dep$pos.new,"</br>")
   )%>% 
@@ -429,7 +429,7 @@ plot_ly(marker=list(line=list(width=1, color="black")),
                            tickvals=c(min(log(c.dep$pas)),max(log(c.dep$pas))*0.25,
                                       max(log(c.dep$pas))*0.5,max(log(c.dep$pas))*0.75,
                                       max(log(c.dep$pas))),
-                           ticktext= c("0","1","10","100","1000+")),
+                           ticktext= c("0","1","10","100","1,000+")),
             hoverinfo="text",
             text = paste(c.dep$dep,'<br><b>Fallecidos acumulados:</b>',c.dep$pas,"</br>")
   )%>% 
@@ -570,7 +570,7 @@ plot_ly(marker=list(line=list(width=1, color="black")),
                            tickvals=c(min(log(c.dep$smp)),max(log(c.dep$smp))*0.2,
                                       max(log(c.dep$smp))*0.4,max(log(c.dep$smp))*0.6,
                                       max(log(c.dep$smp))*0.8,max(log(c.dep$smp))),
-                           ticktext= c("0","10","100","1000","10000","100000+")),
+                           ticktext= c("0","10","100","1,000","10,000","100,000+")),
             hoverinfo="text",
             text = paste(c.dep$dep,'<br><b>Pruebas acumuladas:</b>',c.dep$smp,"</br>")
   )%>% 
@@ -644,7 +644,7 @@ plot_ly(marker=list(line=list(width=1, color="black")),
                            tickvals=c(min(log(c.dep$smp.new)),max(log(c.dep$smp.new))*0.25,
                                       max(log(c.dep$smp.new))*0.5,max(log(c.dep$smp.new))*0.75,
                                       max(log(c.dep$smp.new))),
-                           ticktext= c("0","10","100","1000","10000+")),
+                           ticktext= c("0","10","100","1,000","10,000+")),
             hoverinfo="text",
             text = paste(c.dep$dep,'<br><b>Pruebas nuevas:</b>',c.dep$smp.new,"</br>")
   )%>% 
@@ -1820,12 +1820,19 @@ La documentación y código fuente se encuentran en [github](https://github.com/
 + __Editores y colaboradores__
 
 -Jorge Ruiz-Cabrejos - jorge.ruiz.c@upch.pe
+
 -Gabriel Carrasco-Escobar - gabriel.carrasco@upch.pe
+
 -Edgar Manrique Valverde
+
 -Alvaro Schwalb Calderón
+
 -Ricardo Castillo neyra
+
 -Cesar Augusto Ugarte Gil
+
 -Claudia Arevalo
+
 -Gian Franco Joel Condori Luna
 
 + __Registro de cambios__

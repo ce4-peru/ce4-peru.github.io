@@ -229,7 +229,8 @@ LATAM <- LATAM %>%
   dplyr::filter(location %in% Paises_LATAM) %>%
   dplyr::mutate()%>% 
   group_by(location)%>% 
-  dplyr::mutate(mav_new = slide_dbl(new_cases, ~mean(.x, na.rm = TRUE), .before = 6),
+  dplyr::mutate(new_cases = total_cases - lag(total_cases, n = 1),
+                mav_new = slide_dbl(new_cases, ~mean(.x, na.rm = TRUE), .before = 6),
                 days.end = difftime(today, date , units = c("days")),
                 days.start = as.numeric(difftime(date,f.date), units="days"),
                 dummy = days.start+20,
