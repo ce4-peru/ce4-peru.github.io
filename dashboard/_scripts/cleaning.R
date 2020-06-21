@@ -1,5 +1,18 @@
 #### Procesamiento de los datos por región. ####
 
+
+nac <- nac %>% dplyr::rename(	Total_Pruebas = PCR,
+                Descartados=PCR_descartados ,
+                Positivos	=PCR_positivos ,
+                Nuevos_Positivos=PCR_diario_positivo ,
+                TasaPositivos=PCR_tasa ,
+                Pruebas_dia=PCR_diario,
+                PruebasRapidas =PR	,
+                RapidasPositivos=PR_positivos ,
+                Pruebas_diaPR	=PR_diario ,
+                PR_nuevos=PR_diario_positivos
+               )
+
 dep <- 
   dep %>% 
   dplyr::select(dat = Fecha,
