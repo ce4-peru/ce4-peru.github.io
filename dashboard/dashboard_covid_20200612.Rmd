@@ -133,7 +133,6 @@ overflow: auto;
 
 ```{r imports, include=FALSE}
 source('_scripts/import.R', echo = TRUE) # Importa librerias, bases de datos, variables globales y funciones.
-source('C:/Users/Jorge Ruiz/mapbox_api.R', echo = TRUE) # Importa librerias, bases de datos, variables globales y funciones.
 ```
 
 ```{r plotly, message=F, warning=F, include =F}
