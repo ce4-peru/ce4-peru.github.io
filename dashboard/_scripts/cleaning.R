@@ -23,6 +23,8 @@ dep <-
                 smp =Total_muestras,
                 smp.imp =MuestrasImputadas_totales
   ) %>% 
+  dplyr::mutate(dep = if_else(dep == "LIMA METROPOLITANA" | dep==  "LIMA REGIÓN","LIMA",dep)) %>%
+  group_by(dat,dep) %>% summarise_all( sum, na.rm = F) %>% ungroup() %>%
   dplyr::mutate(pas = pas %>% if_else(is.na(.), 0, .),
                 dat = as.Date(dat)
   ) %>% 
