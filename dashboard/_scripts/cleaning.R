@@ -13,8 +13,7 @@ nac <- nac %>% dplyr::rename(	Total_Pruebas = PCR,
                 PR_nuevos=PR_diario_positivos
                )
 
-dep <- 
-  dep %>% 
+dep <- dep %>% 
   dplyr::select(dat = Fecha,
                 dep = REGION, 
                 pos = Positivos_totales, 
@@ -24,7 +23,7 @@ dep <-
                 smp.imp =MuestrasImputadas_totales
   ) %>% 
   dplyr::mutate(dep = if_else(dep == "LIMA METROPOLITANA" | dep==  "LIMA REGIÓN","LIMA",dep)) %>%
-  group_by(dat,dep) %>% summarise_all( sum, na.rm = F) %>% ungroup() %>%
+  dplyr::group_by(dat,dep) %>% summarise_all( sum, na.rm = F) %>% dplyr::ungroup() %>%
   dplyr::mutate(pas = pas %>% if_else(is.na(.), 0, .),
                 dat = as.Date(dat)
   ) %>% 

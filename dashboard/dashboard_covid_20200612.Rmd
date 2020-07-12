@@ -144,7 +144,7 @@ source('_scripts/leaflet.R', echo = TRUE) # Importa configuraciones para los gr√
 ```
 
 ```{r deps, message=F, warning=F, include=FALSE}
-source('_scripts/cleaning.R', echo = TRUE) # Importa las bases a utilizar procesadas.
+source('_scripts/cleaning.R', echo = TRUE, encoding="UTF-8") # Importa las bases a utilizar procesadas.
 ```
 
 ```{r, message=F, warning=F}
